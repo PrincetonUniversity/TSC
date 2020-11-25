@@ -1,0 +1,156 @@
+SHELL   = /bin/sh
+
+#computer_os:=   $(shell uname -s)
+#computer_arch:= $(shell uname -m)
+#computer_name:= $(shell uname -n)
+
+CC = gcc 
+
+ifeq ($(computer_arch),i686)
+COMPILE = lf95
+CFOPTS = --sav --o2   
+NTCCMOD = ${NTCCHOME}/mod
+NETCDFMOD = ${NETCDFHOME}/include
+endif
+
+ifeq ($(computer_arch),ia64)
+COMPILE = ifort
+NTCCMOD = ${NTCCHOME}/mod
+NETCDFMOD = ${NETCDFHOME}/include
+CFOPTS = -save -ftz 
+endif
+
+ifeq ($(computer_arch),x86_64)
+
+ifneq (, $(finstring, jaguar, $(computer_name)))
+COMPILE = ftn
+NTCCHOME = /ccs/proj/fus013/NUBEAM_Cray_XT
+NTCCMOD = ${NTCCHOME}/mod
+NETCDFMOD = ${NETCDF_DIR}/include
+TRANSP_MOD = ${NTCCHOME}/mod
+PS_INC = /ccs/proj/fus013/lpku/ips/include
+CFOPTS = -Msave -Kieee -pc 64 -O
+endif   # --- jaguar end --- #
+
+# --- edison start --- #
+ifeq ($(shell uname -n | cut -c-6),edison)
+COMPILE = ftn
+C_COMPILE = cc
+CC_COMPILE = CC
+ifeq ($(PE_ENV),PGI)   # Using PGI compiler on edison
+	CFOPTS = -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
+else
+	ifeq ($(PE_ENV),PATHSCALE)   # Using PATHSCALE compiler on edison
+		CFOPTS =  -static-data -O -I${NTCCINC} -I${NTCCMOD}
+		CFOPTS =  -static-data -g -I${NTCCINC} -I${NTCCMOD}
+	else #default: INTEl compiler on edison
+		CFOPTS =  -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
+	endif
+endif
+	# --- edison end --- #
+
+else
+# --- cori start --- #
+
+#ifeq ($(shell uname -n | cut -c-3),nid)
+#ifeq ($(shell uname -n | cut -c-6),hopper)
+ifeq ($(shell uname -n | cut -c-4),cori)
+COMPILE = ftn
+C_COMPILE = cc
+CC_COMPILE = CC
+ifeq ($(PE_ENV),PGI)   # Using PGI compiler on cori
+	CFOPTS = -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
+else
+	ifeq ($(PE_ENV),PATHSCALE)   # Using PATHSCALE compiler on cori
+		CFOPTS =  -static-data -O -I${NTCCINC} -I${NTCCMOD}
+		CFOPTS =  -static-data -g -I${NTCCINC} -I${NTCCMOD}
+	else #default: INTEl compiler on cori
+		CFOPTS =  -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
+	endif
+endif
+
+else
+# --- pppl start --- #
+COMPILE = $(F90)
+NTCCMOD = ${NTCC_ROOT}/mod
+NETCDFMOD = ${NETCDFHOME}/include
+TRANSP_MOD = ${NTCC_ROOT}/mod
+ifeq "$(findstring lfc,$(FC))" "lfc"
+	CFOPTS =  --sav --o2  -I${TRANSP_MOD}
+endif
+#ifeq ($(PATHSCALE),1)
+ifeq "$(findstring pathscale,$(F95HOME))" "pathscale"
+	#TRANSP_MOD = /p/tshare/transp/PS/mod
+	CFOPTS =  -static-data -I${TRANSP_MOD}
+endif
+ifeq "$(findstring intel,$(F90HOME))" "intel"
+	#CFOPTS =  -save -ftz -check bounds -I${TRANSP_MOD} 
+	CFOPTS =  -save -ftz -I${TRANSP_MOD} 
+endif
+endif # --- pppl end --- #
+endif # --- edison end --- #
+endif # --- end of x86_64 --- #
+
+FLAGS= $(CFOPTS) -I$(NTCCMOD) #-g
+LINK    = ar -ruv
+LISTS   = ../list
+
+#Modules with NO external dependency
+OBJ0 = 
+#Modules which depend ONLY on kind_spec
+OBJ1 = 
+#Modules which depend ONLY on 
+OBJ2 = 
+#Modules with more complicated dependence
+OBJ3 = 
+OBJA = $(OBJ0) $(OBJ1) $(OBJ2) $(OBJ3)
+COBJ = 
+
+#Defines vsource.Sub (list of source files.o)
+include $(LISTS)/source.lst
+include $(LISTS)/module.lst
+
+all : libtsc_m.a  mvlibtsc_m
+
+libtsc_m.a : $(vmodule.Sub) $(vsource.Sub) get_svn_version.o get_shot_number.o $(OBJA) $(COBJ)
+	$(LINK) $@ $(vmodule.Sub) $(vsource.Sub) get_svn_version.o get_shot_number.o $(OBJA) $(COBJ)
+
+#Compile Fortran source modules
+$(OBJ0) : ${$(@):.o=.f90}
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f90)
+$(OBJ1) : ${$(@):.o=.f90} 
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f90)
+$(OBJ2) : ${$(@):.o=.f90} 
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f90)
+$(OBJ3) : ${$(@):.o=.f90} 
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f90)
+
+#Compile module .o files
+$(vmodule.Sub) : ${$(@):.o=.f90} $(OBJA)
+#	$(COMPILE) $(FLAGS) -c $(@:.o=.f90) 
+
+#Compile C source .o files
+#$(COBJ) : ${$(@):.o=.c}
+#        cc $(FLAGS_C) -I../source -c $(@:.o=.c)
+
+#Compile Fortran source .o files
+$(vsource.Sub) : ${$(@):.o=.f90} $(OBJA) $(vmodule.Sub)
+#	$(COMPILE) $(FLAGS) -c $(@:.o=.f90)
+
+%.o: %.f
+	$(COMPILE) $(FLAGS) -c -o $@ $<
+
+%.o: %.F
+	$(COMPILE) $(FLAGS) -c -o $@ $<
+
+%.o: %.f90
+	$(COMPILE) $(FLAGS) -c -o $@ $<
+
+%.o: %.F90
+	$(COMPILE) $(FLAGS) -c -o $@ $<
+
+%.o: %.c
+	$(CC) -c -o $@ $<
+
+mvlibtsc_m:
+	mv libtsc_m.a $(SRCDIR) 

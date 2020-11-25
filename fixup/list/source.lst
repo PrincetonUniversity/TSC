@@ -1,0 +1,12 @@
+ vsource.Sub = \
+ areal.o \
+ fixup.o \
+ tcv2.o \
+ tcv1.o \
+ second.o \
+ shpcntl.o \
+ tremain.o \
+ f03aae.o \
+ f04aae.o \
+ ludcmp.o \
+ lubksb.o 

@@ -1,0 +1,2766 @@
+\documentstyle[makeidx,psbox,11pt]{report}
+%define a command "\setw" to set the width of parbox
+%-----------------------------------------------------------
+\newlength{\wspace}
+\newlength{\width}
+\newcommand{\setw}[1]{ \setlength{\width}{\textwidth} \settowidth{\wspace}{#1}
+\addtolength{\width}{-\wspace}}
+%----------------------------------------------------------
+\makeindex
+\author{William Daughton \\  Stephen C. Jardin \\  Charles Kessel \\  Neil Pomphrey}
+\title{TSC Users Manual-Chapter 4 \\ TSC Usage}
+\date{January 2003}
+\begin{document}
+ \setcounter{chapter}{3}
+%\maketitle
+\chapter{Input File}
+\subsection{Summary of Input File}
+\renewcommand{\baselinestretch}{0.56} \large \normalsize
+\begin{tabbing}
+XXX \= plasma pres\= XXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \kill
+ \>  \> 11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\
+  \\
+NAME CARD\\
+\tiny 00 \> \tiny Control \> \tiny IRST1 \>\tiny IRST2 \>\tiny IPEST
+\>\tiny NCYCLE \>\tiny  NSKIPR \>\tiny NSKIPL \> \tiny IMOVIE\\
+\tiny 01 \> \tiny Dimensions \> \tiny NX \>\tiny NZ \>\tiny ALX
+\>\tiny ALZ \>\tiny ISYM \>\tiny CCON \>\tiny IDATA \\
+\tiny 02 \> \tiny Time step \> \tiny DTMINS \>\tiny DTMAXS \>\tiny
+DTFAC \>\tiny LRSWTCH \>\tiny IDENS \>\tiny IPRES \>\tiny IFUNC
+\\
+\tiny 03 \> \tiny Numerical \> \tiny XLIM \>\tiny ZLIM \>\tiny
+XLIM2 \>\tiny FFAC \>\tiny NDIV \>\tiny ICIRC \>\tiny ISVD \\
+\tiny04 \> \tiny Surf. Ave. \> \tiny ISURF \>\tiny NPSI \>\tiny
+NSKIPSF \>\tiny TFMULT \>\tiny  ALPHAR \>\tiny BETAR \>\tiny
+ITRMOD \\
+\tiny 05 \> \tiny Limiter \> \tiny I \>\tiny XLIMA(I) \>\tiny ZLIMA(I)
+\>\tiny XLIMA(I+1) \>\tiny ZLIMA(I+1) \>\tiny XLIMA(I+2) \>\tiny
+ZLIM(I+2) \\
+\tiny 06 \> \tiny Divertor \> \tiny IDIV \>\tiny PSIRAT \>\tiny X1SEP
+\>\tiny X2SEP \>\tiny Z1SEP \>\tiny Z2SEP \>\tiny NSEPMAX \\
+\tiny 07 \> \tiny Impurities \> \tiny IIMP \>\tiny ILTE \>\tiny
+IMPBND \>\tiny IMPPEL \>\tiny AMGAS \>\tiny ZGAS \>\tiny NTHE\\
+\tiny 08 \> \tiny Obs. pairs \> \tiny J \>\tiny XOBS(2J-1) \>\tiny
+ZOBS(2J-1) \>\tiny XOBS(2J) \>\tiny ZOBS(2J) \> \tiny NPLOTOBS \\
+\tiny 09 \> \tiny Ext. coils \> \tiny N \>\tiny XCOIL(N) \>\tiny
+ZCOIL(N) \>\tiny IGROUPC(N) \>\tiny ATURNSC(N) \>\tiny RSCOILS(N)
+\>\tiny AINDC(N) \\
+\tiny 10 \> \tiny Int. coils \> \tiny M \>\tiny XWIRE(M) \>\tiny
+ZWIRE(M) \>\tiny IGROUPW(M) \>\tiny ATURNSW(M) \>\tiny RSWIRES(M)
+\>\tiny CWICS(M) \\
+\tiny 11 \> \tiny ACOEF  \> \tiny ICO \>\tiny NCO \>\tiny
+ACOEF(ICO) \>\tiny $\ldots$(ICO+1) \> $\ldots$ \> $\ldots$ \> \tiny $\ldots$(ICO+4)
+\\
+\tiny 12 \> \tiny Tranport \> \tiny TEVV \>\tiny DCGS \>\tiny QSAW
+\>\tiny ZEFF \>\tiny IALPHA \>\tiny IBALSW \>\tiny ISAW  \\
+\tiny 13 \> \tiny Init. cond-1 \> \tiny ALPHAG \>\tiny ALPHAP
+\>\tiny NEQMAX \>\tiny XPLAS \>\tiny ZPLAS \>\tiny GZERO
+\>\tiny QZERO \\
+\tiny 14 \> \tiny Init. cond-2 \> \tiny ISTART \>\tiny XZERIC \>\tiny
+AXIC \>\tiny ZZERIC \>\tiny BZIC \\
+\tiny 15 \> \tiny Coil groups \> \tiny IGROUP \>\tiny GCUR(1)  \> $\ldots$
+\> $\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny GCUR(6)\\
+\tiny 16 \>\tiny Plasma curr. \> \tiny  -  \>\tiny PCUR(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$  \> $\ldots$ \>\tiny PCUR(6)\\
+\tiny 17 \> \tiny Plasma press. \> \tiny  -  \>\tiny PPRES(1)  \>\tiny
+$\ldots$ \> $\ldots$ \> $\ldots$  \> $\ldots$ \>\tiny PPRES(6)\\
+\tiny 18 \> \tiny Timing \> \tiny  -  \>\tiny TPRO(1)  \> $\ldots$ \> $\ldots$
+\> $\ldots$  \> $\ldots$ \> \tiny TPRO(6)\\
+\tiny 19 \> \tiny Feedback-1 \> \tiny  L  \>\tiny NRFB(L)  \>\tiny
+NFEEDO(L) \>\tiny FBFAC(L) \>\tiny FBCON(L)  \>\tiny IDELAY(L)
+\>\tiny FBFACI(L)\\
+\tiny 20 \> \tiny Feedback-2 \> \tiny  L  \>\tiny TFBONS(L)  \>\tiny
+TFBOFS(L) \>\tiny FBFAC1(L) \>\tiny FBFACD(L) \>\tiny IPEXT(L)\\
+\tiny 21 \> \tiny Contour plot \> \tiny  ICPLET  \>\tiny ICPLGF 
+\>\tiny ICPLWF \>\tiny ICPLPR \>\tiny ICPLBV \>\tiny ICPLUV
+\>\tiny ICPLXP\\
+\tiny 22 \> \tiny Vector plot \> \tiny  IVPLBP  \>\tiny IVPLVI  \>\tiny
+IVPLFR \>\tiny IVPLJP \>\tiny IVPLVC \>\tiny IVPLVT \>\tiny -\\
+\tiny 23 \> \tiny Aux. heat \> \tiny  -  \>\tiny BEAMP(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny BEAMP(6)\\
+\tiny 24 \> \tiny Density \> \tiny  -  \>\tiny RNORM(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \> \tiny RNORM(6)\\
+\tiny 25 \> \tiny Dep. prof. \> \tiny  ABEAM  \>\tiny DBEAM  \>\tiny
+NEBEAM \>\tiny EBEAMKEV \>\tiny AMBEAM  \>\tiny FRACPAR
+\>\tiny IBOOTST\\
+\tiny 26 \> \tiny Anom. trans. \> \tiny  - \>\tiny FBCHIA(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \> \tiny FBCHIA(6)\\
+\tiny 27 \> \tiny Tor. field \> \tiny  - \>\tiny GZEROV(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny GZEROV(6)\\
+\tiny 28 \> \tiny Loop volt. \> \tiny  - \>\tiny VLOOPV(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny VLOOPV(6)\\
+\tiny 29 \>  \tiny PEST output\> \tiny  - \>\tiny TPEST(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny TPEST(6)\\
+\tiny 30 \>\tiny Mag. Axis(x) \> \tiny  - \>\tiny XMAGO(1) \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny XMAGO(6)\\
+\tiny 31 \> \tiny Mag. Axis(z) \> \tiny  - \>\tiny ZMAGO(1) \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny ZMAGO(6)\\
+\tiny 32 \> \tiny Divertor \> \tiny N \>\tiny XLPLATE(N) \>\tiny
+ZLPLATE(N) \>\tiny XRPLATE(N) \>\tiny ZRPLATE(N) \>\tiny FPLATE(N,1)
+\>\tiny FPLATE(N,2)\\
+\tiny 33 \> \tiny Coil grp-2 \>\tiny IGROUP \>\tiny RESGS( )\\
+\tiny 34 \> \tiny TEVV(t) \> \tiny  -  \>\tiny TEVVO(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny TEVVO(6)\\
+\tiny 35 \> \tiny FFAC(t) \> \tiny  -  \>\tiny FFACO(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny FFACO(6)\\
+\tiny 36 \> \tiny ZEFF(t) \> \tiny  -  \>\tiny ZEFFV(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny ZEFFV(6)\\
+\tiny 37 \> \tiny Volt group \> \tiny  IGROUP \>\tiny GVOLT(1) \>$\ldots$
+\>$\ldots$ \>$\ldots$ \>$\ldots$ \>\tiny GVOLT(6)\\
+\tiny 38 \> \tiny LHDEP \> \tiny  ILHCD \>\tiny VILIM  \>\tiny
+FREQLH \>\tiny AION \>\tiny ZION \>\tiny CPROF \>\tiny IFK\\
+\tiny 39 \> \tiny Ext. coil-2 \> \tiny  N \>\tiny DXCOIL(N)  \>\tiny
+DZCOIL(N) \>\tiny FCU(N) \>\tiny FSS(N) \>\tiny TEMPC(N) \>\tiny CCICS(N) \\
+\tiny 40 \> \tiny Noplot \> \tiny NOPLOT(1) \>$\ldots$ \>$\ldots$ \>$\ldots$
+\>$\ldots$ \>$\ldots$ \>\tiny NOPLOT(7)\\
+\tiny 41 \> \tiny Ripple \> \tiny  IRIPPL \>\tiny NTFCOIL \>\tiny
+RIPMAX \>\tiny RTFCOIL \>\tiny NPITCH \>\tiny RIPMULT \>\tiny
+IRIPMOD\\
+\tiny 42 \> \tiny Major rad. \> \tiny - \>\tiny  RZERV(1) \>$\ldots$
+\>$\ldots$ \>$\ldots$ \>$\ldots$ \>\tiny RZERV(6) \\
+\tiny 43 \> \tiny Minor rad. \> \tiny - \>\tiny  AZERV(1) \>$\ldots$
+\>$\ldots$ \>$\ldots$ \>$\ldots$ \>\tiny AZERV(6) \\
+\tiny 44 \> \tiny Ellipticity \> \tiny - \>\tiny EZERV(1) \>$\ldots$ \>$\ldots$
+\>$\ldots$ \>$\ldots$ \>\tiny EZERV(6) \\
+\tiny 45 \> \tiny Triangularity \> \tiny - \>\tiny DZERV(1)\>$\ldots$
+\>$\ldots$ \>$\ldots$ \>$\ldots$ \>\tiny DZERV(6) \\
+\tiny 46 \> \tiny LH heating \> \tiny - \>\tiny  PLHAMP(1) \>$\ldots$
+\>$\ldots$ \>$\ldots$ \>$\ldots$ \>\tiny PLHAMP(6) \\
+\tiny 47 \> \tiny Dens. exp-1 \> \tiny - \>\tiny  ALPHARV(1) \> $\ldots$
+\> $\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny ALPHARV(6) \\
+\tiny 48 \> \tiny Dens. exp-2 \>\tiny - \>\tiny  BETARV(1) \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \>\tiny BETARV(6) \\
+\tiny 49 \> \tiny Multipole \> \tiny N \>\tiny MULTN(N) \>\tiny
+ROMULT(N) \>\tiny IGROUPM(N) \> \tiny ATURNSM(N)\\
+\tiny 50 \> \tiny CD \> \tiny - \>\tiny  FRACPAR(1) \> $\ldots$ \>$\ldots$
+\>$\ldots$ \>$\ldots$ \>\tiny FRACPAR(6) \\
+\tiny 51 \> \tiny alh \> -\>\tiny A(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> \tiny A(6)\\
+\tiny 52 \> \tiny dlh \> -\>\tiny D(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny D(6)\\
+\tiny 53 \> \tiny a1lh \> -\>\tiny A1(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny A1(6)\\
+\tiny 54 \> \tiny a2lh \> -\>\tiny A2(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny A2(6)\\
+\tiny 55 \> \tiny ac \> -\>\tiny AC(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny AC(6)\\
+\tiny 56 \> \tiny dc \> -\>\tiny DC(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny DC(6)\\
+\tiny 57 \> \tiny ac1 \> -\>\tiny AC1(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny AC1(6)\\
+\tiny 58 \> \tiny ac2 \> -\>\tiny AC2(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny AC2(6)\\
+\tiny 59 \> \tiny ICRH \> -\>\tiny PICRH(1) \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> $\ldots$ \> \tiny PICRH(6)\\
+\tiny 60 \> \tiny Halo Temp \> - \> \tiny TH(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \>\tiny TH(6)\\
+\tiny 61 \> \tiny Halo Width \> - \> \tiny AH(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny AH(6)\\
+\tiny 62 \> \tiny X-Shape point \> - \> \tiny XCON0(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny XCON0(6)\\
+\tiny 63 \> \tiny Z-Shape point \> - \> \tiny ZCON0(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny ZCON0(6)\\
+\tiny 64 \> \tiny Fast Wave J \> - \> \tiny FWCD(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny FWCD(6)\\
+\tiny 65 \> \tiny ICRH power profile \>   \> \tiny A(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny A(6)\\
+\tiny 66 \> \tiny ICRH power profile \>   \> \tiny D(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny D(6)\\
+\tiny 67 \> \tiny ICRH power profile \>   \> \tiny A1(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny A1(6)\\
+\tiny 68 \> \tiny ICRH power profile \>   \> \tiny A2(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny A2(6)\\
+\tiny 69 \> \tiny ICRH current profile \>   \> \tiny A(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny A(6)\\
+\tiny 70 \> \tiny ICRH current profile \>   \> \tiny D(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny D(6)\\
+\tiny 71 \> \tiny ICRH current profile \>   \> \tiny A1(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny A1(6)\\
+\tiny 72 \> \tiny ICRH current profile \>   \> \tiny A2(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny A2(6)\\
+\tiny 73 \> \tiny He conf. time \> - \> \tiny HEACT(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny HEACT(6)\\
+\tiny 74 \> \tiny UFILE output \> - \> \tiny TUFILE(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny TUFILE(6)\\
+\tiny 75 \> \tiny Sawtooth time \> - \> \tiny SAWTIME(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny SAWTIME(6)\\
+\tiny 76 \> \tiny Anom. ion trans. \> \tiny  - \>\tiny FBCHIIA(1)  \> $\ldots$ \>
+$\ldots$ \> $\ldots$ \> $\ldots$ \> \tiny FBCHIIA(6)\\
+\tiny 77 \> \tiny acoef(123) \> - \> \tiny qadd(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny qadd(6)\\
+\tiny 78 \> \tiny acoef(3003) \> - \> \tiny fhmodei(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny fhmodei(6)\\
+\tiny 79 \> \tiny acoef(3011) \> - \> \tiny pwidthc(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny pwidthc(6)\\
+\tiny 80 \> \tiny acoef(3006) \> - \> \tiny chiped(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny chiped(6)\\
+\tiny 81 \> \tiny acoef(3102) \> - \> \tiny tped(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny tped(6)\\
+\tiny 82 \> \tiny impurity fraction \> \tiny imptype \> \tiny frac(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny frac(6)\\ 
+\tiny 83 \> \tiny acoef(3012) \> - \> \tiny nflag(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny nflag(6)\\
+\tiny 84 \> \tiny acoef(3013) \> - \> \tiny expn1(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny expn1(6)\\
+\tiny 85 \> \tiny acoef(3014) \> - \> \tiny expn2(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny expn2(6)\\
+\tiny 86 \> \tiny acoef(3004) \> - \> \tiny firitb(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny firitb(6)\\
+\tiny 87 \> \tiny acoef(3005) \> - \> \tiny secitb(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny secitb(6)\\
+\tiny 88 \> \tiny acoef(881) \> - \> \tiny fracno(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny fracno(6)\\
+\tiny 89 \> \tiny acoef(889) \> - \> \tiny newden(1) \> $\ldots$ \> $\ldots$ \> $\ldots$ \>
+$\ldots$ \> \tiny newden(6)\\
+\tiny 90 \> \tiny ECRH Power (MW) \>  \>\tiny PECRH(1) \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> $\ldots$ \> \tiny PECRH(6)\\
+\tiny 91 \> \tiny ECCD Toroidal Current (MA) \>  \>\tiny ECCD(1) \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> $\ldots$ \> \tiny ECCD(6)\\
+\tiny 92 \> \tiny Sh. Par. “a” (ECCD H\&CD) \>  \>\tiny AECD(1) \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> $\ldots$ \> \tiny AECD(6)\\
+\tiny 93 \> \tiny Sh. Par. “d” (ECCD H\&CD) \>  \>\tiny DECD(1) \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> $\ldots$ \> \tiny DECD(6)\\
+\tiny 94 \> \tiny Sh. Par. “a1” (ECCD H\&CD) \>  \>\tiny A1ECD(1) \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> $\ldots$ \> \tiny A1ECD(6)\\
+\tiny 95 \> \tiny Sh. Par. “a2” (ECCD H\&CD) \>  \>\tiny A2ECD(1) \> $\ldots$ \> $\ldots$ \> $\ldots$
+\> $\ldots$ \> \tiny A2ECD(6)\\
+\tiny 99 \> 
+\end{tabbing}
+\renewcommand{\baselinestretch}{1.0} \large \normalsize
+\newpage
+\subsection{Detailed Description of Input Cards} 
+\label{sec:card}
+\subsubsection{Card 00 - Control} 
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX
+\kill  
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\  
+\footnotesize IRST1 \>\footnotesize IRST2 \>\footnotesize IPEST \>\footnotesize NCYCLE
+\>\footnotesize  NSKIPR \>\footnotesize
+NSKIPL \>\footnotesize IMOVIE 
+\end{tabbing} 
+\setw{NCYCLE = 1.0X }
+\begin{tabbing} 
+NCYCLE \= = 1.0X \= \parbox[t]{\width}{Last cycle to be computed.  If NCYCLE=0, only the
+initial equilibrium is computed.} \kill 
+IRST1 \> = 0.0 \> \parbox[t]{\width}{ Start run beginning at time $t$=TPRO(ISTART)} \\ 
+          \> = 1.0 \> \parbox[t]{\width}{ Restart run which reads the file SPRSINA.  A restart job\index{restart file}
+normally requires only 3 input cards: title, type 00, and type 99.  Cards which specify the evolution
+of parameters in time can also be included in a restart job.  However, only the fields corresponding to 
+future time points should be changed.} \\ 
+          \> = 2.0 \> \parbox[t]{\width}{ Start run which reads initial equilibrium from the file
+EQFLINA} \\ 
+IRST2 \> = 0.0 \> \parbox[t]{\width}{ Don't write a restart file} \\ 
+          \> = 1.0 \> \parbox[t]{\width}{ Do write a restart file.  Restart files are updated every NSKIPL cycles
+and at the times specified on the type 29 card and at the end of the run.} \\ 
+IPEST \> = 0.0 \> \parbox[t]{\width}{ Don't write PEST file} \index{PEST file}\\    
+           \> = 1.0 \> \parbox[t]{\width}{ Do write PEST files EQDSKA and EQDSKASCI at times specified on type
+29 cards and at the end of the run. These files can then be read by J-SOLVER code with
+IFUNC2=4. (Note:  also writes GEQDSK file compatible with EFIT output.} \\ 
+NCYCLE \>      \> \parbox[t]{\width}{ Last cycle to be computed.  If NCYCLE=0, only the
+initial equilibrium is computed. Use NCYCLE=-1 to check dimensionless gain for original TSC
+control model as described in section~(\ref{sec:control2}).}\\
+NSKIPR \>      \> \parbox[t]{\width}{ Number of cycles between print cycles and between times when profile
+information is plotted} \\ 
+NSKIPL \>      \> \parbox[t]{\width}{ Number of cycles between plot cycles.  Restart files are also written
+every NSKIPL cycles.} \\ 
+IMOVIE \> = 0.0 \> \parbox[t]{\width}{ Regular graphics} \index{output!graphics}\\
+             \> = 1.0 \> \parbox[t]{\width}{ b/w movie with plasma currents plotted} \\ 
+             \>  = 3.0 \> \parbox[t]{\width}{ Color movie with plasma currents plotted} \\ 
+             \> = 6.0 \> \parbox[t]{\width}{ Color movie of poloidal flux contours and plasma current with
+fixed flux increments.  For this option, the data statement in the subroutine CPLOT must be
+changed: \\
+ \\
+PSISMAL-(minimum value)\\
+PSINCR-(increment)\\
+YMAX \& YMIN at end of CPLOT (now PCUR(12)) \\
+} \\ 
+             \> = 7.0 \> \parbox[t]{\width}{ Color movie of heat flux distribution on the divertor
+plate} \\
+             \> = 8.0 \> \parbox[t]{\width}{ Special disruption plots} \\
+             \> = 10.   \> \parbox[t]{\width}{ Writes special movie.cdf 
+            file for AVS postprocessing.  Note that tmovie and dtmovie are 
+            input via the acoef(33) and acoef(34).  Also note that min and
+            max range for the major radius plots are given by acoef(42) and
+            acoef(43).}
+\end{tabbing}
+{\bf Note} : All jobs write a equilibrium file EQFLOUA upon termination.  A start job with
+IRST1=2 can have ISYM=0 (type 01 card) even if the job which created the equilibrium file had
+ISYM=1, as long as the zone {\em size} (dimension of grid spacing) is the same.
+\newpage \subsubsection{Card 01 - Dimensions} 
+\index{dimensions}
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill  
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize NX \>\footnotesize NZ \>\footnotesize ALX \>\footnotesize ALZ \>\footnotesize
+ISYM \>\footnotesize CCON \>\footnotesize IDATA 
+\end{tabbing}
+\setw{IDATA = 0.0X } 
+\begin{tabbing} 
+IDATA \= =  0.0X \= \parbox[t]{\width}{Regular run} \kill 
+NX  \>  \> \parbox[t]{\width}{Number of zone vertices in the $x$ direction,(NX-1) zones.  Must
+have NX$\leq$ PNX-2 (see param.i) (46)} \\ 
+NZ  \>  \> \parbox[t]{\width}{ Number of zone vertices in the $z$ direction,(NZ-1) zones.  This
+should be an odd number if ISYM = 0. Must have NZ$\leq$ PNZ-2 (see param.i) (16)} \\ 
+ALX \>  \> \parbox[t]{\width}{Major radius of outside computational grid boundary in meters
+(3.0)}
+\\ 
+ALZ \>  \> \parbox[t]{\width}{ One half the height of the computational grid boundary in meters
+(1.0)}
+\\ 
+ISYM \> = 0.0 \> \parbox[t]{\width}{ No symmetry about the midplane} \index{symmetry} \\ 
+         \> = 1.0 \> \parbox[t]{\width}{ Symmetry about the midplane} \\ 
+CCON \>       \> \parbox[t]{\width}{ Major radius of inside computational grid boundary (meters)}
+\\ 
+IDATA \> =  0.0 \> \parbox[t]{\width}{ Regular run} \\ 
+      \> =  1.0 \> \parbox[t]{\width}{ Reads from PBX data tape file ENINA} \\ 
+      \> =  2.0 \> \parbox[t]{\width}{ Reads from TFTR data tape file ENINA} \\ 
+      \> =  3.0 \> \parbox[t]{\width}{ Reads from D-III-D data tape file ENINA} \\ 
+      \> =  4.0 \> \parbox[t]{\width}{ Reads from PBX-M data tape file ENINA} \\ 
+      \> =  5.0 \> \parbox[t]{\width}{ Reads from PBX-M data tape file ENINA (New format)} \\
+      \>  =  6.0 \> \parbox[t]{\width}{FEDTSC}\\ 
+      \> =  7.0 \> \parbox[t]{\width}{TCV - Hofmann control algorithm \index{control!Hofmann algorithm}}\\
+      \> = 8.0 \> \parbox[t]{\width}{ASDEX-U} \\
+      \> =  9.0 \> \parbox[t]{\width}{ Reads from NSTX netCDF file nstx\_magnetics.nc} \\
+      \> =  10. \> \parbox[t]{\width}{ Reads from MAST file mast\_magnetics.nc} \\
+\end{tabbing} 
+{\bf Note} : A problem with ISYM=0 and NZ=NZ0 will have the same zone size as a problem
+with
+ISYM=1 and NZ=(NZ0-1)/2 +1.
+\newpage \subsubsection{Card 02 - Time step and switches} 
+\index{time!step} 
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize DTMINS \>\footnotesize DTMAXS \>\footnotesize DTFAC \>\footnotesize
+LRSWTCH \>\footnotesize IDENS \>\footnotesize IPRES \>\footnotesize IFUNC 
+\end{tabbing}
+\setw{LRSWTCH = 0.0X } 
+\begin{tabbing} 
+LRSWTCH \= = 0.0X \= \parbox[t]{\width}{ Normal run } \kill 
+DTMINS \>       \> \parbox[t]{\width}{Minimum time step allowed ($\mu$sec).  Initial time step
+is 2*DTMINS (0.001)} \\ 
+DTMAXS \>       \> \parbox[t]{\width}{ Maximum time step allowed ($\mu$sec) (1.0)} \\ 
+DTFAC  \>       \> \parbox[t]{\width}{ Time step safety factor. The time step used is the
+maximum value that is theoretically stable multiplied by DTFAC with the
+additional constraint that $\delta t$ increase by at most 20\% every 10 cycles and be less than
+DTMAXS (0.5)} \\ 
+LRSWTCH \> = 0.0 \> \parbox[t]{\width}{ Normal run} \\ 
+                 \> = N.0 \> \parbox[t]{\width}{ Special test run\index{test run} for coils without plasma where coil
+currents in group N are initialized to :\\
+ \\
+CCOILS(N)=SGN[ZCOIL(N)]*ACOEF(12)/RSWIRES(N) \\
+ \\
+To use this option TEVV must be positive, turn off all feedback and set IRST=0.0} \\ 
+ \\
+IDENS \>  = 0.0 \> \parbox[t]{\width}{ Regular calculation of density transport \index{transport!particle}
+Particle diffusion and pinch coefficients are input via acoef(851) and (852).
+Particle source terms provided by Neutral Beams [cards 25 and 23] and the
+source function acoef(871-876). The boundary
+conditions are provided by acoef(881) and the type 24 cards.
+} \\ 
+        \> = 1.0 \> \parbox[t]{\width}{ Forces the density to have profile given by} 
+\end{tabbing} 
+\begin{equation}
+\label{eq:dens} 
+R( \Psi ,t) = {\rm UDSD*RNORM(t)*}  \left\{     \left [ 1- \left ( \frac{\Psi-\Psi_{min}}{\Psi_{lim}
+-\Psi_{min}} \right ) ^{\rm BETAR} \right ] ^{\rm ALPHAR} + r_{edge} \right\}
+\end{equation} 
+\begin{tabbing}
+\label{eq:pres} 
+LRSWTCH \= = 0.0X \= \parbox[t]{\width}{ Normal run } \kill 
+      \>       \> \parbox[t]{\width}{ where ALPHAR and BETAR are input on type 04 or type
+47,48 cards. The edge density $r_{edge}$ is input via acoef(881)} \\ 
+IPRES \> = 0.0 \> \parbox[t]{\width}{ Regular calculation of energy transport}\index{transport!energy} \index{plasma!pressure}\\ 
+           \> = 1.0 \> \parbox[t]{\width}{ Forces the pressure to equal one of the following
+analytical forms :} \\ 
+      \>       \> \\ 
+      \>       \> For IFUNC=1,3,4,5 : 
+\end{tabbing}  
+\begin{eqnarray} 
+P(\Psi,t) & = & P0(t) \left [ \frac{\Psi_{lim} -\Psi}{\Psi_{lim}-\Psi_{min}} \right ] ^{\rm ALPHAP} \\ 
+ &+& {\rm ACOEF(110)*\left( \frac{ALPHAP}{ALPHAP+1} \right)}*\left[ \frac{\Psi_{lim}-\Psi}{\Psi_{lim}-\Psi_{min}} \right]^{\rm ALPHA +1} 
+\end{eqnarray} 
+\begin{tabbing} 
+LRSWTCH \= = 0.0X \= \parbox[t]{\width}{ Normal run } \kill 
+\>       \> For IFUNC=2 
+\end{tabbing} 
+\begin{equation} 
+\frac {dP}{d\Psi} = P0 \left [ \frac {e^{-(\rm ALPHAP)\hat{\Psi}} - e^{-(\rm
+ALPHAP)}}{e^{-(\rm
+ALPHAP)} -1} \right ] . 
+\end{equation} 
+\begin{tabbing} 
+LRSWTCH \= = 0.0X \= \parbox[t]{\width}{ Normal run } \kill 
+\>       \> \parbox[t]{\width}{ where $\hat{\Psi} = (\Psi - \Psi_{min})/(\Psi_{lim}-\Psi_{min})$
+and ALPHAP is input on type 13 card.  P0(t) is determined by card type 17. The ratio of electron to
+ion pressure is given by ACOEF(2).  Pressure equilibration time is given by
+EQRATE,ACOEF(4). } \\ 
+IFUNC \>      \> \parbox[t]{\width}{ Switch to choose the functional forms to use for pressure
+and toroidal field functions as described above and on type 13 card.} \\ 
+      \> = 1.0 \> \parbox[t]{\width}{ tokamak profiles (Princeton)} \\ 
+      \> = 2.0 \> \parbox[t]{\width}{ tokamak profiles (ORNL)} \\ 
+      \> = 3.0 \> \parbox[t]{\width}{ RFP profiles (LANL)} \\ 
+      \> = 4.0 \> \parbox[t]{\width}{ spheromak profiles (Princeton)} \\ 
+      \> = 5.0 \> \parbox[t]{\width}{ ``ohmic'' profiles stationary on
+      resistive time scale}\\
+     \> = 6.0 \> \parbox[t]{\width}{Calls special subroutine {\bf splinfit}} \\
+     \> = 7.0 \> \parbox[t]{\width}{prescribed $<J . B>$ profile}
+\end{tabbing}
+\newpage \subsubsection{Card 03 - Numerical} 
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize XLIM \>\footnotesize ZLIM \>\footnotesize XLIM2 \>\footnotesize FFAC
+\>\footnotesize NDIV \>\footnotesize ICIRC \>\footnotesize ISVD 
+\end{tabbing}
+\setw{XLIM2 = 0.0X } 
+\begin{tabbing} 
+XLIM2 \= = 0.0X \= \parbox[t]{\width}{this is junk to set tabs} \kill 
+XLIM \> \> \parbox[t]{\width}{An internal boundary is defined inside the computational grid so 
+that the plasma can only occupy the rectangular region defined by : $ \rm XLIM < X < XLIM2
+$ ,and $\mid \rm Z \mid < \rm ZLIM$. The region outside this is always treated as vacuum. (i.e. ,\
+no plasma can exist there)}\\ 
+ZLIM  \>  \>See XLIM\\ 
+XLIM2 \>  \>See XLIM\\ 
+FFAC \> \> \parbox[t]{\width}{Factor by which Alfv\'en waves are artificially slowed  \index{mass enhancement}
+down.  Ion mass is increased by $\rm FFAC^2$. The time steps for the fast wave and 
+the Alfv\'en wave are proportional to this.  If negative, uses the absolute value 
+to initialize and adjusts FFAC according to ACOEF (801)-(805) to keep AMACH constant.
+(1.0)}\\ 
+NDIV \> \> \parbox[t]{\width}{Number of sub-cycles in diffusion part of poloidal flux \index{subcycling}
+equation and in the fast wave equation. The time step for fast wave and resistive diffusion 
+are inversely proportional to this, as discussed in section~(\ref{sec:1dvar}) (1.0)}\\ 
+ICIRC \> = 0.0 \> \parbox[t]{\width}{Don't solve circuit equations\index{circuit equations} for the external coils}\\ 
+      \> = 1.0 \> \parbox[t]{\width}{Do solve circuit equations for the external coils}\\ 
+ISVD  \> = 0.0 \> \parbox[t]{\width}{Don't perform SVD analysis to obtain x-point}\\ 
+      \> = 1.0 \> \parbox[t]{\width}{Do perform SVD analysis to obtain x-point} 
+\end{tabbing}
+\newpage \subsubsection{Card 04 - Surface Averaging} 
+\index{surface averaging}
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize ISURF \>\footnotesize NPSI \>\footnotesize NSKIPSF \>\footnotesize TFMULT
+\>\footnotesize  ALPHAR \>\footnotesize BETAR \>\footnotesize ITRMOD 
+\end{tabbing}
+\setw{NSKIPSF = 0.0X } 
+\begin{tabbing} 
+NSKIPSF \= = 0.0X \= \parbox[t]{\width}{this is junk to set tabs} \kill 
+ISURF   \> = 0.0 \>No surface averaging (default)\\ 
+        \> = 1.0 \>Use surface averaged transport equations\\ 
+NPSI  \>   \> \parbox[t]{\width}{Number of PSI surfaces ($\Phi$ surfaces) for one-dimensional transport 
+calculation (always must be $\rm NPSIT < NPSI$)}\\ 
+NSKIPSF \> \> \parbox[t]{\width}{Number of cycles skipped between each surface average
+calculation (20.)}\\ 
+TFMULT \> \> \parbox[t]{\width}{Multiplier defining the toroidal flux domain used in surface
+average calculation.  The initial NPSIT will be NPSI/TFMULT.  NPSIT will increase as the plasma grows,
+but if NPSIT ever exceeds NPSI the program will terminate. }\\ 
+ALPHAR \> \> \parbox[t]{\width}{Exponent for the prescribed density function\index{density profile} \index{plasma!density}(see type 02 card)
+Will be overwritten if type 47 card is included. (0.5)}\\ 
+BETAR \>  \> \parbox[t]{\width}{Exponent for the prescribed density function (see type 02
+card). 
+Will be overwritten if type 48 card is included. (2.0)}\\ 
+ITRMOD \>  \> \parbox[t]{\width}{Switch selecting transport model}\\ 
+\> = 1.0 \> \parbox[t]{\width}{The neo-ALCATOR model, where \index{transport model!neo-Alcator}\\  
+ \\ 
+$\chi_e$ = ACOEF(35) $\times 10.^{19} /n_e$ (mks)\\ 
+$\chi_i$ = ACOEF(37) $\times 10.^{19}/n_e$ (mks)\\ 
+d = ACOEF(39)\\ 
+\\ 
+If ACOEF(107) is greater than zero, these coefficients are enhanced according to the
+Kaye-Goldston formula\\ 
+ \\ 
+ACOEF(35) = $\sqrt{{\rm ACOEF(35)^2 + CHIAUXS}}$\\  
+ \\ 
+where\\ 
+ \\ 
+CHIAUXS = [(ACOEF(107)*NE(0)*300.)/$\rm I_p ]^2$*PTOT\\ 
+ \\ 
+where $\rm I_p$ is the plasma current in amps and PTOT is the total power in watts.}\\
+ \\ 
+\> = 2.0 \> \parbox[t]{\width}{Coppi/Tang transport model\index{transport  model!Coppi/Tang}}\\ 
+ \\ 
+\> \> Need to input the following on type 11 cards :\\
+ \\ 
+\> \> ACOEF(121) - .08 ... Auxiliary heated transport coefficient\\
+\> \> ACOEF(122) - .42  ... Ohmic heated transport coefficient \\
+\> \> ACOEF(123) - 0.5  ... Constant in form factor\\
+\> \> ACOEF(126) - 2.0  ... Ratio of $\chi_i$ to $\chi_e$  \\
+\> \> \parbox[t]{\width} {For H-mode modeling, need to define 
+      ACOEF(3003) and ACOEF(3011).  For ITB modeling, need to define
+      ACOEF(3004)-ACOEF(3006).  Also, if idens=0, need to define ACOEF(851) 
+      and ACOEF(875). }
+\\
+
+\> = 3.0 \> \parbox[t]{\width}{Coppi/Mazzucato/Gruber transport model (L.Sugiyama)} \\   
+\> = 4.0 \> \parbox[t]{\width}{Coppi/Tang transport model (Englade)} \\ 
+\> = 5.0 \> \parbox[t]{\width}{Marion Turner transport model} \\ 
+\> = 6.0 \> \parbox[t]{\width}{GLF23 + neoclassical} \\ 
+\> = 7.0 \> \parbox[t]{\width}{GLF23 + Coppi/Tang transport model} \\ 
+\> = 8.0 \> \parbox[t]{\width}{GLF23 H-mode + Coppi/Tang+ neoclassical (see note below)} \\ 
+\> = 9.0 \> \parbox[t]{\width}{GLF23 H-mode + neo-Alcator + neoclassical (see note below)} \\ 
+\> = 10. \> \parbox[t]{\width}{MMM95 H-mode + Coppi/Tang + neoclassical (see note below)} \\ 
+\> = 11. \> \parbox[t]{\width}{MMM95 H-mode + Neo-Alcator + neoclassical (see note below)} \\ 
+\> = 12. \> \parbox[t]{\width}{calls special Kcoppi routine (C.Kessel)} \\ 
+\\
+\parbox[t]{\width}{Note that models 8.0-11.0 are H-mode models.  ACOEF(3011)
+ needs to be defined as the H-mode pedistal location.   These models 
+default to model 2.0 if there is no auxialliary 
+heating.  Also, for models 9. and 11., ACOEF(35)-(39) and ACOEF(73) 
+must be defined} \\
+
+\end{tabbing}
+\newpage \subsubsection{Card 05 - Limiter Points} 
+\index{limiter}
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize I \>\footnotesize XLIMA(I) \>\footnotesize ZLIMA(I) \>\footnotesize XLIMA(I+1)
+\>\footnotesize ZLIMA(I+1) \>\footnotesize XLIMA(I+2) \>\footnotesize ZLIMA(I+2) 
+\end{tabbing}
+\setw{XLIMA(I) xx} 
+\begin{tabbing} 
+XLIMA(I) \= xx\= \parbox[t]{\width}{This is junk to set tabs} \kill 
+XLIMA(I) \> \> \parbox[t]{\width}{The $x$ coordinate of limiter I.  If XLIMA(I)=0 for any I,
+that
+field and the rest of the cards are ignored.}\\ 
+ZLIMA(I) \> \> \parbox[t]{\width}{The $z$ coordinate of limiter I.}\\ 
+ \\ 
+\> \> \parbox[t]{\width}{Up to 3 limiter points can be defined on each type 5 card.  The
+minimum
+value 
+ of the poloidal flux amongst all limiter points, PSILIM, defines the plasma 
+ boundary PSI=PSILIM} 
+\end{tabbing} 
+{\bf Note} : If ISYM=1 and ZLIMA(I)$<$0 for some I, this limiter point will be automatically
+discarded and the remaining points will be renumbered to be consecutive.
+\newpage \subsubsection{Card 06 - Divertor} 
+\index{divertor}
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize IDIV \>\footnotesize PSIRAT \>\footnotesize X1SEP \>\footnotesize X2SEP
+\>\footnotesize Z1SEP \>\footnotesize Z2SEP \>\footnotesize NSEPMAX 
+\end{tabbing}
+\setw{PSIRAT = 1.0X } 
+\begin{tabbing} 
+PSIRAT \= = 1.0X \= \parbox[t]{\width}{This is junk to set tabs} \kill 
+IDIV \> = 0.0 \> \parbox[t]{\width}{Code does not check for magnetic divertor}\\ 
+     \> = 1.0 \> \parbox[t]{\width}{Code will attempt to locate magnetic separatrix\index{separatrix} and use this
+as the limiter if the value of PSI at the separatrix is less than PSILIM from the limiter points.}\\ 
+PSIRAT \> \>\parbox[t]{\width}{Actual value of PSI used to limit plasma from separatrix is\\ 
+ \\ 
+PSILIM = PSIRAT*(PSISEP-PSIMIN)+PSIMIN\\ 
+ \\ 
+where PSISEP is the actual poloidal flux at the separatrix and PSIMIN is the flux at the magnetic
+axis.  The normal value is PSIRAT = 0.999. (However, may have to lower if writing EQDSKA
+files for JSOLVER)}\\ 
+X1SEP \> \> \parbox[t]{\width}{The separatrix is only searched for in the region :\\
+X1SEP$<$X2SEP}\\ 
+X2SEP \> \> See X1SEP\\ 
+Z1SEP \> \> \parbox[t]{\width}{The separatrix is only searched for in the region :\\
+Z1SEP$<$ Z2SEP}\\ 
+Z2SEP \> \> See Z1SEP\\ 
+NSEPMAX \> \> \parbox[t]{\width}{The maximum number of separatrices that will be searched
+for. (2.)}\\ 
+\end{tabbing}
+\newpage \subsubsection{Card 07 - Impurities} 
+\index{impurities}
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize IIMP \>\footnotesize ILTE \>\footnotesize IMPBND \>\footnotesize IMPPEL
+\>\footnotesize AMGAS \>\footnotesize ZGAS \>\footnotesize NTHE 
+\end{tabbing}
+
+\begin{tabbing} 
+FRACOX \= = 0.0X \= \parbox[t]{\width}{this is junk} \kill 
+IIMP \> = 0.0 \> No impurity line radiation.  ZEFF determined from card 12 (or 36) \\ 
+     \> = 1.0 \> Impurity constant fraction of background density \\ 
+     \>       \> ... see acoef(854)-(861) and also Type 82 (for time dependence) \\
+     \> = 2.0 \> Impurity transport \\
+     \>       \> for iimp .gt. 0, ZEFF determined from impurity concentration \\
+ILTE \> = 0.0 \> Local thermodynamic equilibrium assumed\\ 
+     \> = 1.0 \> Local thermodyanmic equilibrium not assumed\\ 
+IMPBND \> = 0.0 \> non-flow boundary condition for impurities\\
+     \> = 1.0 \> pedistal boundary condition for impurities\\
+IMPPEL \> = 0.0 \> impurity pellet is deuterium\\
+     \> = 1.0 \> impurity pellet is oxygen(not available)\\
+     \> = 2.0 \> impurity pellet is carbon(not available)\\
+     \> = 3.0 \> impurity pellet is iron(not available)\\
+     \> = 4.0 \> impurity pellet is beryllium(not available)\\
+     \> = 5.0 \> impurity pellet is neon\\
+     \> = 6.0 \> impurity pellet is krypton\\
+     \> = 7.0 \> impurity pellet is argon\\
+AMGAS \>  \>  \parbox[t]{\width}{Mass of primary ion species in amu (1.0 for hydrogen, 2.0
+for deuterium,
+etc) (1.0)}\\ 
+ZGAS \> \>  \parbox[t]{\width}{Charge of primary ion species (1.0 for hydrogen, 2.0 for helium,
+etc) (1.0)}\\ 
+NTHE \> \> \parbox[t]{\width}{Number of theta zones used in contouring plasma for parallel
+impurity diffusion, and also in ballooning mode calculation (100.)} 
+\end{tabbing} 
+{\bf Note} : For IIMP$>$0, at least one of the fractions acoef(854)-(861) must be greater
+than
+zero OR these fractions must be defined as a function of time on the type 82 card.  
+For IIMP=2, these values are used to initialize the impurity transport calculation. 
+\newpage \subsubsection{Card 08 - Observation Pairs} 
+\index{observation pairs}
+\index{feedback!observation points}
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize J \>\footnotesize XOBS(2J-1) \>\footnotesize ZOBS(2J-1) \>\footnotesize XOBS(2J)
+\>\footnotesize ZOBS(2J) \>\footnotesize NPLOTOBS 
+\end{tabbing}
+\setw{NPLOTOBS = 0.0X } 
+\begin{tabbing}
+NPLOTOBS \= = 0.0X \= Don't plot time histories \kill
+J \> \> \parbox[t]{\width}{Number of observation pairs where poloidal flux difference is to be
+recorded (and plotted optionally), and possibly used for feedback control (type 19 cards)}\\
+XOBS(2J-1) \> \> $x$ coordinate of first point in pair\\
+ZOBS(2J-1) \> \>$z$ coordinate of first point in pair\\
+XOBS(2J) \> \>$x$ coordinate of second point in pair\\
+ZOBS(2J) \> \>$z$ coordinate of second point in pair\\
+NPLOTOBS \> = 0.0 \> \parbox[t]{\width}{Don't plot time histories}\\
+         \> = 1.0 \> \parbox[t]{\width}{Do plot time history of fluxes and flux difference at
+observation pair}\\
+\\
+\end{tabbing}
+{\bf Note} : If ISYM=1 and ZOBS(J)$<$0 for some  J, this observation point will be
+automatically discarded and the remaining observation points will be renumbered to be
+consecutive. The values of NFEEDO on the type 19 cards will automatically be changed also to
+reflect this renumbering.
+\pagebreak
+\newpage \subsubsection{Card 09 - External Coils}
+\index{coils!external|(} 
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXXXX \= XXXXXXXX \=
+XXXXXXXX \= XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize N \>\footnotesize XCOIL(N) \>\footnotesize ZCOIL(N) \>\footnotesize
+IGROUPC(N) \>\footnotesize ATURNSC(N) \>\footnotesize RSCOILS(N) \>\footnotesize
+AINDC(N) 
+\end{tabbing} 
+Each type 09 card defines the properties of a single coil {\em external} to the computational grid.
+\setw{ATURNSC(N) X}
+\begin{tabbing} 
+ATURNSC(N) X\= \parbox[t]{\width}{This is junk} \kill 
+N \> \parbox[t]{\width}{External coil number (this must be a unique identifying number between
+1 and PNCOIL)}\\  
+XCOIL(N) \> \parbox[t]{\width}{The $x$ coordinate of the center of the external coil. (Must
+be outside the computational grid)}\\ 
+ZCOIL(N) \> \parbox[t]{\width}{The $z$ coordinate of the center of the external coil. (Must
+lie outside the computational grid)}\\ 
+IGROUPC(N) \> \parbox[t]{\width}{Group number of coil N.  Refers to type 15 card with the
+same group number.} \index{coils!group number}\\ 
+ATURNSC(N) \> \parbox[t]{\width}{Number of turns for coil N.  This is a positive or negative
+number, not necessarily an integer.  The preprogrammed current for coil N will be the product
+of ATURNSC(N) and the current in IGROUPC(N) as specified by the appropriate type 15 card}\\
+RSCOILS(N) \> \parbox[t]{\width}{Resistance of coil N (ohms).  For multiturn coils, this is the
+one-turn equivalent resistance.}\\ 
+AINDC(N) \> \parbox[t]{\width}{Self inductance of coil N, assuming a single turn.  If a type 39
+card is included, this will be overwritten with an inductance calculated from the geometry.} 
+\end{tabbing} 
+{\bf Note 1} : If ISYM=1 AND ZCOIL(N)$<$0 for some N, this coil will be automatically
+discarded
+and the remaining coils will be renumbered to be consecutive.\\ 
+ \\ 
+{\bf Note 2} : An external coil can belong to more than one coil group,
+both for the feedback systems and for the preprogrammed currents.  To
+specify the second group, follow the type 09 card with another type 09 card of the form:\\ 
+ \\ 
+09 10NN. ATURN(N,1) ATURN(N,2)...ATURN(N,6)\\ 
+ \\ 
+This will cause coil N to also belong to coil group NN with variable number of turns
+ATURN(N,I) at time TPRO(I) as specified by the type 18 card.  Up to four additional systems
+can be specified by using 10NN., 20NN.,30NN.,40NN., in the first field.\index{coils!external|)} 
+\newpage \subsubsection{Card 10 - Internal Coils} 
+\index{coils!internal|(}
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXXXX \= XXXXXXXX \=
+XXXXXXXX \= XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize M \>\footnotesize XWIRE(M) \>\footnotesize ZWIRE(M) \>\footnotesize
+IGROUPW(M) \>\footnotesize ATURNSW(M) \>\footnotesize RSWIRES(M) \>\footnotesize
+CWICS(M) 
+\end{tabbing} 
+Each type 10 card defines the properties of a single coil {\em internal} to the computational grid,
+denoted a {\em wire}.\\ 
+\setw{ ATURNSW(M) X}
+\begin{tabbing} 
+ATURNSW(M) X\= \parbox[t]{\width}{this is junk} \kill 
+M \> \parbox[t]{\width}{Wire number (this must be a unique identifying number between 1 and
+PNCOIL)}\\ 
+XWIRE(M) \> \parbox[t]{\width}{The $x$ coordinate of the center of the wire. (coordinate
+must lie inside the grid)}\\ 
+ZWIRE(M) \> \parbox[t]{\width}{The $z$ coordinate of the center of the wire. (coordinate
+must lie inside the grid)}\\ 
+IGROUPW(M) \> \parbox[t]{\width}{The absolute value $\mid$IGROUPW(M)$\mid$ is the
+group
+number.  Refers to type 15 card with the same group number.\index{coils!group number}  If IGROUPW(M)$<$0, this is a
+switch indicating that the wire is to occupy four adjacent cells (rather than 1) and to have the
+relative number of turns in the four cell area weighted so that the current centroid will be at
+[XWIRE(M),ZWIRE(M)].}\\ 
+ATURNSW(M) \> \parbox[t]{\width}{The number of turns for wire M.  This is a positive or
+negative number, not necessarily an integer.  The preprogrammed current for wire M will be the
+product of ATURNSW(M) and the current in IGROUPW(M) as specified by the appropriate type
+15 card.}\\ 
+RSWIRES(M) \> \parbox[t]{\width}{The resistance of wire M (ohms).  If negative, resistance
+is
+major radius XWIRE(M) times the absolute value of RSWIRES(M).  For a multiturn coil, this
+is
+a one turn equivalent resistance.}\\ 
+CWICS(M) \> \parbox[t]{\width}{Initial induced current in wire M. (kA)}\\ 
+\end{tabbing}
+{\bf Note 1} : If ISYM=1 AND ZWIRE(M)$<$0 for some M, this wire will be
+automatically discarded and the remaining wires will be renumbered to be consecutive.\\ 
+ \\ 
+{\bf Note 2} : An internal coil can belong to more than one coil group for
+feedback systems. To specify the second group, follow the type 10 card with another type 10 card
+of the form:\\ 
+ \\
+10    10NN. ATURN(M,1) (M,2) (M,3) (M,4) (M,5) ATURN(M,6) \\
+ \\
+This will cause coil M to also belong to coil group NN with variable number of turns
+ATURN(M,I) at time TPRO(I) as specified by type 18 card.  Up to four additional systems can
+be specified by using 10NN.,20NN.,30NN.,40NN., in the first field.\\ 
+ \\ 
+{\bf Note 3} : If IGROUPW(M)$<$0, three new coils will be generated and the
+parameter PNCOIL must be large enough to accommodate these.\\ 
+{\bf Note 4} : At the end of a run, a special file is written out called NEWTYPE10.
+This has CWIS defined.\\
+\begin{tabbing}
+{\bf Note 5} : \= Resistivity of copper :  1.724$\times 10^{-8} \Omega \cdot \rm m$\\
+               \>Resistivity of Aluminum :  2.824$\times 10^{-8} \Omega \cdot \rm m$\\
+               \>Resistivity of 304 SS :  7.2  $\times 10^{-7} \Omega \cdot \rm m$
+\end{tabbing}\index{coils!internal|)}
+\newpage \subsubsection{Card 11 - ACOEF Array}
+\index{ACOEF array|(}
+\begin{tabbing} 
+XXXXX \= XXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize ICO \>\footnotesize NCO \>\footnotesize ACOEF(ICO) \>\footnotesize
+$\ldots$(ICO+1) \> \footnotesize $\ldots$(ICO+2) \> \footnotesize $\ldots$(ICO+3) \>\footnotesize
+ACOEF(ICO+4) 
+\end{tabbing} 
+\setw{ACOEF(1) X}
+\begin{tabbing}
+ACOEF(1) X\= set tabs \kill
+ICO \> \parbox[t]{\width}{First index of ACOEF array specified on this card}\\
+NCO \> \parbox[t]{\width}{The number of elements on this card. (1$\leq$NCO$\leq$5)}\\
+ACOEF(I) \>\parbox[t]{\width}{The value of ACOEF(I).  The following ACOEF array elements
+are presently defined (default values in parentheses):}\\
+ACOEF(1) \> \parbox[t]{\width}{If 1.0,special run for PBX, if 2.0, special run for NSTX, if 3.0
+special run for ASDEX-U.   If 4.0 or 5.0, special for ITER(0.).  Note that acoef(1997) has a special meaning for acoef(1)=4.}\\
+ACOEF(2) \> \parbox[t]{\width}{Ratio of initial electron to total pressure (0.5)} \\
+(3) \> \parbox[t]{\width}{Time interval over which feedback systems are turned on. (0.0)}\\
+(4) \> \parbox[t]{\width}{Relaxation factor for pressure when IPRES=1 (100).}\\
+(5) \> \parbox[t]{\width}{If 1.0, time history plots start new at restart time. (0.0)}\\
+(6) \> \parbox[t]{\width}{Parallel diffusion multiplier for ISURF=0, IPRES=0 (10.)}\\
+(7) \> \parbox[t]{\width}{Mix between Dufort Frankel and FTCS in flux diffusion (0.5)}\\
+(8) \> \parbox[t]{\width}{Implicit parameter for surface averaged time advancement (1.0)}\\
+(9) \> \parbox[t]{\width}{Numerical viscosity coefficient (40.)} \index{viscosity}\\
+(10) \> \parbox[t]{\width}{Ratio of incompressible to compressible viscosity (0.5)}\\
+(11) \> \parbox[t]{\width}{Proportionality constant in plasma current feedback (0.5)}\\
+(12) \> \parbox[t]{\width}{Initial voltage in wires for LRSWTCH$>$0 (1.0)}\\
+(13) \> \parbox[t]{\width}{IFLUX switch for poloidal flux boundary condition (see
+Eq.~(\ref{eq:Psib}).  The options are : 0.0 constant, 1.0 first order, 2.0 second order, 3.0 full
+integral, 4.0 Von-Hagenow's virtual casing method. (default is 4.0)}\\
+(14) \> \parbox[t]{\width}{Maximum scale for SURFVOLT plot (10.0)}\\
+(15) \> \parbox[t]{\width}{Minimum OH loop voltage (-100.0)}\\
+(16) \> \parbox[t]{\width}{Maximum OH loop voltage (100.0)}\\
+(17) \> \parbox[t]{\width}{ICUBE switch for cubic time point interpolation.  IF ICUBE=0.0
+linear interpolation is used and for ICUBE=1.0 cubic interpolation is used. (0.0)}\\
+(18) \> \parbox[t]{\width}{Multiplier in front of PSIDOT on boundary (0.0)}\\
+(19) \> \parbox[t]{\width}{Not used}\\
+(20) \> \parbox[t]{\width}{Switch for UCOR (0.0)}\\
+(21) \> \parbox[t]{\width}{Error criterion for AMACH (1.0)}\\
+(22) \> \parbox[t]{\width}{Error criterion for EKIN (100.)}\\
+(23) \> \parbox[t]{\width}{EPSIMIN$\ldots$convergence criterion on PSI for
+equilibrium($10^{-7}$)}\\ 
+(24) \> \parbox[t]{\width}{EZCURF$\ldots$convergence criterion on  Z for
+equilibrium($10^{-6}$)}\\
+(25) \> \parbox[t]{\width}{DELG$\ldots$equilibrium parameter used for IFUNC=3 (1.0)}\\
+(26) \> \parbox[t]{\width}{GRPRFP$\ldots$equilibrium parameter used for IFUNC=3 (1.0)}\\
+(27) \> \parbox[t]{\width}{BETAJ$\ldots$equilibrium parameter used for IFUNC=3 (1.0)}\\
+(28) \> \parbox[t]{\width}{Bypass initial filament growth rate calculation if nonzero (0.0)}\\
+(29) \> \parbox[t]{\width}{Time in seconds at which calculation stops (1000.)} \index{time!stopping}\\
+(30) \> \parbox[t]{\width}{IWAYNE$\ldots$switch to write special disruption file and produce
+voltage plots at flux loops (0.0)}\\
+(31) \> \parbox[t]{\width}{TJPHI$\ldots$time when to start writing (0.0)}\\
+(32) \> \parbox[t]{\width}{DTJPHI$\ldots$time increment for writing (0.0)}\\
+(33) \> \parbox[t]{\width}{TMOVIE (0.0)} \\
+(34) \> \parbox[t]{\width}{DTMOVIE (0.0)} \\
+(35),(37),(39) \> \parbox[t]{\width}{Anomalous transport coefficients CHIE,CHII,D
+(1.0,1.0,0.2)   note:  These are multiplied by $10^{19}/n$, so the effective diffusion coefficient 
+is $D = ACOEF(39) \times 10^{19}/n$ etc.}\\
+(36),(38) \> \parbox[t]{\width}{off-diagonal transport coefficients for  CHIE,CHII (0.0,0.0)}\\
+(40) \> \parbox[t]{\width}{If 1.0, U not zeroed in vacuum (0.0)}\\
+(41) \> \parbox[t]{\width}{RESGAP$\ldots$coefficient of resistivity for gap in conductors (0.5).
+Set to 0.0 for default value which is a very high resistance. The effect of the gap is to constrain zero net current in coil groups with
+IGROUP$<$0 on type 15 cards.  If nonzero, that value will be used as the
+as the resistance across the gap.  This value is overidden if type 33 card is  supplied.}\\
+(42) \> \parbox[t]{\width}{Minimum $x$ for profile plots (0.)}\\
+(43) \> \parbox[t]{\width}{Maximum $x$ for profile plots (0.)}\\
+(44) \> \parbox[t]{\width}{IRFP$\ldots$set to 1.0 for reversed field pinch (0.0)}\\
+(45) \> \parbox[t]{\width}{Number of zones to search over for x-point (2.0)}\\
+(46) \> \parbox[t]{\width}{Maximum for $\tau _e$ plot (sec) (2.0)}\\
+(47) \> \parbox[t]{\width}{Maximum power for problem with burn control (used to regulate
+heating) ($1. \times 10^{12}$)}\\
+(48),(49) \> \parbox[t]{\width}{The number of contours drawn in plasma and vacuum (20.,20.)}\\
+(50),(51) \> \parbox[t]{\width}{Relaxation factors for initial equilibrium calculation (0.5,0.5)}\\
+(52) \> \parbox[t]{\width}{Vacuum vessel poloidal inductance (0.0)}\\
+(53) \> \parbox[t]{\width}{Vacuum vessel poloidal resistance (0.0)}\\
+(54) \> \parbox[t]{\width}{Current feedback coefficient for burn control (0.0)}\\
+(55) \> \parbox[t]{\width}{Reflectivity coefficient for cyclotron radiation (0.9)}\\
+(56) \> \parbox[t]{\width}{HYPER heating multiplier (0.0)}\\
+(57) \> \parbox[t]{\width}{t-begin for HYPER (0.0)}\\
+(58) \> \parbox[t]{\width}{t-end for HYPER ($1. \times 10^6$)}\\
+(59) \> \parbox[t]{\width}{EPSHYP$\ldots$convergence criteria in HYPER ($1. \times
+10^{-6}$)}\\
+(60) \> \parbox[t]{\width}{NLOOPM$\ldots$maximum iterations in HYPER (4000.)}\\
+(61) \> \parbox[t]{\width}{If nonzero, ZMAG time history plotted even for ISYM=1 (0.0)}\\
+(62) \> \parbox[t]{\width}{Ratio of toroidal to compressible viscosity (1.0)}\\
+(63) \> \parbox[t]{\width}{Affects LSAW for ISURF=0 (0.667)}\\
+(64) \> \parbox[t]{\width}{Hyperresistivity coefficient (0.0)}\\
+(65) \> \parbox[t]{\width}{Hyperresistivity fraction (0.1)}\\
+(66) \> \parbox[t]{\width}{Hyperresistivity exponent (4.0)}\\
+(67) \> \parbox[t]{\width}{Hyperresistivity iteration damping-factor (1.2)}\\
+(68) \> \parbox[t]{\width}{Hyperresistivity iteration safety factor (1.0)}\\
+(69) \> \parbox[t]{\width}{Crash-time for Porcelli Sawtooth Model (0.10)}\\
+(70) \> \parbox[t]{\width}{Relaxation for resistivity when LRSWTCH$\ne$0
+($1.\times10^{-4}$)}\\
+(71) \> \parbox[t]{\width}{Maximum temperature for resistivity calculation ($1.\times10^6$)}\\
+(72) \> \parbox[t]{\width}{Bypass writing input on plot file if ACOEF(72)$>$0 (0.0)}\\
+(73) \> \parbox[t]{\width}{fraction of ion neoclassical to use for electrons}\\
+(74) \> \parbox[t]{\width}{Special limiter adjustment switch (0.0)}\\
+(75) \> \parbox[t]{\width}{Number of cycles coil resistivity is enhanced to let perturbation
+in(0.0)}\\
+(76) \> \parbox[t]{\width}{Switch for setting FBFAC(I1) to FBFAC(I2) to zero after equilibrium
+calculation (0.0)}\\
+(77) \> \parbox[t]{\width}{I1 - see ACOEF(76) (0.0)}\\
+(78) \> \parbox[t]{\width}{I2 - see ACOEF(76) (0.0)}\\
+(79) \> \parbox[t]{\width}{IGONE = 0 for normal run, =1 if no closed flux surfaces (0.0)} \\
+(80) \> \parbox[t]{\width}{Group number of superimposed oscillation (0.0)}\\
+(81) \> \parbox[t]{\width}{Amplitude of oscillation (kA) (0.0)}\\
+(82) \> \parbox[t]{\width}{Period of oscillation (seconds) (0.0)}\\
+(83) \> \parbox[t]{\width}{2nd group number (0.0)}\\
+(84) \> \parbox[t]{\width}{2nd amplitude number (0.0)}\\
+(85) \> \parbox[t]{\width}{3rd group number (0.0)}\\
+(86) \> \parbox[t]{\width}{3rd amplitude number (0.0)}\\
+(87) \> \parbox[t]{\width}{4th group number (0.0)}\\
+(88) \> \parbox[t]{\width}{4th amplitude number (0.0)}\\
+(90) \> \parbox[t]{\width}{Drag terms in equation of motion (0.2)}\\
+(91) \> \parbox[t]{\width}{Drag terms in equation of motion (0.2)}\\
+(92) \> \parbox[t]{\width}{Drag terms in equation of motion (0.2)}\\
+(93) \> \parbox[t]{\width}{Confinement time for He-ash (1.0).  This value is overidden
+if type 73 card is supplied.} \\
+(95) \> \parbox[t]{\width}{TDISRUPT$\ldots$time at which disruption occurs and QSAW
+changes ($1.\times10^6$)}\\
+(96) \> \parbox[t]{\width}{QSAW2$\ldots$value of QSAW after disruption (2.0)}\\
+(97) \> \parbox[t]{\width}{Fraction of flux in plasma that halo extends beyond - a halo width.
+(overwritten if type 61 card is included) (0.0)}\\
+(98) \> \parbox[t]{\width}{Temperature of halo in eV (overwritten if type 60 card is included) (1.0)}\\
+(99) \> \parbox[t]{\width}{Switch used in halo temperature and resistivity
+calculation.  If acoef(99) $>$ 0, linearly interpolates temperature in
+halo region from thalo at psilim to tevv at psilim+phalo. }\\
+(101) \> \parbox[t]{\width}{IDTEST$\ldots$see note below (0.0)}\\
+(102) \> \parbox[t]{\width}{VTEST$\ldots$see note below (0.0)}\\ 
+  \\
+  \\ 
+{\bf Note} : Program will terminate normally if :\\
+\begin{tabular}{lcllll}
+IDTEST =  & -1 &  AND & $I_p(a)$ & $<$ & VTEST\\
+''&  1 &`` &``       & $>$ &`` \\
+''& -2 &`` &$Z_{MA}$ & $<$ &``\\
+''&  2 &`` &''       & $>$ &''\\
+''& -3 &`` &$\dot{I}_p(A/S)$ & $<$ & ``\\
+''&  3 &`` &''&  $>$ &``\\
+``& -4 &`` & $X_{MA}(m)$ & $<$ &``\\
+``&  4 &`` &'' & $>$  & ``\\
+``& -5 &'' & $q_{95}$  & $<$ & ``\\
+``&  5 & `` & `` & $>$ & ``\\
+``& -6 & `` & $\kappa$ & $<$ & ``\\
+``&  6 & `` & `` & $<$ & ``\\
+`` &-7 & `` & $\delta$ & $<$ & ``\\
+`` & 7 & `` & `` & $>$ & ``\\
+`` &-8 & `` & $PTOT(MW)$ & $<$ & ``\\
+`` & 8 & `` & `` & $>$ & ``\\
+`` &-9 & `` & CURR(1)(kA) & $<$ & ``\\
+`` & 9 & `` & `` & $>$ & ``
+\end{tabular}
+ \\
+ \\
+(103) \> \parbox[t]{\width}{Multiplier bootstrap current (1.0)}\\
+(104) \> \parbox[t]{\width}{ITEMP: If ITEMP=1, the temperature in the external coils will be calculated as a function of time.  In this case, type 39 cards must be included to provide additional coil information. (0.0)}\\
+(106) \> \parbox[t]{\width}{Multiplier of AJLH for lower hybrid (1.0)}\\
+(107) \> \parbox[t]{\width}{Anomalous auxiliary heating transport coefficient (1.0)} \index{transport!anomalous}\\
+(108) \> \parbox[t]{\width}{ not presently used}\\
+(109) \> \parbox[t]{\width}{No trapped particles when ACOEF(109)=1.0 (0.0)} \index{trapped particle!switch}\\
+(110) \> \parbox[t]{\width}{Coefficient in pressure function (0.0) (see type 02 card)}\\
+(111) \> \parbox[t]{\width}{Feedback constant for plasma density when IDATA=1 (0.0)}\\
+(112) \> \parbox[t]{\width}{Feedback constant for ZEFF when IDATA=1 (0.0)}\\
+(113) \> \parbox[t]{\width}{relative fraction of tritium for alpha heating calculation (0.49)}\\
+(114) \> \parbox[t]{\width}{Stored energy wanted for feedback on D-T mix(0.0)}\\
+(115) \> \parbox[t]{\width}{Derivative gain for control of feedback on DT mix(0.0)}\\
+(120) \> \parbox[t]{\width}{Fraction of ETA (LSAW) to use in sawtooth model for ISAW=1.
+     Note: 0 gives maximum flattening, 1 gives no flattening.(0.5)}\\
+(121) \> \parbox[t]{\width}{Auxiliary heated transport coefficient for ITR=2 (0.08)}\\
+(122) \> \parbox[t]{\width}{Ohmic transport coefficient for ITR=2 (0.42)}\\
+(123) \> \parbox[t]{\width}{Factor added to $q_{cylin}$ for ITR=2 (0.5)}\\
+(124) \> \parbox[t]{\width}{$\chi$ enhancement inside q=1 surface (for isaw=1) (2.0)}\\
+(125) \> \parbox[t]{\width}{Feedback constant for $\chi$ when IDATA=1 (0.0)}\\
+(126) \> \parbox[t]{\width}{Ratio of $\chi_i$ to $\chi_e$ (2.0)  If
+negative, then ACOEF(126) is $\chi_i$ in $m^2/sec$ (spatial constant)}\\
+(127) \> \parbox[t]{\width}{Feedback coefficient for $\chi$ time derivative term (0.0)}\\
+(128) \> \parbox[t]{\width}{Minimum value for FBCHI (IDATA=1) (0.5)}\\
+(129) \> \parbox[t]{\width}{Maximum value for FBCHI (IDATA=1) (2.0)}\\
+(130)-(298) \> \parbox[t]{\width}{Special coefficients for thyristor voltage source model}\\
+\end{tabbing}
+{\bf Special coefficients for current feedback:} \\
+ \\
+\label{p:vback}
+\underline{Coils inside grid:} \\
+\index{feedback!voltage}
+\setw{ACOEF(296) }
+\begin{tabbing}
+ACOEF(290) X\= = 1.0x IGRX \= NSTART+7*NFBX \= $<$X \= JX \= $<$X \= \kill
+ACOEF(290) \> = 1.0 Lausanne feedback model \\
+           \> = 2.0 Standard PID-model \\
+ \\
+PID-model :\\
+ \\
+ACOEF(291) \> NSTART : first coefficient for feedback\\
+ACOEF(292) \> NFB : total number of feedback systems\\
+ACOEF(293) \> NWPRINT : print cycle (coil currents and voltages)\\
+ \\
+\parbox[t]{\textwidth}{Having specified NSTART and NFB, the subsequent coefficients have to
+be specified according to:} \\
+ \\
+ACOEF(J) \> IGROUPW: \> NSTART       \> $<$  \> J  \> $<$ \> NSTART+NFB-1 \\
+         \> VGAINP:  \> NSTART+NFB   \> $<$  \> J  \> $<$ \> NSTART+2*NFB-1\\
+         \> VGAIND:  \> NSTART+2*NFB \> $<$  \> J  \> $<$ \> NSTART+3*NFB-1\\
+         \> VGAINI:  \> NSTART+3*NFB \> $<$  \> J  \> $<$ \> NSTART+4*NFB-1\\
+         \> TFBON:  \> NSTART+4*NFB \> $<$  \> J  \> $<$ \> NSTART+5*NFB-1\\
+         \> TFBOFF:  \> NSTART+5*NFB \> $<$  \> J  \> $<$ \> NSTART+6*NFB-1\\
+         \> VOLTMAX:  \> NSTART+6*NFB \> $<$  \> J  \> $<$ \> NSTART+7*NFB-1\\
+         \> TRAMP:  \> NSTART+7*NFB \> $<$  \> J  \> $<$ \> NSTART+8*NFB-1\\
+where:\\
+\>  IGROUP : \> coil group for feedback \\
+\> VGAINP : \> proportional feedback constants (V/A) \\
+\> VGAIND : \> differential (Vs/A)\\
+\>  VGAINI : \> integral (V/As)   [note: if negative, then used as a \\
+\> \> switch to enforce series connection]  \\
+\>  TFBON : \> time when feedback system is switched on (s)\\
+\>  TFBOFF : \> time when feedback system is switched off (s)\\
+\>  VOLTMAX :\> maximum voltage (V)(one turn equiv. voltage)\\
+\>  TRAMP : \> ramp time (s)\\
+ \\
+\underline{Coils outside grid :}\\
+\index{feedback!voltage}
+Feedback on external coil group currents is applied, if :\\
+ \\
+\>\underline{ICIRC=1} and \underline{ACOEF(294)$>$129} \\
+ \\
+ACOEF(294) \> NSTART : first coefficient for feedback \\
+ACOEF(295) \> NFB : total number of coil groups for feedback\\
+ACOEF(296) \>= 0.0 \> \parbox[t]{\width}{Use inductance matrix in voltage feedback model :}\\
+  \\
+           \> $V_{FB}^j = \left[ \beta_p^k (\Delta I^k) + \beta_d^k \left( \frac{d \Delta I^k}{dt}
+\right) + \beta_I^k \left( \int \Delta I^k dt \right) \right] \cdot M_{k,j}.$\\
+ \\
+           \>\parbox[t]{\width}{where $\beta_p^k$, $\beta_d^k$, $\beta_I^k$ are the proportional
+and derivative and integral gains, $\Delta I$ is the difference between the actual current and the
+desire current and $M_{k,j}$ is the mutual inductance matrix}\\
+\\
+           \>= 1.0 \> Standard PID-model :\\
+ \\
+          \> $V_{FB}^k = \left( \beta_p^k (\Delta I^k) + \beta_d^k \left( \frac{d \Delta I^k}{dt}
+\right) + \beta_I^k \left( \int \Delta I^k dt \right) \right) \cdot \delta_{k,j},$\\
+ \\
+          \> where $\delta_{k,j}$ is the identity matrix.\\
+ \\
+           \>= 2.0 \> Special for ZT-H\\
+           \>= 3.0 \> Use the following voltage feedback model:\\
+ \\
+          \> $V_{FB}^k = \left( R_j I_j + \beta_p^k (\Delta I^k) + \beta_d^k \left( \frac{d \Delta
+I^k}{dt} \right) + \beta_I^k \left( \int \Delta I^k dt \right) \right) \cdot \delta_{k,j},$\\
+ \\
+           \>= 4.0 \> ASDEX upgrade  \\
+           \>= 5.0 \> call missionc \\
+           \>= 6.0 \> call volt \\
+ \\
+\label{p:vback2}
+ACOEF(J) \>  IGROUPC : \> NSTART       \> $<$  \> J  \> $<$ \> NSTART+NFB-1 \\
+         \>  GAINPEG :  \> NSTART+NFB   \> $<$  \> J  \> $<$ \> NSTART+2*NFB-1\\
+         \>  GAINDEG :  \> NSTART+2*NFB \> $<$  \> J  \> $<$ \> NSTART+3*NFB-1\\
+         \>  GAINIEG :  \> NSTART+3*NFB \> $<$  \> J  \> $<$ \> NSTART+4*NFB-1\\
+         \>  TONEG :  \> NSTART+4*NFB \> $<$  \> J  \> $<$ \> NSTART+5*NFB-1\\
+         \>  TOFFEG :  \> NSTART+5*NFB \> $<$  \> J  \> $<$ \> NSTART+6*NFB-1\\
+         \>  VMINEG :  \> NSTART+6*NFB \> $<$  \> J  \> $<$ \> NSTART+7*NFB-1\\
+         \>  VMAXEG :  \> NSTART+7*NFB \> $<$  \> J  \> $<$ \> NSTART+8*NFB-1\\
+where:\\
+\>  IGROUPC : \> external coil group for feedback\\
+\>  GAINPEG : \> proportional feedback constants (V/A) (else:(mu/s))\\
+\>  GAINDEG : \> differential (Vs/A) (else: (mu))\\
+\>  GAINIEG : \> integral (V/As) (else: (mu/s**2)\\
+\>  TONEG : \> time when feedback system is switched on (s)\\
+\>  TOFFEG : \> time when feedback system is switched off (s)\\
+\>  VMINEG : \> minimum voltage (kV)/turn\\
+\>  VMAXED : \> maximum voltage (kV)/turn
+\end{tabbing}
+The following information is used by the shape control subroutine {\bf tcv1}, when IDATA=7 \index{control!Hofmann algorithm|(}
+on card 01.  The default values for ACOEF(300) to ACOEF(560) are all equal to zero.
+\setw{(303)X = 1.0X  }
+\begin{tabbing}
+(300)X  \= = 1.0X \= set tabs \kill
+(300) \> \> \parbox[t]{\width}{If ACOEF(307)=0, the number of plasma current elements is equal
+to 2*ACOEF(300)}\\
+(301) \> \> \parbox[t]{\width}{If ACOEF(307)=0 AND ACOEF(319)=1, the plasma current
+elements cover the rectangular area defined by : \\
+ \\
+ ACOEF(302) $< x <$ ACOEF(302)\\
+ ACOEF(303) $< z <$ ACOEF(304) }\\
+ \\
+(302) \> \>See (301)\\
+(303) \> \>See (301)\\
+(304) \> \>See (301)\\
+(305) \> \>Not used \\
+(306) \> \>Not used \\
+(307) \> = 0.0  \> fixed plasma current elements\\
+       \>= 1.0  \> \parbox[t]{\width}{current elements are periodically adapted to the
+preprogrammed plasma shape}\\
+(308) \> \> \parbox[t]{\width}{Overall shape control gain, expressed as a time constant (in
+seconds) for the action of the control algorithm}\\
+(309) \> = 0.0 \> \parbox[t]{\width}{boundary points are specified in the ACOEF array}\\
+      \> = 1.0  \>\parbox[t]{\width}{boundary points are generated analytically using the variables
+RZERV, AZERV, EZERV, DZERV on type 42, 43, 44 and 45 cards}\\
+(310) \> \> Not used \\
+(311) \> \>Shape control proportional feedback gain \\
+(312) \> \>Shape control derivative feedback gain \\
+(313) \> \>Not used \\
+(314) \> \>Not used \\
+(315) \> \> \parbox[t]{\width}{Exit time in seconds for program diagnostics}\\
+(316) \> \>\parbox[t]{\width}{Feedback coefficient for plasma current control by acting on flux
+at reference point.  Only used when ACOEF(318)=2.}\\
+(317) \> = 1.0  \> TCV\\
+      \> = 2.0  \> BPX\\
+      \> = 3.0  \> SSAT\\
+      \> = N.0  \> \parbox[t]{\width}{User supplied subroutine containing the information
+discussed in section~(\ref{sec:control2}).  This information is required for the Hofmann control
+scheme.}\\
+(318) \> = 0.0  \> \parbox[t]{\width}{Plasma current is feedback controlled by applying an OH
+moment.  OH group currents are defined in ACOEF(401) through ACOEF(450).  Feedback gain
+is ACOEF(332)}\\
+      \> = 1.0  \> \parbox[t]{\width}{Plasma current is feedback controlled by acting on the
+boundary flux.  The gain is ACOEF(329) and the weight is preprogrammed (see ACOEF(2093)
+, ACOEF(2193) etc )}\\
+      \> = 2.0  \> \parbox[t]{\width}{Plasma current is feedback controlled by acting on flux at
+reference point.  Trajectory of reference point is preprogrammed (see
+ACOEF(2091),ACOEF(2092),ACOEF(2191),ACOEF(2192), etc).  The gain is ACOEF(316) and
+the weight is preprogrammed as under 1 above.}\\
+      \> = 3.0  \> \parbox[t]{\width}{Plasma current is not feedback controlled, but the total
+volt-sec at reference point (same reference point as under 2 above) is feedback controlled to
+follow a given time evolution, as defined in ACOEF(2095), ACOEF(2195), etc.  Gain is
+ACOEF(333), weight is preprogrammed as under 1 above.}\\
+(319) \> \>\parbox[t]{\width}{ Ratio of maximum to minimum width of finite element matrix.}\\ 
+(320) \> \> \parbox[t]{\width}{Vertical position control proportional feedback gain. If
+ACOEF(320)$\ne$0 group currents for a radial field moment must be given in ACOEF(451),
+ACOEF(452), etc.}\\
+(321) \> \>\parbox[t]{\width}{Not used}\\
+(322) \> \>\parbox[t]{\width}{Ellipticity \nolinebreak control proportional feedback gain.
+\nolinebreak If ACOEF(322)$\ne$0, group currents producing a quadrupole moment must be
+specified in ACOEF(501), ACOEF(502) etc.  This is not recommended!}\\
+(323) \> \>\parbox[t]{\width}{Ellipticity control derivative feedback gain. If ACOEF(323)$\ne$0,
+group currents producing a quadrupole moment must be specified in ACOEF(501), ACOEF(502)
+etc.  This is not recommended!}\\
+(324) \> \> \parbox[t]{\width}{Control cycle time (in seconds).  This is the time interval for
+applying the control algorithm}\\
+(325) \> = 0.0 \> \parbox[t]{\width}{For plasma current to be calculated from flux loops using
+finite elements}\\
+      \> = 1.0 \> \parbox[t]{\width}{For the TSC plasma current to be used in shape
+subroutines.}\\
+(326) \> \>Not used\\
+(327) \> \>\parbox[t]{\width}{Number of control cycles between successive element changes}\\
+(328) \> \>\parbox[t]{\width}{If ACOEF(328)=1, the shape evolution between two given shapes
+can be modified by using the type 44 card.  In this case FRAC=EZERW (see subroutine
+tcvshap).}\\
+(329) \> \>\parbox[t]{\width}{Feedback gain for plasma current control by acting on the flux at
+the plasma boundary.  Used when ACOEF(318)=1.}\\
+(330) \> = 0.0 \> \parbox[t]{\width}{Measurements are taken from psi-matrix using the
+subroutine {\bf grap}.}\\
+      \> = 1.0 \>\parbox[t]{\width}{Measurements are computed using the subroutines {\bf gf}
+and {\bf gradgf}.}\\
+(331) \> \>\parbox[t]{\width}{Damping coefficient for control algorithm (normally = 0.5)}\\
+(332) \> \>\parbox[t]{\width}{Feedback coefficient for plasma current control by applying an OH
+current moment (see ACOEF(401)$\ldots$).  Only used when ACOEF(318)=0.}\\
+(333) \> \>\parbox[t]{\width}{Feedback coefficient for volt-sec preprogramming.  Only used
+when ACOEF(318)=3.}\\
+(334) \> = 0.0 \> \parbox[t]{\width}{Vessel currents are equal to sum of the wire currents}\\
+      \> = 1.0 \> \parbox[t]{\width}{Vessel currents are computed from time derivative of flux}\\
+(340) \> \>\parbox[t]{\width}{Number of plasma shapes specified using the ACOEF array}\\
+(341) \> \>\parbox[t]{\width}{If equal to 1, weight of the top boundary point is preprogrammed.}\\
+(342) \> \>\parbox[t]{\width}{If equal to 1, weight of the bottom boundary point is
+preprogrammed.}\\
+(380) \> \>\parbox[t]{\width}{Number of preprogrammed boundary points (should be
+approximately 2$\times$(Number of poloidal field coil groups))}\\
+(401)-(450) \> \> \parbox[t]{\width}{Group currents which produce a perfect OH field.  Used
+only when ACOEF(318)=0. Currents should be scaled such that the sum of all OH currents is
+of the order 10 kA-turns}\\
+(451)-(500) \> \> \parbox[t]{\width}{Group currents which produce a pure radial field.  Only
+used when ACOEF(320)$\ne$0 or ACOEF(2096)$\ne$0.  Currents should be scaled as above}\\
+(501)-(504) \> \> \parbox[t]{\width}{sed for Halo Current feedback simulations if acoef(501) nonzero}\\
+(504) \> \> \parbox[t]{\width}{applied electric field for CHI} \\
+(510) \> \> \parbox[t]{\width}{factor for determining the regularization parameter for shape feedback
+(IPEXT=25 on type 20 card) with type 62,63 cards}\\
+(511) \> \> \parbox[t]{\width}{Integral gain factor for shape feedback
+(IPEXT=25 on type 20 card) with type 62,63 cards}\\
+(512) \> \> \parbox[t]{\width}{Time for starting up the shape feedback slowly
+(IPEXT=25 on type 20 card) with type 62,63 cards}\\
+(513) \> \> \parbox[t]{\width}{Proportional gain factor for shape feedback
+(IPEXT=25 on type 20 card) with type 62,63 cards}\\
+(514) \> \> \parbox[t]{\width}{Derivative gain factor for shape feedback
+(IPEXT=25 on type 20 card) with type 62,63 cards}\\
+(540) \> \> \parbox[t]{\width}{Number of preprogrammed BSUBR=0 points}\\ 
+(560) \> \>\parbox[t]{\width}{Number of preprogrammed BSUBZ=0 points} \index{control!Hofmann algorithm}\\
+ \\
+\parbox[t]{\textwidth}{{\bf Note} : Additional information for the Hofmann shape control
+algorithm is provided on ACOEF(2000)-ACOEF(3000)}
+\end{tabbing}
+\setw{(808)X }
+\begin{tabbing}
+(888)X \= PHI2 (1.75) XXX FOR XXX \= ITYPE=1 XXX \= \kill
+(700) \> NSLHRT : number of cycles skipped between ray tracing in LSC (50.)\\
+(701) \> \parbox[t]{\width}{NSLHPC : number of cycles skipped between power and current calls to LSC
+(10.). Note that NSLHPC $<$ NSLHRT}\\
+ \\
+\parbox[t]{\textwidth}{{\bf Note} : 700-705 also are used to define divertor plots} \\
+\parbox[t]{\textwidth}{{\bf Note} : 701-705 used in special summary plot routine if idiv .ne. 0} \\
+\parbox[t]{\textwidth}{These coefficients are needed for IFFAC=1 (neg FFAC on type 03) to
+control automatic adjustment of FFAC.}\\
+  \\  
+(703) \> gcmin: possible min for group current plot, default 0. \\
+(704) \> gcmax: possible max for group current plot, default 0. \\
+(705) \> possible min for power plot, default 0. \\
+(706) \> possible max for power plot, default 0. \\
+  \\  
+(710) \> nplot -- number of divertor blow-up plots (max 4) \\
+(711) \> xmin(i),i=1,4 \\
+(712) \> xmax(i),i=1,4 \\
+(713) \> zmin(i),i=1,4 \\
+(714) \> zmax(i),i=1,4 \\
+  \\  
+(751) \> xmin for second summary plot \\
+(752) \> xmax for second summary plot \\
+(753) \> zmin for second summary plot \\
+(754) \> zmax for second summary plot \\
+(755) \> multiplier of nx and nz for points used in contour plot \\
+  \\  
+(760) \> pellet run if 1.0 \\
+(761) \> VXPEL...initial R velocity of pellet (note...normally negative) \\
+(762) \> VZPEL...initial Z velocity of pellet \\
+(763) \> XPEL....initial R position of pellet \\
+(764) \> ZPEL....initial Z position of pellet \\
+(765) \> RADPEL..initial radius of pellet (assumed spherical) \\
+(766) \> time pellet gets injected \\
+(767) \> fraction of impurity in pellet (set 0.0 for pure H pellet) \\
+\\
+(770) \> second pellet if 1.0 \\
+(771) \> VXPEL...initial R velocity of second pellet (note...normally negative) \\
+(772) \> VZPEL...initial Z velocity of second pellet \\
+(773) \> XPEL....initial R position of second pellet \\
+(774) \> ZPEL....initial Z position of second pellet \\
+(775) \> RADPEL..initial radius of second pellet (assumed spherical) \\
+(776) \> time second pellet gets injected \\
+(777) \> fraction of impurity in second pellet (set 0.0 for pure H pellet) \\
+  \\  
+(778) \> time between subsequent pellets \\
+(779) \> final time \\
+\\
+(790) \> = 0.0  \> original calculation of pellet density\\
+      \> = 1.0  \> average pellet density source over trail\\
+(791) \> = 0.0  \> original calculation of density integration for plots\\
+      \> = 1.0  \> start density integration at restart time\\
+\\
+(792)  \>  fraction which volume extends for pellet backaveraging\\
+(795)  \> = 1.0 for runaway calculation \\
+(801)  \>  maximum AMACH (0.005)\\
+(802)  \> minimum FFAC decrease (0.9)\\
+(803)  \> maximum FFAC increase (1.1)\\
+(804)  \> maximum FFAC (1000.)\\
+(805)  \> minimum FFAC (1.0)\\  
+(806)  \> Boundary relaxation factor (1.0)\\
+ \\
+(809)  \> Multiplier of pellet ablation rate (1.0)\\
+(810)  \> multiplies $\eta$ (1.0)\\
+(811)  \> QLIM : plasma will be limited by surface where q$\geq$QLIM (0.0)\\
+(815) \> in missionc \\
+(816) \> reserved for density jet \\
+(817) \> reserved for density jet \\
+(818) \> reserved for density jet \\
+(819) \> reserved for density jet \\
+(820) \> reserved for density jet \\
+ \\
+These coefficients are needed for subroutine ITERATE \\
+ \\
+(821) \> PHI2 (1.75) for \> ITYPE=1 \> poloidal flux \\
+(822) \> SF (1.4)        \> `` \\
+(823) \> FACCONV ($1.\times10^{-8}$) \> ``\\
+(824) \> NIMAX (4000.) \> ``\\
+ \\
+(831) \> PHI2 (1.85) for \> ITYPE=2 \> velocity stream function\\
+(832) \> SF (1.4) \> ``\\
+(833) \> FACCONV ($1.\times10^{-8}$) \> `` \\
+(834) \> NIMAX (2000.) \> ``\\
+ \\
+(841) \> PHI2 (1.62) for \> ITYPE=3 \> velocity potential\\
+(842) \> SF (1.38) \> ``\\
+(843) \> FACCONV ($1.\times10^{-8}$) \> `` \\
+(844) \> NIMAX (4000.) \> ``\\
+ \\
+(850) \> Initial voltage for equilibrium calculation (0.0)\\
+(851) \> \parbox[t]{\width}{Particle diffusion coefficient ($\rm m^2/s$) 
+for IDENS=0 and ITRMOD=2.  See also ACOEF(875) (0.0)}\\
+(852) \> \parbox[t]{\width}{Normalized pinch term (dimensionless).  This is the 
+exponential decay factor for the steady state particle radial density profile (0.0)}\\
+(853) \> Flux of impurities crossing outermost flux surface (\#/s) (0.0)\\
+    \>         \\
+NOTE \> Acoef(854)-(861) are for impurity fractions \\
+     \> These can also be input as time-dependent variables on Type 82 \\
+    \>         \\
+(854) \> Oxygen (0.0)\\
+(855) \> Carbon (0.0)\\
+(856) \> Iron (0.0) \\
+(857) \> Berillium (0.0)\\
+(858) \> Neon (0.0)\\
+(859) \> Krypton (0.0) \\
+(860) \> Argon (0.0) \\
+(861) \> Tungston (0.0) \\
+(869) \> \parbox[t]{\width}{VT : transfer voltage(kV) for ZTH circuit when IRFP=1 and
+ACOEF(296)=2; when $V_T \leq$ACOEF(860), OH power supply comes on. (0.0)} \\
+(870) \> $\alpha$ for Ohm's law (0.0) : $\vec E + {\rm \vec{v}} \times \vec B = \eta \left( \vec 
+J - \alpha \vec B / \mu_o \right)$ \index{Ohm's law}\\
+(871) \> Edge density source multiplier in $atoms/m^3$  for IDENS=0, ISURF=1 \\
+\> edge density source for IDENS=0., ACOEF(871-876) \\
+\> $S=a_{871} \exp{a_{872} (\frac{\Phi - \Phi_{e}}{\Phi_{e}})}$ \\
+\> $D_{\bot}=a_{851}+a_{a875} \tilde{\Phi}^{2}$ for $\tilde{\Phi} \leq 0.75$ \\
+\> $D_{\bot}=a_{876}$ for $\tilde{\Phi} > 0.75$ \\
+(872) \> Edge density source exponential decay factor for IDENS=0, ISURF=1\\
+(875) \> Quadratic term multiplier in particle diffusion coefficient for IDENS=0, ISURF=1 \\
+(876) \> Particle diffusion coefficient for $\phi>0.75$ for IDENS=0, ISURF=1\\
+(877) \> Multiplier of PBREM (1.0) \\
+(880) \> $T_{edge}$ (eV) for transport calculations. (0.0)\\
+  \\
+\>\parbox[t]{\width}{Note :  The electron  and  ion edge temperatures  are  deterined  as follows : \index{edge temperature} \index{temperature!edge} \label{p:tedge}}\\
+ \\
+ \>\parbox[t]{\width}{For ACOEF(880)=0.0  :  $\left({T_{edge}}\right)_e$ = TEVV  unless THALO  is  
+specified  by ACOEF(98) or by the type 60  card, and WHALO is specified to be non-zero by ACOEF(97) 
+or by the type 61.  Then $\left({T_{edge}}\right)_e$~=~THALO}  \\
+  \\
+  \>For ACOEF(880)$>$0.0 :  $\left({T_{edge}}\right)_e$ =ACOEF(880) \\
+  \\
+  \>In all cases  : $\left({T_{edge}}\right)_i$ = (ACOEF(882)-1.)$\left({T_{edge}}\right)_e$\\
+ \\  
+(881) \> Fraction of $n_o$ for edge density (0.1)\\
+(882) \> Ratio of total pressure to electron pressure at edge (2.0)\\
+(889) \> Ratio of n1 and n2 in density profile (acoef 3013 and 3014). It is now input on type 89 \\
+(890) \> Heat conduction multiplier (1.0)\\
+(891) \> Heat conduction denominator used in temperature equilibration (100.)\\
+(894) \> ratio of pressure on sep to axis for FRC stability calculation \\
+(895) \> Let x-point and psimin exist in structure \\
+(896) \> Set to 1.0 for velocity chopping \\
+(897) \> convective multiplier(3./2.) \\
+(901) \> equilibrium shape control parameter  \\
+       \> 1.0 \> only shape points are used  \\
+       \> 2.0 \> shape points + flux linkage (acoef(902)) at xplas,zplas  \\
+       \> 3.0 \> shape points, + x-point ($r_x$=acoef(903),$z_x$=acoef(904))  \\
+       \> 4.0 \>  shape points + flux linkage + x-point   \\
+(905) \>  \parbox[t]{\width}{ specifies max number of coil group currents to calculate
+(actually set this equal to the total number of groups. To fix any
+coil current, set the desired value in gcur(2) and set the corresponding
+gcur(3) value to 1.0)} \\
+(906) \> is the relative error tolorance...[1.e-3]  \\
+(907) \> is the iteration number when shape feedback starts   \\
+(908) \> is the iteration number when type 19 feedback ends  \\
+(909) \> is the relaxation factor for equilibrium shape feedback  \\
+(910) \> is number of iterations between resetting sigmax and relaxation factors \\
+(911) \> is number of iterations to full implementation of vsec constraint \\
+(931) \> switch for writing ographa file (0.0) \\
+(941-962) \> used in routine jpolo for calculating  vessel forces for iwayne $>$ 0 \\
+(950) \> special SPDD3D coding for DIII-D \\
+(991)\>  \parbox[t]{\width} {ACOEF(991-997) are used with the $<j.B>$ current
+profile equilibrium mode (IFUNC=7.0, on type 02 card)} \\
+\>  \parbox[t]{\width} {$ \frac{\langle \vec{j} \cdot \vec{B} \rangle}{\langle
+\vec{B} \cdot \nabla \phi \rangle} = a_{991} (1 - \hat{\psi}^{a_{992}})^{a_{993}}
++ (1-a_{991}) \frac{a_{994}^{2} \hat{\psi}^{a_{995}} (1-\hat{\psi})^{a_{996}}}{a_{994}^{2} +
+(\hat{\psi}-a_{997})^{2}}$} \\
+(1997) \> special switch for acoef(1)=4 to revert to 1997 code version treatment of iter VV \\
+\end{tabbing}
+The following is additional information for the Hofmann control scheme :\index{control!Hofmann algorithm|(}\\
+\setw{(2081,2082,2083)X }
+\begin{tabbing}
+(2081,2082,2083)X \= set the tabs \kill
+(2000) \> \parbox[t]{\width}{Time when the first plasma shape is specified (seconds)}\\
+(2001-2030) \> \parbox[t]{\width}{The {\em x} coordinates of the boundary points}\\
+(2031-2060) \> \parbox[t]{\width}{The {\em z} coordinates of boundary points}\\
+(2061) \> Weight of top boundary point\\
+(2062) \> Weight of bottom boundary point\\
+(2071,2072,2073) \> \parbox[t]{\width}{{\em x, z}, weight of first BR=0 point}\\
+(2074,2075,2076) \> \parbox[t]{\width}{{\em x, z}, weight of the second BR=0 point}\\
+(2081,2082,2083) \> \parbox[t]{\width}{{\em x, z}, weight of first BZ=0 point}\\
+(2084,2085,2086) \> \parbox[t]{\width}{{\em x, z}, weight of second BZ=0 point}\\
+(2091,2092) \> \parbox[t]{\width}{{\em x, z} for preprogrammed volt seconds}\\
+(2093) \> \parbox[t]{\width}{Weight of flux control, used when ACOEF(318)=1, 2, or 3.}\\
+(2094) \> \parbox[t]{\width}{D-matrix scaling factor}\\
+(2095) \> \parbox[t]{\width}{Preprogrammed volt seconds, used when ACOEF(318)=3.}\\
+(2096) \> \parbox[t]{\width}{Derivative gain for ver{\nolinebreak}tical \nolinebreak position
+control. If ACOEF(2096)$\ne$0, group currents for a radial field moment must be given in
+ACOEF(451), ACOEF(452) etc.}\\
+(2100)-(2195) \> Same as above for second plasma shape\\
+(2200)-(2295) \> Same as above for third plasma shape\\
+(etc) \> \parbox[t]{\width}{Continue in same fashion for all plasma shapes} \index{control!Hofmann algorithm|)}
+\index{ACOEF array|)} \\
+(3001) \> = 1.0 to write special UFILE data,=2.0 for 1d and 2D UFILES \\
+(3003) \> transport multiplier for Coppi/Tang for flux $>$ acoef(3011) \\
+       \> can be input as time-dependent on type 78 \\
+(3004) \> first ITB coefficient:  minimum flux fraction \\
+(3005) \> second ITB coefficient: maximum flux fraction \\
+(3006) \> third ITB coefficient:  reduction multiplier \\
+       \> can be input as time-dependent on type 80 \\
+(3007) \> feedback coefficient for Chi Multiplier (0.0) \\
+(3008) \> second feedback coefficient for Chi Multiplier (1.0) \\
+(3009) \> spatial relaxation factor for GLF23 (.01) \\
+(3010) \> time relaxation factor for GLF23 (0.1) \\
+(3011) \> \parbox[t]{\width}{flux fraction for Coppi/Tang to apply acoef(3003) multiplier.  Also, H-mode pedistal location for transport models 8-10.
+The GLF23 and MMM95 models are only applied interior to this fraction. (.75)    Can be input as time dependent
+using the type 79.} \\
+\end{tabbing} 
+\setw{Note :}
+{\bf Note} : \parbox[t]{\width}{In order to use the Hofmann control scheme, the additional
+information described in section~(\ref{sec:control2}) must be provided through a subroutine.}\\
+\setw{(acoef(3012))X }
+\begin{tabbing}
+(acoef(3012))X \= set the tabs \kill
+(3012) \> \parbox[t]{\width}{flag for setting exponents n1/n2 in density profile if $>$0 (0)} \\
+(3013) \> \parbox[t]{\width}{n1} \\
+(3014) \> \parbox[t]{\width}{n2 } \\
+(3015) \> \parbox[t]{\width}{exponential factor in $\chi$ at the edge used in Coppi model (0)} \\
+(3101) \> \parbox[t]{\width}{hyper-conductivity coefficient to smooth temperature (0.008 to 0.020)} \\
+(3102) \> \parbox[t]{\width}{tped (temperature pedestal) for use with hyper-conductivity (also on time dependent card type 81)}\\
+(3208) \> \parbox[t]{\width}{switch to use EPED1 calculations: if $=$1 then TSC interpolates between hardwired values and adjust fhmodei. NOTE: the table contains EPED1 output for current of 7-10MA and 
+                             pedestal density of $4-10\times10^{19}$. For density and current outside the tabulated range, the pedestal temeprature is not accurate.}
+(4948) \> \parbox[t]{\width}{switch for using external diffusivity data if $>$0 (0)} \\
+(4950) \> \parbox[t]{\width}{time to start TRANSP coupling ($10^8$)} \\
+(4951) \> \parbox[t]{\width}{time step for TRANSP forward integration (0.0)} \\
+(4952) \> \parbox[t]{\width}{} \\
+(4953) \> \parbox[t]{\width}{\# of grids for profiles written to plasma state} \\
+(4954) \> \parbox[t]{\width}{zimp} \\
+(4955) \> \parbox[t]{\width}{H fraction in thermal ion species to be outputted to PS (0.0) (note: acoef(113)= D fraction)} \\ 
+(4956) \> \parbox[t]{\width}{beam power for each NBI used by TRANSP/NUBEAM (0.0)} \\
+(4957) \> \parbox[t]{\width}{number of Newton iterations for GLF linearization (1)} \\
+(4958) \> \parbox[t]{\width}{step size for derivatives in Newton iteration for GLF (-1.0)} \\
+(4959) \> \parbox[t]{\width}{switch for SWIM if $>$0 (0=no)} \\
+(4960) \> \parbox[t]{\width}{switch for TRANSP coupling if $>$0 (0=no)} \\
+(4961) \> \parbox[t]{\width}{switch for writing plasma state if $>$0 (0=no)} \\
+(4962) \> \parbox[t]{\width}{switch for using TSC in beam heating/current drive (0=yes)} \\
+(4963) \> \parbox[t]{\width}{switch for using TSC in fast ion source (0)} \\
+(4964) \> \parbox[t]{\width}{switch for using TSC in fast wave heating/current drive (0)} \\
+(4965) \> \parbox[t]{\width}{switch for using TSC in lower hybrid heating/current drive (0)} \\
+(4966) \> \parbox[t]{\width}{switch for using TSC in ECH heating/current drive (0)} \\
+(4967) \> \parbox[t]{\width}{switch for using external beam data if $>$0 (0)} \\
+(4968) \> \parbox[t]{\width}{switch for using external lower hybrid data if $>$0 (0)} \\
+(4969) \> \parbox[t]{\width}{switch for using external fast wave data if $>$0 (0)} \\
+(4970) \> \parbox[t]{\width}{switch for using external electron density data if $>$0 (0)} \\
+(4971) \> \parbox[t]{\width}{fraction of RF power to electrons when using analytic internal algorithm (1.0)} \\
+(4972) \> \parbox[t]{\width}{switch for using external electron rotation data if $>$0 (0)} \\
+(4973) \> \parbox[t]{\width}{switch to allow stored energy control using NB power if $>$0 (0)} \\
+(4974) \> \parbox[t]{\width}{switch to allow stored energy control using RF power if $>$0 (0)} \\
+(4975) \> \parbox[t]{\width}{switch for nb internal model, standard 0 (0)} \\
+(4976) \> \parbox[t]{\width}{switch for icrf internal model, standard 0 (0)} \\
+(4977) \> \parbox[t]{\width}{switch for density profile (0)} \\
+(4978) \> \parbox[t]{\width}{switch for using external line radiated power if $>$0 (0)} \\
+(4979) \> \parbox[t]{\width}{switch for using external ECRH data if $>$0 (0)} \\
+(4980) \> \parbox[t]{\width}{stop if reading PS failed if 1 (0)} \\
+(4981) \> \parbox[t]{\width}{itport(1) in GLF (0)} \\
+(4982) \> \parbox[t]{\width}{itport(2) in GLF (1)} \\
+(4983) \> \parbox[t]{\width}{itport(3) in GLF (1)} \\
+(4984) \> \parbox[t]{\width}{itport(4) in GLF (0)} \\
+(4985) \> \parbox[t]{\width}{itport(5) in GLF (0)} \\
+(4986) \> \parbox[t]{\width}{angular velocity used in GLF (0.0)} \\
+       \> \parbox[t]{\width}{angrotp(i)=acoef(4986)*(npsit-i)/npsit} \\
+(4987) \> \parbox[t]{\width}{alpha value for the "alpha-effect" in GLF (0.0)} \\
+(4988) \> \parbox[t]{\width}{switch for rotational stabilization in GLF (0=off)} \\
+(4989) \> \parbox[t]{\width}{} \\
+(4990) \> \parbox[t]{\width}{} \\
+(4991) \> \parbox[t]{\width}{if .gt.0; get pressure profile from trxpl} \\
+(4992) \> \parbox[t]{\width}{if .gt.0; get electron pressure profile from trxpl} \\
+(4993) \> \parbox[t]{\width}{if .gt.0; get density profile from trxpl} \\
+(4994) \> \parbox[t]{\width}{if .gt.0; get nubeam machine description and wall data from trxpl} \\
+\end{tabbing}
+\newpage \subsubsection{Card 12 - Transport} 
+\begin{tabbing} 
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill   
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\ 
+\footnotesize TEVV \>\footnotesize DCGS \>\footnotesize QSAW \>\footnotesize ZEFF
+\>\footnotesize IALPHA \>\footnotesize IBALSW \>\footnotesize ISAW 
+\end{tabbing} 
+\setw{IBALSW = 0.0X }
+\begin{tabbing} 
+IBALSW \= = 0.0X \= \parbox[t]{\width}{This is junk to set tabs} \kill 
+TEVV \> \> \parbox[t]{\width}{Temperature of the vacuum region for use in resistivity \index{vacuum temperature} \index{temperature!vacuum}
+calculation.  If TEVV is negative, (-TEVV) is used initially then TEVV is adjusted to give the
+maximum value which is numerically stable.  If type 34 card is included, this overrides value
+specified here. (1.0)}\\
+DCGS \> \> \parbox[t]{\width}{Reference number density in units of $10^{19} / \rm m^3$ \index{plasma!density} 
+The
+actual density for IDENS=1 is the product of DCGS and RNORM on type 24 card.}\\
+QSAW \> \> \parbox[t]{\width}{The resistivity is enhanced in the center of the plasma if
+ISURF=1 and ISAW=1 and the local safety factor satisfies q$<$QSAW.
+(see acoef(120) and acoef(124)) (1.0)}\\
+ZEFF \> \> \parbox[t]{\width}{The effective Z used in the resistivity calculation if iimp=0 on type 07. 
+Can also be input as a time dependent function on type 36. (1.0)} \index{resistivity enhancement}\\
+IALPHA \> \> \parbox[t]{\width}{Switch for $\alpha$-particle heating. If IALPHA=1, the \index{heating!fusion}
+$\alpha$-particle heating corresponding to a 50:50 D/T mixture is included in the energy
+equation. (0.0)}\\
+
+IBALSW \> \> Switch for ballooning calculation (0.0) \index{ballooning calculation} \index{stability!ballooning calculation}\\
+       \> = 0.0 \> No ballooning calculation\\
+       \> = 1.0 \> \parbox[t]{\width}{Ballooning calculation performed every NSKIPSF cycles on
+every flux surface.  Results are presented as a stability plot at the end of the calculation. {\em
+WARNING :} may be expensive for time dependent calculations }\\
+       \> = 2.0 \> \parbox[t]{\width}{Same as 1.0, with the addition that the thermal conductivity
+is increased by a factor of 10 on all surfaces found to be unstable.}\\
+  \> = 3.0 \> \parbox[t]{\width}{Same as 2.0, except only surfaces in the SOL are checked.}\\
+ISAW \> \> Switch for sawtooth model (1.0) \\
+       \> = 1.0 \> \parbox[t]{\width}{old "Standard" sawtooth model 
+                 (average in time, based on qsaw)  Also, increases Chi and eta inside
+                 q=qsaw surface based on ACOEF(120) and (124)}\\
+       \> = 2.0 \> \parbox[t]{\width}{Kadomtsev Sawtooth at times specified on type 75 card}\\
+       \> = 3.0 \> \parbox[t]{\width}{Full Porcilli Model}\\
+
+
+
+\end{tabbing}
+\newpage \subsubsection{Card 13 - Initial Conditions}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71 \\
+\footnotesize ALPHAG \>\footnotesize ALPHAP \>\footnotesize NEQMAX \>\footnotesize
+XPLAS \>\footnotesize ZPLAS \>\footnotesize GZERO \>\footnotesize QZERO
+\end{tabbing}
+\setw{ALPHAG X}
+\begin{tabbing}
+ALPHAG \= X\= \parbox[t]{\width}{THIS IS JUNK} \kill
+ALPHAG \> \> \parbox[t]{\width}{The initial toroidal field is given by $g\nabla \phi$ where} \index{toroidal field|(}\\
+ \\
+\> \>For IFUNC =1: \\
+ \\
+ \> \> $gg^{'}$ = [GP1*FF1($\Psi$)+GP2*FF2($\Psi$)]\\
+  \\
+ \> \> where\\
+  \\
+ \> \> FF1($\hat{\Psi})=-\hat{\Psi}^{\rm ALPHAG}$\\
+ \> \> FF2($\hat{\Psi})=-4.0\hat{\Psi}^{\rm ALPHAG} [1-\hat{\Psi}]$\\
+ \> \> $\hat{\Psi}$=($\Psi_{lim}-\Psi)/(\Psi_{lim}-\Psi_{min})$\\
+ \\
+ \> \> \parbox[t]{\width}{And GP1 and GP2 are determined so that the central q value is QZERO
+and the total plasma current is PCUR(ISTART).}\\
+ \\
+\> \> For IFUNC=2:
+\end{tabbing}
+\begin{displaymath}
+\frac{1}{2} \frac{dg^2}{d\Psi} = ({\rm XPLAS^2*PO*(1/BETAJ-1)}*\left[
+\frac{e^{-({\rm ALPHAG})\hat{\Psi}}-e^{-({\rm ALPHAG})}}{e^{-({\rm ALPHAG})}-1} \right
+]
+\end{displaymath}
+\begin{tabbing}
+ALPHAG \= X\= \parbox[t]{\width}{THIS IS JUNK} \kill
+\> \> \parbox[t]{\width}{where $\hat{\Psi} = (\Psi-\Psi_{min})/(\Psi_{lim}-\Psi_{min})$,
+BETAJ=ACOEF(27), and PO above and in the pressure equation are initialized by the type 17
+card, but are iterated (renormalized) so the total plasma current is PCUR(ISTART) and $g$=GZERO at
+$\Psi=\Psi_{lim}$.}\\
+ \\
+\> \>For IFUNC=3:\\
+ \\
+\> if (DELG $>$ 0) $g$=GZERO + (const) $\hat{\Psi}^{\rm ALPHAG}$ \\
+\> \> \parbox[t]{\width}{where (const) is chosen to make plasma current equal to PCUR(ISTART)
+         (as specified on the type 16 card)}\\
+\>if (DELG $<$ 0)  $g$=GPRFP*(1+(DELG-1)$\hat{\Psi}^{\rm ALPHAG}$)\\
+ \\
+\> \> \parbox[t]{\width}{where DELG=ACOEF(25) and GRPFP=ACOEF(26) is iterated
+(renormalized) so the total plasma current is PCUR(ISTART)}\\
+ \\
+\> \> For IFUNC=4:\\
+ \\
+\> \>$g^2 = \rm GZERO^2 +2*GP1*FF1(\Psi)$\\
+ \\
+\> \> \parbox[t]{\width}{and GP1 is determined so the total plasma current is GCUR(1)}\\
+ \\
+\> \>For IFUNC=5:
+\end{tabbing}
+\begin{displaymath}
+-\frac{1}{2} \frac{dg^2}{d\Psi}=\frac{{\rm GP1}/2 \pi \eta +(p^{'}+ \langle J_{CD} \rangle )
+/ \langle R^{-2} \rangle}{ \langle B^2 \rangle / \langle B^2_T \rangle}\\
+\end{displaymath}
+\begin{tabbing}
+ALPHAG \= X\= \parbox[t]{\width}{THIS IS JUNK} \kill
+ALPHAP \> \>\parbox[t]{\width}{Pressure exponent for equilibrium calculation \index{plasma!pressure}(see type 02
+card)}\\
+NEQMAX \> \> \parbox[t]{\width}{Maximum number of equilibrium iterations allows. Normal
+value is 200.  If NEQMAX is negative, the absolute value is used and the error flag is skipped
+if convergence is not obtained in ABS(NEQMAX) iterations.}\\
+XPLAS \> \> \parbox[t]{\width}{Initial guess for the $x$ coordinate of the magnetic axis.
+This value is used as the nominal major radius in several calculations.} \\
+ZPLAS \> \>\parbox[t]{\width}{Initial guess for the $z$ coordinate of the magnetic axis.
+This value is used as the nominal vertical position in several calculations.} \\
+GZERO \> \>\parbox[t]{\width}{Vacuum toroidal field given by GZERO $\nabla \phi$.  This can be specified
+ as a function of time on the type 27 card.} \index{toroidal field|)}\\
+QZERO \> \>\parbox[t]{\width}{Initial value of the safety factor at the magnetic axis for
+IFUNC=1}
+\end{tabbing}
+\newpage \subsubsection{Card 14 - Initial Conditions 2}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \\
+\footnotesize ISTART \>\footnotesize XZERIC \>\footnotesize AXIC \>\footnotesize ZZERIC
+\>\footnotesize BZIC 
+\end{tabbing}
+\setw{ISTART XX}
+\begin{tabbing}
+ISTART XX\= \parbox[t]{\width}{used to set tabs} \kill
+ISTART \> \parbox[t]{\width}{This indicates at which time point TPRO(I) as specified on the
+type 18 card the calculation is to begin.  The normal value is 1.} \index{time!starting}\\
+XZERIC \>\parbox[t]{\width}{If this is nonzero, the initial equilibrium iteration will be initialized
+with the plasma current distributed over a rectangular region centered at XZERIC and ZZERIC
+and with half width AXIC and half height BZIC.  If these variables are specified, then the initial
+plasma position XPLAS and ZPLAS on the type 13 card are overwritten.}\\
+AXIC \> See above\\
+ZZERIC \> See above\\
+BZIC \> See above
+\end{tabbing}
+\newpage \subsubsection{Card 15 - Coil Group Current}
+\index{coils!current}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize IGROUP \>\footnotesize GCUR(1)  \>\footnotesize GCUR(2) \>\footnotesize
+GCUR(3) \>\footnotesize GCUR(4) \>\footnotesize GCUR(5) \>\footnotesize GCUR(6)
+\end{tabbing}
+\setw{IGROUP X}
+\begin{tabbing}
+IGROUP  X\= \parbox[t]{\width}{this is junk to set tabs} \kill
+IGROUP \> \parbox[t]{\width}{The group number used to identify the coil. It is specified on type
+9 and 10 cards for the external and internal coils.  If IGROUP$<$0, then ABS(IGROUP) is used
+and this coil group has zero net current constraint applied if ACOEF(41)$>$0.  If
+RESGS(IGROUP)
+is non-zero, then this resistance is used for the group resistance.}\\
+GCUR(I) \> \parbox[t]{\width}{The programmed coil current (kA) for the coil group IGROUP
+at
+time TPRO(I).  When using the Hofmann control scheme only the initial coil currents are
+needed.}
+\end{tabbing}
+\pagebreak
+\newpage \subsubsection{Card 16 - Plasma Current}
+\index{plasma!current}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize PCUR(1)  \>\footnotesize PCUR(2) \>\footnotesize PCUR(3)
+\>\footnotesize PCUR(4)  \>\footnotesize PCUR(5) \>\footnotesize PCUR(6)
+\end{tabbing}
+\setw{PCUR(I) X}
+\begin{tabbing}
+PCUR(I) X\= \parbox[t]{\width}{this is junk to set tabs} \kill
+PCUR(I) \> \parbox[t]{\width}{The programmed plasma current (kA) at the time TPRO(I)}
+\end{tabbing}
+\newpage \subsubsection{Card 17 - Plasma Pressure}
+\index{plasma!pressure}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize PPRES(1)  \>\footnotesize PPRES(2) \>\footnotesize PPRES(3)
+\>\footnotesize PPRES(4)  \>\footnotesize PPRES(5) \>\footnotesize PPRES(6)
+\end{tabbing}
+\setw{PPRES(I) X}
+\begin{tabbing}
+PPRES(I) X\= \parbox[t]{\width}{this is junk to set tabs} \kill
+PPRES(I) \> \parbox[t]{\width}{The programmed plasma pressure (mks) at the time TPRO(I).
+For
+IPRES=0, only the initial value is needed. For IPRES=1, all values are used.}
+\end{tabbing}
+\newpage \subsubsection{Card 18 - Time }
+\index{time!specified points}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize TPRO(1)  \>\footnotesize TPRO(2) \>\footnotesize TPRO(3)
+\>\footnotesize TPRO(4)  \>\footnotesize TPRO(5) \>\footnotesize TPRO(6)
+\end{tabbing}
+\setw{TPRO(I) X}
+\begin{tabbing}
+TPRO(I) X\= \parbox[t]{\width}{this is junk to set tabs} \kill
+TPRO(I) \> \parbox[t]{\width}{Time (in seconds) corresponding to GCUR(I),PCUR(I), etc.  The
+intermediate values are linearly interpolated for ICUBE=0, cubic interpolation is used for
+ICUBE=1 (set by ACOEF(17)).  Note that while most time dependent quantities are interpolated
+between time points, auxiliary heating system powers specified on type 23 (Neutral Beam) and 46
+ (Lower Hybrid) cards come on abruptly at these times and stay at the fixed level during each time
+interval.}
+\end{tabbing}
+\newpage \subsubsection{Card 19 - Feedback 1}
+\index{feedback!systems|(}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  L  \>\footnotesize NRFB(L)  \>\footnotesize NFEEDO(L) \>\footnotesize
+FBFAC(L) \>\footnotesize FBCON(L)  \>\footnotesize IDELAY(L) \>\footnotesize FBFACI(L)
+\end{tabbing}
+\setw{NFEEDO(L) X}
+\begin{tabbing}
+NFEEDO(L) X\= SET TABS \kill
+L \> Number of feedback system\\
+NRFB(L) \> If NRFB(L)$>$0, indicates coil group number for feedback\\
+        \> If NRFB(L)=0, indicates feedback on plasma current\\
+NFEEDO(L) \> \parbox[t]{\width}{Observation pair number (type 8) used in feedback system.  
+This is ignored if IPEXT(L) $>$ 3 (type 20).}\\
+FBFAC(L) \> \parbox[t]{\width}{This is a proportionality factor between the coil group current
+and the desired flux difference.  Units are (amps/weber/radian)  For external coils, this current
+is changed instantaneously for ICIRC=0, or a voltage is applied through
+the circuit equations for ICIRC=1.
+For internal coils, a voltage is applied (proportional to the wire
+resistivity) so that the desired current will be obtained after the coil L/R time. If IPEXT(L)=4 on
+corresponding type 20 card, FBFAC(L) is the proportionality factor between coil group current
+desired and difference between plasma current and plasma current desired.}\\
+FBCON(L) \> \parbox[t]{\width}{Flux offset, FBFAC(L) multiplies :\\
+(PSI1-PSI2-FBCON(L)*FAC)}\\
+IDELAY(L) \> \parbox[t]{\width}{If this is greater than zero, a time delay of IDELAY(L) time
+steps is introduced into the calculations.  Note that the parameter PDELAY must be greater than
+the maximum IDELAY(L).}\\
+FBFACI(L) \> \parbox[t]{\width}{This is the time integral feedback proportionality term.  It is
+the same as FBFAC(L) except it multiplies the time integral of the flux or current difference. 
+May be superimposed with FBFAC.}\\
+ \\
+{\bf Note} :\> \parbox[t]{\width}{If the first field on the type 19 card is equal to 1000.0, this
+card defines time varying observation points for the feedback system defined by the preceding
+type 19 card. The format is similar to that of the type [15,16,17,18,23,24] cards:}
+\end{tabbing}
+\begin{tabbing}
+XXXXXX \= XXXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX
+\=XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  1000.0  \>\footnotesize NFEEDV(1,L)  \>\footnotesize (2,L) \>\footnotesize (3,L)
+\>\footnotesize (4,L)  \>\footnotesize (5,L) \>\footnotesize(6,L)
+\end{tabbing}
+\setw{NFEEDV(I,L) }
+NFEEDV(I,L) \parbox[t]{\width}{Observation pair number (type 08) used in feedback system
+L at time point I (type 18).  Multiple cards can be included to define more than 6 points}
+\newpage \subsubsection{Card 20 - Feedback 2 }
+\begin{tabbing}
+XXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX
+\=XXXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  L  \>\footnotesize TFBONS(L)  \>\footnotesize TFBOFS(L) \>\footnotesize
+FBFAC1(L) \>\footnotesize FBFACD(L) \>\footnotesize IPEXT(L) 
+\end{tabbing}
+\setw{TFBONS(L) = 1.0 }
+\begin{tabbing}
+TFBONS(L) \= = 1.0XX \=  SET TABS \kill
+L \> \> \parbox[t]{\width}{Number of feedback system (same as that on corresponding type 19
+card)}\\
+TFBONS(L) \> \> \parbox[t]{\width}{Time when feedback system L is turned on (sec)}\\
+TFBOFS(L) \> \> \parbox[t]{\width}{Time when feedback system L is turned off (sec)}\\
+FBFAC1(L) \> \> \parbox[t]{\width}{If $>$0, factor multiplying FBCON is proportional to the
+(plasma current)/(final current)}\\
+FBFACD(L) \> \> \parbox[t]{\width}{This is the time derivative feedback proportionality term. 
+It is the same as FBFAC(L) and FBFACI(L) except it multiplies the time derivative of the flux
+or current difference.  It may be superimposed with FBFAC and FBFACI}\\
+IPEXT(L) \> \>\parbox[t]{\width}{Signifies which flux to used from the observation coils}\\
+\> = 1.0 \> Total flux per radian\\
+\> = 2.0 \> Flux from coils only (not presently available)\\
+\> = 3.0 \> Flux from plasma only (not presently available)\\
+\> = 4.0 \> \parbox[t]{\width}{Feedback signal is proportional to plasma current minus preprogrammed
+value.  For this option , FBFAC is dimensionless}\\
+\> = 5.0 \> \parbox[t]{\width}{Feedback signal is proportional to (XMAG-XMAGO(t)). where
+XMAGO(t) is defined on type 30 card$\ldots$see note 4}\\
+\> = 6.0 \> \parbox[t]{\width}{Feedback signal is proportional to (ZMAG-ZMAGO(t)). where
+ZMAGO(t) is defined on type 31 card$\ldots$see note 4}\\
+\> = 7-10 \> \parbox[t]{\width}{Feedback is proportional to EPS1C-EPS4C}\\
+\> = 10NN \> \parbox[t]{\width}{Feedback is proportional to current in wire NN}\\
+\> = 21-24 \> \parbox[t]{\width}{Special option for RFP, proportional to $\cos(\theta) -
+\cos(4\theta)$}\\
+\> = 25 \> \parbox[t]{\width}{Special shape control using acoef(510) and cards 62-63
+}\\
+\end{tabbing}
+{\bf Note 1} : If TFBONS or TFBOFS are negative, then their absolute value refers to the cycle
+number for which the feedback is turned on or off.\\
+ \\
+{\bf Note 2} : If controlling plasma current by using IPEXT(L)=4, the automatic plasma current
+control should be turned off by setting ACOEF(11)=0.\\
+ \\
+{\bf Note 3} : If IPEXT(L) = 7,8,9,10, the switch ISVD must be set to 1.0 on type 03 card\\
+ \\
+{\bf Note 4} : Feedback signal multiplied by ($I_p$/1 MA) for IPEXT(5) or IPEXT(6) \index{feedback!systems|)}
+\pagebreak
+\subsubsection{Card 21 - Contour Plots}
+\index{output!contour plots}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  ICPLET  \>\footnotesize ICPLGF  \>\footnotesize ICPLWF \>\footnotesize ICPLPR
+\>\footnotesize ICPLBV 
+\>\footnotesize ICPLUV \>\footnotesize ICPLXP
+\end{tabbing}
+If any of these switches are set to 1.0, the following contour plots are produced every NSKIPL
+cycles.
+\begin{tabbing}
+ICPLWF xx \= This is junk to set tabs \kill
+ICPLET    \> Resistivity array ETAY\\
+        \> If (IRFP=1) ETA*J\\
+ICPLGF \> Toroidal field function g\\
+ICPLWF \> Toroidal velocity W \\
+       \> If (IRFP=1) ( $\vec{J} \cdot \vec{B} /B^2$ ) \\
+ICPLPR \> Pressure p\\
+ICPLBV \> Curl of the velocity field B $\equiv {\it \Delta}^* A$\\
+       \> If (IRFP=1) HYPER/J \\
+ICPLUV \> Divergence of velocity field U$\equiv \nabla^2 \Omega$\\
+       \> If (IRFP=1) (ETA*J+HYPER)/(ETA*J)\\
+ICPLXP \> Close-up of poloidal flux near x-point region
+\end{tabbing}
+\newpage \subsubsection{Card 22 - Vector Plots}
+\index{output!vector plots}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  IVPLBP  \>\footnotesize IVPLVI  \>\footnotesize IVPLFR \>\footnotesize IVPLJP
+\>\footnotesize IVPLVC 
+\>\footnotesize IVPLVT \>\footnotesize -
+\end{tabbing}
+If any of these switches are set to 1.0, the following vector plots are produced every NSKIPL
+cycles.
+\begin{tabbing}
+IVPLFR xx \= Set the tab stops \kill
+IVPLBP \> Poloidal magnetic field\\
+IVPLVI \> Incompressible velocity field\\
+IVPLFR \> Forces\\
+IVPLJP \> Poloidal current\\
+IVPLVC \> Compressible velocity field\\
+IVPLVT \> Total velocity field\\
+\end{tabbing}
+\newpage \subsubsection{Card 23 - Neutral Beam}
+\index{neutral beam!amplitude}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize BEAMP(1)  \>\footnotesize BEAMP(2) \>\footnotesize
+BEAMP(3) \>\footnotesize BEAMP(4) 
+\>\footnotesize BEAMP(5) \>\footnotesize BEAMP(6)
+\end{tabbing}
+\setw{BEAMP(I) X}
+\begin{tabbing}
+BEAMP(I) X\= \parbox[t]{\width}{this is junk to set tabs} \kill
+BEAMP(I) \> \parbox[t]{\width}{The amplitude of the neutral beam source (MW) at time
+TPRO(I).  The deposition profile is given on the type 25 card.}
+\end{tabbing}
+\newpage \subsubsection{Card 24 - Plasma Density}
+\index{plasma!density}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize RNORM(1)  \>\footnotesize RNORM(2) \>\footnotesize
+RNORM(3) \>\footnotesize RNORM(4) \>\footnotesize RNORM(5) \>\footnotesize RNORM(6)
+\end{tabbing}
+\setw{RNORM(I) X}
+\begin{tabbing}
+RNORM(I) X\= \parbox[t]{\width}{this is junk to set tabs} \kill
+RNORM(I) \> \parbox[t]{\width}{The normalized central density for IDENS=1 at time TPRO(I).
+The actual density is RNORM(I)*DCGS.}
+\end{tabbing}
+\newpage \subsubsection{Card 25 - Neutral Beam Deposition Profile}
+\index{neutral beam!deposition profile}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  ABEAM  \>\footnotesize DBEAM  \>\footnotesize NEBEAM \>\footnotesize
+EBEAMKEV \>\footnotesize AMBEAM  \>\footnotesize FRACPAR \>\footnotesize IBOOTST
+\end{tabbing}
+\setw{EBEAMKEV X}
+\begin{tabbing}
+EBEAMKEV X\= \parbox[t]{\width}{This is junk to set tabs} \kill
+ABEAM \>\parbox[t]{\width}{This variable along with DBEAM and NEBEAM specify the
+spatial
+external heat source deposition profile which is multiplied by the beam amplitude parameter on
+the type 23 card. (0.25)  The spatial form factor is}\\
+ \\
+\> FF=F1*F2/SUM\\
+ \\
+\> F1=$\rm DBEAM ^2/[(\hat{\Psi}-ABEAM)^2+DBEAM^2]$\\
+ \\
+\> F2=(1-$\rm \hat{\Psi}^2)^{NEBEAM}$\\
+ \\
+\>\parbox[t]{\width}{with $\hat{\Psi}=(\Psi-\Psi_{min})/(\Psi_{lim}-\Psi_{min})$ and SUM is
+the normalization factor.}\\
+\\
+DBEAM \> See ABEAM above. (0.1)\\
+NEBEAM \> See ABEAM above. (1.0)\\
+EBEAMKEV \> Energy of the neutral beam ions in keV. (80.)\\
+AMBEAM \> Mass of the neutral beam particles in amu. (1.0)\\
+FRACPAR \> \parbox[t]{\width}{Fraction of beam particles which are oriented parallel to the
+plasma current (0.0). -1$<$ FRACPAR $<$ 1. This can be input as a
+function of time, TPRO(I), on the type 50 card.}\\
+IBOOTST \>\parbox[t]{\width}{If IBOOTST$\ne$0, the bootstrap current\index{bootstrap current} is included in the
+calculation.  If IBOOTST=1, the collisionless Hirshman model is used and if IBOOTST=2 the
+collisional Harris model is used}       
+\end{tabbing}
+\pagebreak
+\subsubsection{Card 26 - Anomalous Transport}
+\index{transport!anomalous}
+\begin{tabbing}
+XXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize FBCHIA(1)  \>\footnotesize FBCHIA(2) \>\footnotesize
+FBCHIA(3) \>\footnotesize FBCHIA(4) \>\footnotesize FBCHIA(5) \>\footnotesize FBCHIA(6)
+\end{tabbing}
+\setw{FBCHIA(I) X}
+\begin{tabbing}
+FBCHIA(I) X\= \parbox[t]{\width}{This is junk to set tabs} \kill
+FBCHIA(I) \>Factor by which thermal conductivity is enhanced at time TPRO(I) \\
+\end{tabbing}
+\newpage \subsubsection{Card 27 - Toroidal Field}
+\index{toroidal field}
+\begin{tabbing}
+XXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize GZEROV(1)  \>\footnotesize $\ldots$(2) \>\footnotesize  $\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize GZEROV(6)
+\end{tabbing}
+\setw{GZEROV(I) X}
+\begin{tabbing}
+GZEROV(I) X\= \parbox[t]{\width}{This is junk to set tabs} \kill
+GZEROV(I) \> Vacuum toroidal field function GZERO at time TPRO(I) \\
+\end{tabbing}
+
+\newpage \subsubsection{Card 28 - Loop Voltage}
+\index{loop voltage}
+\begin{tabbing}
+XXXXX \= XXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize VLOOPV(1)  \>\footnotesize $\ldots$(2) \>\footnotesize  $\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize
+VLOOPV(6)
+\end{tabbing}
+\setw{VLOOPV(I) X}
+\begin{tabbing}
+VLOOPV(I) X\= \parbox[t]{\width}{This is junk to set tabs} \kill
+VLOOPV(I) \> \parbox[t]{\width}{Programmed loop voltage for OH system at time TPRO(I). 
+In
+general, a loop voltage determined by feedback will be superimposed on VLOOPV(I).  The
+``automatic'' plasma current control feedback is proportional to ACOEF(11). The maximum and
+minimum loop voltages (sum of preprogrammed and feedback) are limited by ACOEF(15)(min)
+and ACOEF(16)(max).  Currents in passive conductors are initialized when
+VLOOPV(ISTART)$>$0 and ACOEF(41)=0.}
+\end{tabbing}
+\newpage \subsubsection{Card 29 - PEST Output}
+\index{PEST file}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize TPEST(1)  \>\footnotesize TPEST(2) \>\footnotesize TPEST(3)
+\>\footnotesize TPEST(4) \>\footnotesize TPEST(5) \>\footnotesize TPEST(6)
+\end{tabbing}
+\setw{TPEST(I) X}
+\begin{tabbing}
+TPEST(I) X\= This is junk to set tabs \kill
+TPEST(I) \> \parbox[t]{\width}{The specified times at which PEST output is to be written onto
+file EQDSKA for IPEST=1. Plots and a restart file are also written at these times.}
+\end{tabbing}
+
+\newpage \subsubsection{Cards 30 and 31 - Magnetic Axis}
+\index{feedback!systems}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize XMAGO(1)  \>\footnotesize XMAGO(2) \>\footnotesize
+XMAGO(3) \>\footnotesize XMAGO(4) \>\footnotesize XMAGO(5) \>\footnotesize XMAGO(6)\\
+\footnotesize  - \>\footnotesize ZMAGO(1)  \>\footnotesize ZMAGO(2) \>\footnotesize
+ZMAGO(3) \>\footnotesize ZMAGO(4) \>\footnotesize ZMAGO(5) \>\footnotesize ZMAGO(6)
+\end{tabbing}
+\setw{XMAGO(I) X}
+\begin{tabbing}
+XMAGO(I) X\=  set tabs \kill
+XMAGO(I)  \=  \parbox[t]{\width}{The $x$-magnetic axis position corresponding to time
+TPRO(I) for use in feedback system (type 19,20) with IPEXT=5}\\
+ZMAGO(I)  \=  \parbox[t]{\width}{The $z$-magnetic axis position corresponding to time
+TPRO(I) for use in feedback system (type 19,20) with IPEXT=6}
+\end{tabbing}
+
+\newpage \subsubsection{Card 32 - Divertor Plate}
+\index{divertor}
+\begin{tabbing}
+XXXXX \= XXXXXXX \= XXXXX \= XXXXX \= XXXXX \= XXXXXXX \=  XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize N \>\footnotesize XLPLATE(N) \>\footnotesize ZL$\ldots$(N) \>\footnotesize
+XR$\ldots$(N) \>\footnotesize ZR$\ldots$(N) \>\footnotesize FPLATE(N,1) \>\footnotesize FPLATE(N,2)
+\end{tabbing}
+\setw{XLPLATE(N) X}
+\begin{tabbing}
+XLPLATE(N) X\= this is to set tabs \kill
+N \> Number of divertor plate\\
+XLPLATE(N) \> \parbox[t]{\width}{The $x$-coordinate of leftmost side of divertor plate N.}\\
+ZLPLATE(N) \> \parbox[t]{\width}{The $z$-coordinate of leftmost side of divertor plate N.}\\
+XRPLATE(N) \> \parbox[t]{\width}{The $x$-coordinate of rightmost side of divertor plate N.}\\
+ZRPLATE(N) \> \parbox[t]{\width}{The $z$-coordinate of rightmost side of divertor plate N.}\\
+FPLATE(N,1) \> \parbox[t]{\width}{Fraction of charged particle heat flux deposited on divertor
+plate N. Outside strike point is 1, inside is 2}\\
+FPLATE(N,2) \> \parbox[t]{\width}{See FPLATE(N,1)}\\
+ \\
+\parbox[t]{\textwidth}{The plate will be divided into PNSEG bins, and the heat flux in each bin
+will be calculated and plotted. One sided exponential distributions are used, based on midplane
+scrapeoff distance of 0.6 cm.}\\
+\\
+{\bf Note} : \> \parbox[t]{\width}{The default divertor shape follows a straight line between the coordinates 
+specified here.  If this card is followed by additional type 32 cards with option 1000 in the second field,
+additional defining points are added.  The individual PNSEG+1 x-z coordinates are input 3 per
+card as follows}\\
+\\
+{\bf Note} : \> \parbox[t]{\width}{Acoef(700)-(704) must be defined for divertor plots}\\
+\\
+XXXXX \= XXXXX \= XXXXX \= XXXXX \= XXXXX \= XXXXX \= XXXXX \= XXXXX
+\kill
+32 \> 10000. \> X(I) \> Z(I) \> X(I+1) \> Z(I+1) \> X(I+2) \> Z(I+2)
+\end{tabbing}
+\pagebreak
+\subsubsection{Card 33 - Gap Resistance}
+\index{gap resistance}
+\begin{tabbing}
+XXXXXX \= XXXXXX \kill
+11 \> 21 \\
+\footnotesize IGROUP \>\footnotesize RESGS(IGROUP)
+\end{tabbing}
+\setw{IGROUP X}
+\begin{tabbing}
+IGROUP X\= this is to set tabs \kill
+IGROUP \> \parbox[t]{\width}{Group number of coil (same as type 15 card).}\\
+RESGS \> \parbox[t]{\width}{The resistance of gap in coil.  This will override the gap resistance
+computed from ACOEF(41) when IGROUP is negative.}
+\end{tabbing}
+
+\newpage \subsubsection{Card 34 - Vacuum Temperature}
+\index{vacuum temperature} \index{temperature!vacuum}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize TEVVO(1)  \>\footnotesize TEVVO(2) \>\footnotesize
+TEVVO(3) \>\footnotesize TEVVO(4) \>\footnotesize TEVVO(5) \>\footnotesize TEVVO(6)
+\end{tabbing}
+\setw{TEVVO(I) X}
+\begin{tabbing}
+TEVVO(I) X\= set the tab \kill
+TEVVO(I) \> \parbox[t]{\width}{Vacuum temperature TEVV at time point I. This
+card overrides the value specified on type 12 card.  This option is NOT
+recommended, rather set TEVV negative on the type 12 card and allow TSC
+to determine the value}
+\end{tabbing}
+\newpage \subsubsection{Card 35 - Mass Enhancement}
+\index{mass enhancement}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize FFACO(1)  \>\footnotesize FFACO(2) \>\footnotesize FFACO(3)
+\>\footnotesize TEVVO(4) \>\footnotesize FFACO(5) \>\footnotesize FFACO(6)
+\end{tabbing}
+\setw{FFACO(I) X}
+\begin{tabbing}
+FFACO(I) X\= set the tab \kill
+FFACO(I) \>\parbox[t]{\width}{Mass enhancement FFAC at time point I.  Inclusion of of this card
+will override the value specified on type 03 card.}
+\end{tabbing}
+\newpage \subsubsection{Card 36 - Resistivity Enhancement}
+\index{resistivity enhancement}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  -  \>\footnotesize ZEFFV(1)  \>\footnotesize ZEFFV(2) \>\footnotesize ZEFFV(3)
+\>\footnotesize ZEFFV(4) \>\footnotesize ZEFFV(5) \>\footnotesize ZEFFV(6)
+\end{tabbing}
+\setw{ZEFFV(I) X}
+\begin{tabbing}
+ZEFFV(I) X\= set the tab \kill
+ZEFFV(I) \> \parbox[t]{\width}{Resistivity enhancement ZEFF at time point I.  Inclusion of this
+card will override the value specified on type 12 card.  Only used for IIMP=0 on type 07.}
+\end{tabbing}
+
+\newpage \subsubsection{Card 37 - Voltage Group}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  IGROUP \>\footnotesize GVOLT(1)  \>\footnotesize GVOLT(2) \>\footnotesize
+GVOLT(3) \>\footnotesize GVOLT(4) \>\footnotesize GVOLT(5) \>\footnotesize GVOLT(6)
+\end{tabbing}
+\setw{GVOLT(I) X}
+\begin{tabbing}
+GVOLT(I) X\= set tabs \kill
+GVOLT(I) \> \parbox[t]{\width}{The preprogrammed voltage (kV) for coil group IGROUP at
+time TPRO.  This is the equivalent one turn voltage.}
+\end{tabbing}
+
+\newpage \subsubsection{Card 38 - ILHCD}
+\index{heating!RF}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  ILHCD \>\footnotesize VILIM  \>\footnotesize FREQLH \>\footnotesize AION
+\>\footnotesize ZION \>\footnotesize CPROF \>\footnotesize IFK\\
+\end{tabbing}
+\setw{ILHCD = 0.0 XX}
+\begin{tabbing}
+ILHCD \= 0.0 XX\= set tabs \kill
+ILHCD \>= 0.0 \> \parbox[t]{\width}{No LHCD calculation and no hot plasma conductivity correction}\\
+
+      \> = 1.0 \> \parbox[t]{\width}{LHCD calculation and hot plasma conductivity contribution are
+included}\\
+VILIM \> \>  \parbox[t]{\width}{Lower velocity limit for the LHCD spectrum normalized to
+local thermal velocity. (typical value 2 to 3)}\\
+FREQLH \> \> \parbox[t]{\width}{Frequency in GHz of the LH wave(3.7 for instance)}\\
+AION \> \>\parbox[t]{\width}{Ratio of masses $\rm m_i/M_p$ for the dominant ion species (1
+for hydrogen)}\\
+ZION \> \>\parbox[t]{\width}{Atomic number of the dominant ion species}\\
+CPROF \> \>\parbox[t]{\width}{Option to calculate the RF current profile}\\
+      \> = 0.0 \>\parbox[t]{\width}{RF current profile is calculated from the Fisch formula
+(depends on power)}\\
+      \> = 1.0 \>\parbox[t]{\width}{RF current profile is calculated independently of power, from
+cards 55-58 according to}
+\end{tabbing}
+\begin{displaymath}
+\> \> \frac{d_c^2 r^{a_{c_1}}(1-r)^{a_{c_2}}}{(r-a_c)^2+d_c^2}\\
+\end{displaymath}
+\begin{tabbing}
+ILHCD \= 0.0 XX\= set tabs \kill
+IFK \>= 1.0 \> Read data file TSCOUTA\\
+    \>= 2.0 \> Call LSC(see acoef(700),(701),(106))
+\end{tabbing}
+
+\newpage \subsubsection{Card 39 - External Coils 2}
+\index{coils!external}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  ICO \>\footnotesize DXCOIL  \>\footnotesize DZCOIL \>\footnotesize FCU
+\>\footnotesize FSS \>\footnotesize TEMPC \>\footnotesize CCICS \\
+\end{tabbing}
+\setw{DXCOIL X} 
+\begin{tabbing}
+DXCOIL X\= set tabs \kill
+ICO \> External coil number (same as on type 09 card)\\
+DXCOIL \> Radial thickness of coil in meters\\
+DZCOIL \> Vertical thickness of coil in meters\\
+FCU \> \parbox[t]{\width}{Fraction of coil volume which is copper (see note below)}\\
+FSS \> Fraction of coil volume which is stainless steel\\
+TEMPC \> Initial temperature of coil in ${ }^{\footnotesize \circ}$K\\
+CCICS \> Initial induced current in coil (kA)\\
+ \\
+Note: \> \parbox[t]{\width}{If FCU(N)$>$1, the truncated integer refers to the alloy type, while
+the decimal fraction refers to the fraction}\\
+Note:  \> \parbox[t]{\width}{For superconducting coils,
+set ITEMP=-1 (type 12), FSS=0, TEMPC=2., FCU=0, RSCOILS=1.e-12 }\\
+ \\
+ \> 0.000$<$FCU$<$0.999 \= OFHC Copper\\
+\>  1.000$<$FCU$<$1.999 \> AL25 (Glidcop)\\
+\>  2.000$<$FCU$<$2.999 \> Berylium Copper
+\end{tabbing}
+
+\newpage \subsubsection{Card 40 - Output Reduction}
+\index{output!reduction}
+\begin{tabbing}
+XXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize NOPLOT(1) \>\footnotesize $\ldots$(2) \>\footnotesize $\ldots$(3) \>\footnotesize
+$\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize $\ldots$(6) \>\footnotesize NOPLOT(7)\\
+\end{tabbing}
+Plots are suppressed if the following numbers are assigned to the NOPLOT array on type(40) cards.
+\begin{tabbing}
+XX\= XXXXX \= set tabs \kill
+\underline{NOPLOT} \> \>  \underline{Description} \\
+\>1 \> Grid, coils and limiters \\
+\>2 \> Switch and time step information\\
+\>3 \> Filament growth rate model\\
+\>4 \> Initial coil and wire information\\
+\>5 \> Coil currents,cycle=\#\\
+\>6 \> Current and flux\\
+\>7  \> Special for spheromak formation \\
+\>8 \> Special x-point plot\\
+\>9 \> Heat flux, plate \# cycle \#\\
+\>10 \> Profile plots(eg: q-prof vs poloidal flux, etc.)\\
+\>11 \> Surface profiles, cycle=\#\\
+\>12 \> Summary plot\\
+\>13 \> Flux measurements of observation pairs\\
+\>14 \> Special divertor plots\\
+\>15 \> Group number current and voltage\\
+\>16 \> Current groups\\
+\>17 \> Group voltage\\
+\>18 \> Group power\\
+\>19 \> Group energy\\
+\>20 \> Total power and energy\\
+\>21 \> Coil temperature\\
+\>22 \> Currents(kA)\\
+\>23 \> Timing information\\
+\>51 \> AMACH and EKIN vs time\\
+\>52 \> IPLIM and ZMAG vs time, XMAG vs TIME and ZMAG\\
+\>53 \> XMAG and CUR vs time\\
+\>54 \> DELP.TPI and PMIN.TPI vs time\\
+\>55 \> DIAMAG and SURFVOLT vs time\\
+\>56 \> QZERO and QEDGE vs time\\
+\>57 \> DT and BETA vs TIME\\
+\>58 \> $\langle \rm N \rangle$/NMUR vs time and 1/q nr/B\\
+\>   \> Density and INT ENER vs time\\
+\>59 \> LI/2 vs time and LI vs q\\
+\>60 \> TAUE-KG and TAU(MS) vs time\\
+\>61 \> TI(0) and TE/TE-AV vs time\\
+\>62 \> CHIOHMS and HFLUX-MW vs time\\
+\>63 \> RO and MINORRAD vs time\\
+\>64 \> DELT-TRI and ELLIP vs time\\
+\>65 \> XSEP and ZSEP vs time\\
+\>66 \> RESV-SEC and VSEC-TOT vs time\\
+\>67 \> LOOPV-OH and VSEC-OH vs time\\
+\>68 \> PTOT(MW) and PSEPCAL vs time\\
+\>   \> Power flow in system\\
+\>   \> FFAC and TEVV vs time\\
+\>   \> NPSIT and RESID vs time\\
+\>69 \> Nullapole and dipole vs time\\
+\>70 \> Quadrupole and hexapole vs time\\
+\>71 \> Octapole and decapole vs time
+\end{tabbing}
+{\bf Note} : To cancel the suppression of a certain plot, restart the job and input a negative number (eg: -9 ) \\
+ \\
+\underline{Example:}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX
+\kill
+10. \> 2. \> +23. \> -9. \> 15. \> 12. \> 7.
+\end{tabbing}
+\pagebreak
+\subsubsection{Card 41 - TF Ripple}
+\index{toroidal field!ripple calculation}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  IRIPPL \>\footnotesize NTFCOIL \>\footnotesize RIPMAX \>\footnotesize
+RTFCOIL \>\footnotesize NPITCH \>\footnotesize RIPMULT \>\footnotesize IRIPMOD \\
+\end{tabbing}
+\setw{IRIPPLE = 0.0XX}
+\begin{tabbing}
+IRIPPLE \= 0.0XX\= SET TABS \kill
+IRIPPLE \> = 0.0 \>Does not calculate ripple losses\\
+        \> = 1.0 \> \parbox[t]{\width}{Does calculate ripple losses. {\em WARNING} : may be
+expensive for time dependent calculation}\\
+NTFCOIL \> \> Number of TF coils\\
+RIPMAX  \> \> Ripple magnitude at radius of TF coil\\
+RTFCOIL \> \> Radius of TF coil\\
+NPITCH \> \>Number of pitch angles for integration\\
+RIPMULT \> \>Ripple multiplier\\ 
+IRIPMOD \>= 1.0\>CIT 2.1 meter design (U. Christenson)\\
+        \>= 2.0\> TFTR model\\
+        \>= 3.0\> Model RIPMAX*(R/RTFCOIL$)^{\rm NTFCOIL}$
+\end{tabbing}
+\newpage \subsubsection{Card 42 - Major Radius}
+\index{radius!major}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  RZERV(1) \>\footnotesize RZERV(2) \>\footnotesize RZERV(3)
+\>\footnotesize RZERV(4) \>\footnotesize RZERV(5) \>\footnotesize RZERV(6) \\
+\end{tabbing}
+\setw{RZERV(I) X}
+\begin{tabbing}
+RZERV(I) X\= set tab \kill
+RZERV(I) \> \parbox[t]{\width}{The preprogrammed major radius at time TPRO(I)
+for use in the Hofmann plasma shape control algorithm.}\\
+\end{tabbing}
+\newpage \subsubsection{Card 43 - Minor Radius}
+\index{radius!minor}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  AZERV(1) \>\footnotesize AZERV(2) \>\footnotesize AZERV(3)
+\>\footnotesize AZERV(4) \>\footnotesize AZERV(5) \>\footnotesize AZERV(6) \\
+\end{tabbing}
+\setw{AZERV(I) X}
+\begin{tabbing}
+AZERV(I) X\= set tab \kill
+AZERV(I) \> \parbox[t]{\width}{The preprogrammed minor radius at time TPRO(I) f
+or use in the Hofmann plasma shape control algorithm.}\\
+\end{tabbing}
+\pagebreak
+\subsubsection{Card 44 - Ellipticity}
+\index{ellipticity}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  EZERV(1) \>\footnotesize EZERV(2) \>\footnotesize EZERV(3)
+\>\footnotesize EZERV(4) \>\footnotesize EZERV(5) \>\footnotesize EZERV(6) \\
+\end{tabbing}
+\setw{EZERV(I) X}
+\begin{tabbing}
+EZERV(I) X\= set tab \kill
+EZERV(I) \> \parbox[t]{\width}{The preprogrammed ellipticity at time TPRO(I)
+for use in the Hofmann plasma shape control algorithm.}\\
+\end{tabbing}
+\newpage \subsubsection{Card 45 - Triangularity}
+\index{triangularity}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  DZERV(1) \>\footnotesize DZERV(2) \>\footnotesize DZERV(3)
+\>\footnotesize DZERV(4) \>\footnotesize DZERV(5) \>\footnotesize DZERV(6) \\
+\end{tabbing}
+\setw{DZERV(I) X}
+\begin{tabbing}
+DZERV(I) X\= set tab \kill
+DZERV(I) \> \parbox[t]{\width}{The preprogrammed triangularity at time TPRO(I)
+for use in the Hofmann plasma shape control algorithm.}
+\end{tabbing}
+\newpage \subsubsection{Card 46 - Lower Hybrid Heating}
+\index{heating!lower hybrid}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  PLHAMP(1) \>\footnotesize $\ldots$(2) \>\footnotesize $\ldots$(3)
+\>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize PLHAMP(6) \\
+\end{tabbing}
+\setw{PLHAMP(I) X}
+\begin{tabbing}
+PLHAMP(I) X\= set tab \kill
+PLHAMP(I) \> \parbox[t]{\width}{The lower hybrid heating power (MW) at time TPRO(I)}
+\end{tabbing}
+\newpage \subsubsection{Card 47 - Density Exponent 1}
+\index{density profile}
+\begin{tabbing}
+XXXXXX \= XXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  ALPHARV(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize ALPHARV(6)
+\\
+\end{tabbing}
+\setw{ALPHARV(I) X}
+\begin{tabbing}
+ALPHARV(I) X\= set tab \kill
+ALPHARV(I) \> \parbox[t]{\width}{The density exponent ALPHAR (see type 02 card)
+at time TPRO(I) (0.5).  If included, this overwrites the value on the type 04 card.}
+\end{tabbing}
+\pagebreak
+\subsubsection{Card 48 - Density Exponent 2}
+\index{density profile}
+\begin{tabbing}
+XXXXXX \= XXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  BETARV(1) \>\footnotesize $\ldots$(2) \>\footnotesize $\ldots$(3)
+\>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize BETARV(6) \\
+\end{tabbing}
+\setw{BETARV(I) X}
+\begin{tabbing}
+BETARV(I) X\= set tab \kill
+BETARV(I) \> \parbox[t]{\width}{The density exponent BETAR (see type 02 card)
+ at time TPRO(I) (2.0).  If included, this overwrites the value on the type 04 card.}
+\end{tabbing}
+
+\newpage \subsubsection{Card 49 - Multipolar Moments}
+\index{multipolar moments}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX
+\=XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize N \>\footnotesize MULTN(N) \>\footnotesize ROMULT(N) \>\footnotesize
+IGROUPM(N) \> \footnotesize ATURNSM(N)\\
+\end{tabbing}
+\setw{ATURNSM(N) = 0.0X}
+\begin{tabbing}
+ATURNSM(N)\= = 0.0X\= set tab \kill
+N \> \> \parbox[t]{\width}{Multipole coil number (this must be a unique identifying number
+between 1 and PNCOIL}\\
+MULTN(N) \> \>Multipole field type :\\
+\> = 0.0 \> Even nullapole\\
+\> = 1.0 \> Odd nullapole\\
+\> = 2.0 \> Even dipole\\
+\> = 3.0 \> Odd dipole\\
+\> = 4.0 \> Even quadrupole\\
+\> = 5.0 \> Odd quadrupole\\
+\> = 6.0 \> Even hexapole\\
+\> = 7.0 \> Odd hexapole\\
+\> = 8.0 \> Even Octapole\\
+\> = 9.0 \> Odd Octapole\\
+\> = 10.0 \> Even decapole\\
+ROMULT(N) \> \> \parbox[t]{\width}{Major radius about which multipole fields are
+expanded}\\
+IGROUPM(N) \> \> \parbox[t]{\width}{Group number of multipole coil N. Refers to type 15
+card with the same number.}\\
+ATURNSM(N) \> \> \parbox[t]{\width}{Number of turns for multipole coil N. This is a positive
+or negative number, not necessarily an integer.  The preprogrammed current for multipole coil
+N will be the product of ATURNSC(N) and the current in IGROUPC(N) 
+as specified by the appropriate type 15 card.}
+\end{tabbing}
+
+\newpage \subsubsection{Card 50 - Neutral Beam Fraction}
+\index{neutral beam!orientation fraction}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  FRACPAR(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize FRACPAR(6)
+\\
+\end{tabbing}
+\setw{FRACPAR(I) X}
+\begin{tabbing}
+FRACPAR(I) X\= set tab \kill
+FRACPAR(I) \> \parbox[t]{\width}{The fraction of neutral beams oriented tangentially at time
+TPRO(I).  If included, this overwrites the value on the type 25 card.}
+\end{tabbing}
+
+\newpage \subsubsection{Cards 51-54 Input Power Profile (LH)}
+\index{lower hybrid waves!input power}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+- \> \footnotesize A(1) \>\footnotesize A(2) \>\footnotesize A(3) \>\footnotesize A(4)
+\>\footnotesize A(5) \>\footnotesize A(6)\\
+- \> \footnotesize D(1) \>\footnotesize D(2) \>\footnotesize D(3) \>\footnotesize D(4)
+\>\footnotesize D(5) \>\footnotesize D(6)\\
+- \> \footnotesize A1(1) \>\footnotesize A1(2) \>\footnotesize A1(3) \>\footnotesize A1(4)
+\>\footnotesize A1(5) \>\footnotesize A1(6)\\
+- \>\footnotesize A2(1) \>\footnotesize A2(2) \>\footnotesize A2(3) \>\footnotesize A2(4)
+\>\footnotesize A2(5) \>\footnotesize A2(6)\\
+\end{tabbing}
+The above cards specify the input power profile for lower hybrid waves at time TPRO according
+to
+\begin{equation}
+S_{LH}(\hat{\Psi}) = \frac{d^2 \hat{\Psi}^{a_1}(1-\hat{\Psi})^{a_2}}{(\hat{\Psi}-a)^2+d^2} ,
+\end{equation}
+where $\hat{\Psi}=(\Psi-\Psi_{min})/(\Psi_{lim}-\Psi_{min})$.  Normalization is such that the total power
+in MW is given on the type 46 card.
+
+\newpage \subsubsection{Cards 55-58 Current Profile (LH)}
+\index{lower hybrid waves!current profile}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+- \> \footnotesize AC(1) \>\footnotesize AC(2) \>\footnotesize AC(3) \>\footnotesize AC(4)
+\>\footnotesize AC(5) \>\footnotesize AC(6)\\
+- \> \footnotesize DC(1) \>\footnotesize DC(2) \>\footnotesize DC(3) \>\footnotesize DC(4)
+\>\footnotesize DC(5) \>\footnotesize DC(6)\\
+- \> \footnotesize AC1(1) \>\footnotesize AC1(2) \>\footnotesize AC1(3) \>\footnotesize AC1(4)
+\>\footnotesize AC1(5) \>\footnotesize AC1(6)\\
+- \> \footnotesize AC2(1) \>\footnotesize AC2(2) \>\footnotesize AC2(3) \>\footnotesize AC2(4)
+\>\footnotesize AC2(5) \>\footnotesize AC2(6)\\
+\end{tabbing}
+The above cards specify the current profile for lower hybrid waves evolving independently in
+time from the power according to
+\begin{equation}
+J_{LH}(\hat{\Psi}) = \frac{d^2_c \hat{\Psi}^{a_{c1}}(1-\hat{\Psi})^{a_{c2}}}{(\hat{\Psi}-a_c)^2+d_c^2} .
+\end{equation}
+Linear interpolation is used between different time values. Normalization is such that the total current is given by the Fisch formula.
+This resulting total current can be adjusted with ACOEF(106).
+\newpage \subsubsection{Card 59 - ICRH Power}
+\index{ICRH}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  PICRH(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize PICRH(6)
+\\
+\end{tabbing}
+\setw{PICRH(I) X}
+\begin{tabbing}
+PICRH(I) X\= set tab \kill
+PICRH(I) \> \parbox[t]{\width}{The amplitude of the ICRH source(MW) at time TPRO(I).  The
+deposition profile for electron heating is given on the TYPE 65-68 cards.}
+\end{tabbing}
+\newpage \subsubsection{Cards 60 and 61 - Halo Parameters}
+\index{feedback!systems}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize TH(1)  \>\footnotesize TH(2) \>\footnotesize
+TH(3) \>\footnotesize TH(4) \>\footnotesize TH(5) \>\footnotesize TH(6)\\
+\footnotesize  - \>\footnotesize AH(1)  \>\footnotesize AH(2) \>\footnotesize
+AH(3) \>\footnotesize AH(4) \>\footnotesize AH(5) \>\footnotesize AH(6)
+\end{tabbing}
+\setw{TH(I) X}
+\begin{tabbing}
+TH(I) X\=  set tabs \kill
+TH(I)  \=  \parbox[t]{\width}{The halo region temperature (in eV) corresponding to time
+TPRO(I) }\\
+AH(I)  \=  \parbox[t]{\width}{The halo region width (described as a
+fraction of the poloidal flux between the plasma edge and axis,
+($\delta \psi_{halo}=AH(I) (\psi_{edge}-\psi_{axis})$) corresponding to time
+TPRO(I) }
+\end{tabbing}
+{\bf Note 1} :  Tedge must be set to zero, ACOEF(880) \\
+{\bf Note 2} : these values override those specified in
+ACOEF(97) and ACOEF(98)
+{\bf Note 3} : \parbox[t]{\width}{Either the type 97 or the AH parameter must be included
+for the temperature boundary condition to be applied.}
+
+\newpage \subsubsection{Cards 62 and 63 - Control Points}
+\index{feedback!systems}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize XCON0(1)  \>\footnotesize XCON0(2) \>\footnotesize
+XCON0(3) \>\footnotesize XCON0(4) \>\footnotesize XCON0(5) \>\footnotesize XCON0(6)\\
+\footnotesize  - \>\footnotesize ZCON0(1)  \>\footnotesize ZCON0(2) \>\footnotesize
+ZCON0(3) \>\footnotesize ZCON0(4) \>\footnotesize ZCON0(5) \>\footnotesize ZCON0(6)
+\end{tabbing}
+\setw{XCON0(I) X}
+\begin{tabbing}
+XCON0(I) X\=  set tabs \kill
+XCON0(I)  \=  \parbox[t]{\width}{The $x$-shape point corresponding to time
+TPRO(I) for use in equilibrium iteration when acoef(901)$>$0
+and shape control (IPEXT=25 on type 20 card)}\\
+ZCON0(I)  \=  \parbox[t]{\width}{The $z$-shape point corresponding to time
+TPRO(I) for use in equilibrium iteration when acoef(901)$>$0
+and shape control (IPEXT=25 on type 20 card)}
+\end{tabbing}
+\newpage \subsubsection{Card 64 - ICRH Fast Wave Current}
+\index{ICRH}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  FWCD(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize FWCD(6)
+\\
+\end{tabbing}
+\setw{FWCD(I) X}
+\begin{tabbing}
+FWCD(I) X\= set tab \kill
+FWCD(I) \> \parbox[t]{\width}{The total toroidal current(MA) driven by fast wave current
+drive at time TPRO(I).  The deposition profile is given on the TYPE 69-72 cards.}
+\end{tabbing}
+\newpage \subsubsection{Cards 65-68 Input Power Profile(ICRH)}
+\index{ICRH heating}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+- \> \footnotesize A(1) \>\footnotesize A(2) \>\footnotesize A(3) \>\footnotesize A(4)
+\>\footnotesize A(5) \>\footnotesize A(6)\\
+- \> \footnotesize D(1) \>\footnotesize D(2) \>\footnotesize D(3) \>\footnotesize D(4)
+\>\footnotesize D(5) \>\footnotesize D(6)\\
+- \> \footnotesize A1(1) \>\footnotesize A1(2) \>\footnotesize A1(3) \>\footnotesize A1(4)
+\>\footnotesize A1(5) \>\footnotesize A1(6)\\
+- \> \footnotesize A2(1) \>\footnotesize A2(2) \>\footnotesize A2(3) \>\footnotesize A2(4)
+\>\footnotesize A2(5) \>\footnotesize A2(6)\\
+\end{tabbing}
+The above cards specify the input power profile for electrons for ICRH heating.
+The power density from fast wave at time t is given by:
+\begin{equation}
+S_{ICRH}(\hat{\Psi},t) ={\alpha}_N(t) \frac{d^2 \hat{\Psi}^{a_{1}}(1-\hat{\Psi})^{a_{2}}}{(\hat{\Psi}-a)^2+d^2} .
+\end{equation}
+where $\hat{\Psi}=( \Psi - {\Psi}_{min}) / ({\Psi}_{lim}-{\Psi}_{min})$.  The normalization parameter
+${\alpha}_N(t)$ is chosen such that the total power from fast waves in MW is given on the type 59 card.
+\newpage \subsubsection{Cards 69-72 Current Profile (FW)}
+\index{ICRH fast waves!current profile}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+- \> \footnotesize A(1) \>\footnotesize A(2) \>\footnotesize A(3) \>\footnotesize A(4)
+\>\footnotesize A(5) \>\footnotesize A(6)\\
+- \> \footnotesize D(1) \>\footnotesize D(2) \>\footnotesize D(3) \>\footnotesize D(4)
+\>\footnotesize D(5) \>\footnotesize D(6)\\
+- \> \footnotesize A1(1) \>\footnotesize A1(2) \>\footnotesize A1(3) \>\footnotesize A1(4)
+\>\footnotesize A1(5) \>\footnotesize A1(6)\\
+- \> \footnotesize A2(1) \>\footnotesize A2(2) \>\footnotesize A2(3) \>\footnotesize A2(4)
+\>\footnotesize A2(5) \>\footnotesize A2(6)\\
+\end{tabbing}
+The above cards specify the input current density profile for fast wave current drive.
+The current density from fast wave at time t is given by:
+\begin{equation}
+\vec{J_{FW}}= {\alpha}_{N}(t)f(\hat{\Psi},t)\vec{B}
+\end{equation}
+where
+\begin{equation}
+f(\hat{\Psi},t) = \frac{d^2 \hat{\Psi}^{a_{1}}(1-\hat{\Psi})^{a_{2}}}{(\hat{\Psi}-a)^2+d^2} .
+\end{equation}
+where $\hat{\Psi}=( \Psi - {\Psi}_{min}) / ({\Psi}_{lim}-{\Psi}_{min})$.  The normalization parameter
+${\alpha}_N(t)$ is chosen such that the total current driven by fast waves in MA is given on the type 64 card.
+\newpage \subsubsection{Card 73 - He Confinement Time}
+\index{He confinement time}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  HEACT(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize HEACT(6)
+\\
+\end{tabbing}
+\setw{HEACT(I) X}
+\begin{tabbing}
+HEACT(I) X\= set tab \kill
+HEACT(I) \> \parbox[t]{\width}{The He confinement time in seconds
+at time TPRO(I).  This overrides the value given in ACOEF(93).}
+\end{tabbing}
+\newpage \subsubsection{Card 74 - UFILE Output}
+\index{UFILE}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  TUFILE(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize TUFILE(6)
+\\
+\end{tabbing}
+\setw{TUFILE(I) X}
+\begin{tabbing}
+TUFILE(I) X\= set tab \kill
+TUFILE(I) \> \parbox[t]{\width}{Specified times at which UFILE output
+is to be written into file OGRAPH for ACOEF(3001)=1.}
+\end{tabbing}
+\newpage \subsubsection{Card 75 - SAWTOOTH times}
+\index{UFILE}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  TUFILE(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize TUFILE(6)
+\\
+\end{tabbing}
+\setw{SAWTIME(I) X}
+\begin{tabbing}
+SAWTIME(I) X\= set tab \kill
+SAWTIME(I) \> \parbox[t]{\width}{Times (in seconds) for which sawtooth will
+occur for ISAW=2 on type 12}
+\end{tabbing}
+\pagebreak
+\subsubsection{Card 76 - Anomalous Ion Transport for itrmod=13,14}
+\index{transport!anomalous}
+\begin{tabbing}
+XXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \= XXXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize  - \>\footnotesize FBCHIIA(1)  \>\footnotesize FBCHIIA(2) \>\footnotesize
+FBCHIIA(3) \>\footnotesize FBCHIIA(4) \>\footnotesize FBCHIIA(5) \>\footnotesize FBCHIIA(6)
+\end{tabbing}
+\setw{FBCHIIA(I) X}
+\begin{tabbing}
+FBCHIIA(I) X\= \parbox[t]{\width}{This is junk to set tabs} \kill
+FBCHIIA(I) \>\parbox[t]{\width}{Factor by which ion thermal conductivity (for itrmod=13,14) is enhanced at time TPRO(I)} \\
+\end{tabbing}
+
+\newpage \subsubsection{Cards 77-89 new time-dependent variables (updated Dec-20-2010)}
+\index{new time-dependent variables}
+\begin{tabbing}
+XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=XXXXXX
+\kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+- \> \footnotesize qadd(1) \>\footnotesize qadd(2) \>\footnotesize qadd(3) \>\footnotesize qadd(4)
+\>\footnotesize qadd(5) \>\footnotesize qadd(6)\\
+- \> \footnotesize fhmodei(1) \>\footnotesize fhmodei(2) \>\footnotesize fhmodei(3) \>\footnotesize fhmodei(4)
+\>\footnotesize fhmodei(5) \>\footnotesize fhmodei(6)\\
+- \> \footnotesize pwidthc(1) \>\footnotesize pwidthc(2) \>\footnotesize pwidthc(3) \>\footnotesize pwidthc(4)
+\>\footnotesize pwidthc(5) \>\footnotesize pwidthc(6)\\
+- \> \footnotesize chiped(1) \>\footnotesize chiped(2) \>\footnotesize chiped(3) \>\footnotesize chiped(4)
+\>\footnotesize chiped(5) \>\footnotesize chiped(6)\\
+- \> \footnotesize tped(1) \>\footnotesize tped(2) \>\footnotesize tped(3) \>\footnotesize tped(4)
+\>\footnotesize tped(5) \>\footnotesize tped(6)\\
+imptype \> \footnotesize frac(1) \>\footnotesize frac(2) \>\footnotesize frac(3) \>\footnotesize frac(4)
+\>\footnotesize frac(5) \>\footnotesize frac(6)\\
+- \> \footnotesize nflag(1) \>\footnotesize nflag(2) \>\footnotesize nflag(3) \>\footnotesize nflag(4)
+\>\footnotesize nflag(5) \>\footnotesize nflag(6)\\
+- \> \footnotesize expn1(1) \>\footnotesize expn1(2) \>\footnotesize expn1(3) \>\footnotesize expn1(4)
+\>\footnotesize expn1(5) \>\footnotesize expn1(6)\\
+- \> \footnotesize expn2(1) \>\footnotesize expn2(2) \>\footnotesize expn2(3) \>\footnotesize expn2(4)
+\>\footnotesize expn2(5) \>\footnotesize expn2(6)\\
+- \> \footnotesize firitb(1) \>\footnotesize firitb(2) \>\footnotesize firitb(3) \>\footnotesize firitb(4)
+\>\footnotesize firitb(5) \>\footnotesize firitb(6)\\
+- \> \footnotesize secitb(1) \>\footnotesize secitb(2) \>\footnotesize secitb(3) \>\footnotesize secitb(4)
+\>\footnotesize secitb(5) \>\footnotesize secitb(6)\\
+- \> \footnotesize fracn0(1) \>\footnotesize fracn0(2) \>\footnotesize fracn0(3) \>\footnotesize fracn0(4)
+\>\footnotesize fracn0(5) \>\footnotesize fracn0(6)\\
+- \> \footnotesize newden(1) \>\footnotesize newden(2) \>\footnotesize newden(3) \>\footnotesize newden(4)
+\>\footnotesize newden(5) \>\footnotesize newden(6)\\
+\end{tabbing} 
+\begin{tabbing}
+77 X\= set tab \kill
+77 \> ------   qadd(1)    qadd(2)  ....  qadd(6)  (default acoef(123)) \\
+78 X\= set tab \kill
+78 \> ------   fhmodei(1) fhmodei(2) ..  fhmodei(6) (default acoef(3003)) \\
+79 X\= set tab \kill
+79 \> ------   pwidthc(1) pwidthc(2) ..  pwidthc(6) (default acoef(3011)) \\
+80 X\= set tab \kill
+80 \> ------   chiped(1)  chiped(2)  ..  chiped(6)  (default acoef(3006)) \\
+81 X\= set tab \kill
+81 \> ------   tped(1)    tped(2)    ..  tped(6)    (default acoef(3102)) \\
+82 X\= set tab \kill
+82 \> imptype   frac(1)    frac(2)  ....  frac(6) (default acoef(853+imptype) \\
+83 X\= set tab \kill
+83 \> ------   nflag(1)    nflag(2)  ....  nflag(6)  (default acoef(3012)) \\
+84 X\= set tab \kill
+84 \> ------   expn1(1)    expn1(2)  ....  expn1(6)  (default acoef(3013)) \\
+85 X\= set tab \kill
+85 \> ------   expn2(1)    expn2(2)  ....  expn2(6)  (default acoef(3014)) \\
+86 X\= set tab \kill
+86 \> ------   firitb(1)    firitb(2)  ....  firitb(6)  (default acoef(3004)) \\
+87 X\= set tab \kill
+87 \> ------   secitb(1)    secitb(2)  ....  secitb(6)  (default acoef(3005)) \\
+88 X\= set tab \kill
+88 \> ------   fracn0(1)    fracn0(2)  ....  fracn0(6)  (default acoef(881)) \\
+89 X\= set tab \kill
+89 \> ------   newden(1)    newden(2)  ....  newden(6)  (default acoef(889)) \\
+\end{tabbing}
+
+
+%cj jan 28, 2011
+\newpage \subsubsection{Card 90 - ECRH Power (MW)}
+\index{PECRH}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  PECRH(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize PECRH(6)
+\\
+\end{tabbing}
+\setw{FWCD(I) X}
+\begin{tabbing}
+PECRH(I) X\= set tab \kill
+FWCD(I) \> \parbox[t]{\width}{
+ECRH Power (MW)
+}
+\end{tabbing}
+
+\subsubsection{Card 91 - ECCD Toroidal Current (MA)}
+\index{ECCD}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  ECCD(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize ECCD(6)
+\\
+\end{tabbing}
+\setw{ECCD(I) X}
+\begin{tabbing}
+ECCD(I) X\= set tab \kill
+ECCD(I) \> \parbox[t]{\width}{
+ECCD Toroidal Current (MA)
+}
+\end{tabbing}
+
+\subsubsection{Card 92 -  First shape parameter “a” for ECCD heating AND CD}
+\index{AECD}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  AECD(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize AECD(6)
+\\
+\end{tabbing}
+\setw{AECD(I) X}
+\begin{tabbing}
+AECD(I) X\= set tab \kill
+AECD(I) \> \parbox[t]{\width}{
+First shape parameter “a” for ECCD heating AND CD
+}
+\end{tabbing}
+
+\subsubsection{Card 93 -  Second shape parameter “d” for ECCD heating AND CD}
+\index{DECD}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  DECD(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize DECD(6)
+\\
+\end{tabbing}
+\setw{DECD(I) X}
+\begin{tabbing}
+DECD(I) X\= set tab \kill
+DECD(I) \> \parbox[t]{\width}{
+Second shape parameter “d” for ECCD heating AND CD
+}
+\end{tabbing}
+
+\subsubsection{Card 94 -  Third shape parameter “a1” for ECCD heating AND CD}
+\index{A1ECD}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  A1ECD(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize A1ECD(6)
+\\
+\end{tabbing}
+\setw{A1ECD(I) X}
+\begin{tabbing}
+A1ECD(I) X\= set tab \kill
+A1ECD(I) \> \parbox[t]{\width}{
+Third shape parameter “a1” for ECCD heating AND CD
+}
+\end{tabbing}
+
+\subsubsection{Card 95 -  Fourth shape parameter “a2” for ECCD heating AND CD}
+\index{A2ECD}
+\begin{tabbing}
+XXXXXX \= XXXXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \= XXXXXX \=
+XXXXXX \kill
+11 \> 21 \> 31 \> 41 \> 51 \> 61 \> 71\\
+\footnotesize - \>\footnotesize  A2ECD(1) \>\footnotesize $\ldots$(2) \>\footnotesize
+$\ldots$(3) \>\footnotesize $\ldots$(4) \>\footnotesize $\ldots$(5) \>\footnotesize A2ECD(6)
+\\
+\end{tabbing}
+\setw{A2ECD(I) X}
+\begin{tabbing}
+A2ECD(I) X\= set tab \kill
+A2ECD(I) \> \parbox[t]{\width}{
+Third shape parameter “a2” for ECCD heating AND CD
+} 
+\end{tabbing}
+
+\end{document}

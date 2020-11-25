@@ -1,0 +1,3 @@
+ vsource.Sub = \
+ trdatbuf_test.o \
+ ne_from_trdatbuf.o 

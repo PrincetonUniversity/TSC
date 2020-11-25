@@ -1,0 +1,8 @@
+ vsource.Sub = \
+w20data.o \
+w20diff.o \
+w20disp.o \
+w20main.o \
+w20solv.o \
+w20wguess.o
+

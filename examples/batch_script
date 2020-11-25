@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# --- the name of your job
+#PBS -N lpk_tsc
+ 
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=1:00:00
+#PBS -r n
+#PBS -V
+#
+echo " "
+echo "-------------------"
+echo "This is a $PBS_ENVIRONMENT job"
+echo "This job was submitted to the queue: $PBS_QUEUE"
+echo "The job's id is: $PBS_JOBID"
+echo "-------------------"
+echo "The master node of this job is: $PBS_O_HOST"
+
+NPROCS=`wc -l < $PBS_NODEFILE`
+NNODES=`uniq $PBS_NODEFILE | wc -l`
+
+echo "This job is using $NPROCS CPU(s) on the following $NNODES node(s):"
+echo "-----------------------"
+uniq $PBS_NODEFILE | sort
+echo "-----------------------"
+
+echo The working directory is $PBS_O_WORKDIR 
+ 
+cd $PBS_O_WORKDIR
+# run in local scratch
+cd /local
+mkdir /lpku
+cd lpku
+mkdir tsc
+cd tsc
+rm *
+cp $PBS_O_WORKDIR/gotsc .
+
+echo -n 'Started program at : ' ; date
+
+# define run id 
+runid="I12121"
+runid=""
+# define others
+tokmak=""
+year=""
+shot=""
+init=""
+
+if [ -z $runid ] ;  then
+
+cp $PBS_O_WORKDIR/inputa .
+#cp $PBS_O_WORKDIR/sprsina .
+
+if [ $NPROCS -eq 1 ] ; then
+./gotsc >& log.tsc
+else
+time mpirun -np $NPROCS ./gotsc > log.tsc
+fi
+cp log.tsc $PBS_O_WORKDIR/.
+cp outputa $PBS_O_WORKDIR/.
+cp tsc.cgm $PBS_O_WORKDIR/.
+cp sprsoua $PBS_O_WORKDIR/.
+
+else
+
+cp $PBS_O_WORKDIR/input.$runid .
+#cp $PBS_O_WORKDIR/sprsin.$runid .
+
+if [ $NPROCS -eq 1 ] ; then
+./gotsc $runid $tokmak $year $shot $init > log.tsc$runid
+else
+time mpirun -np $NPROCS ./gotsc $runid $tokmak $year $shot $init > log.tsc$runid
+fi
+cp log.tsc$runid $PBS_O_WORKDIR/.
+cp output.$runid $PBS_O_WORKDIR/.
+cp tsc.cgm.$runid $PBS_O_WORKDIR/.
+cp sprsou.$runid $PBS_O_WORKDIR/.
+
+fi
+
+echo -n 'Ended program at  : ' ; date
+echo " " 

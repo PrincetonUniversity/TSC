@@ -1,0 +1,63 @@
+c     File: params.inc                          starts
+c     Name:   Typical:
+c     NZONDIM  2000
+c             max number of ray zones; ray not followed further than
+c             this number of zone crossings
+c     NPLTDIM  800
+c             plotting dimension
+c     NRAYDIM  210
+c             max number of rays
+c     NTORDIM   30
+c             max number of distinct n_parallels meaning n_phi's toridally
+c     NPOLDIM    7
+c             max number of distinct n_poloidals which stir in to n_parallel
+c     NGRPDIM    3
+c             max number of groups in the spectrum
+c     NVELDIM  401
+c             maximum number of parallel velocity zones
+c     NSMODEF
+c             default value of nsmoo
+c     NSMWDEF
+c             default value of nsmw
+c     NPSIDIM  400
+c             max size of spatial grid in psi
+c     NITRDIM
+c             RAYARRAY        dimensioned (NZONDIM, NRAYDIM)
+c             VQLARRAY        dimensioned (NVELDIM, NPSIDIM)
+c     NITRDIM 2
+c             number of copies of fe kept
+c     NWKARDIM = NRAYDIM * NZONDIM * 3  !! obsolete and taken out Apr9,93
+c
+c                                       The relative size of these dimensions
+c                                       is implicitly assumed in work arrays.
+c                                       NVELDIM >= NPSIDIM + NZONDIM
+c                                       eXcept, After April 16, 1993, this
+c                                       restriction removed by the introduction
+c                                       of NWKVDIM==NVELDIM+NPSIDIM+NZONDIM
+ 
+      INTEGER INUNIT, OUTUNIT, NWINDIM, FALSE, TRUE
+      PARAMETER(INUNIT = 3, OUTUNIT = 4, NWINDIM = 4)
+      PARAMETER(FALSE = 0, TRUE = 1)
+ 
+      INTEGER PIMP, PPSI, PNX, PNZ, PWORDS
+      PARAMETER (PIMP=3, PPSI= 401, PNX= 125, PNZ= 159)
+      PARAMETER (PWORDS = 10)
+      INTEGER NPSIDIM, NGRPDIM, NVELDIM, NSMODEF, NSMWDEF
+      INTEGER NTORDIM, NPOLDIM, NRAYDIM
+      INTEGER NZONDIM, NPLTDIM, NWKVDIM
+      PARAMETER(NPSIDIM  = 400, NGRPDIM = 3)
+      PARAMETER(NVELDIM  = 401, NZONDIM = 2000)
+      PARAMETER(NSMODEF  =   9, NSMWDEF = 3)
+      PARAMETER(NTORDIM=30, NPOLDIM=7, NRAYDIM=NTORDIM*NPOLDIM)
+      PARAMETER( NPLTDIM = 800)
+      INTEGER ZXDIM, NPZDIM
+      PARAMETER(ZXDIM = 2 * PNZ * PNX)
+      INTEGER NZRDIM, NVPDIM
+      PARAMETER(NZRDIM = 3 * NRAYDIM * NZONDIM,
+     ^          NVPDIM = 2 * NVELDIM * NPSIDIM,
+     ^          NPZDIM = 2 * NPSIDIM * NZONDIM)
+      INTEGER NITRDIM
+      PARAMETER(NITRDIM = 2)
+      PARAMETER(NWKVDIM = NVELDIM+NPSIDIM+NZONDIM)
+c     File: params.inc                          ends
+! 24May2005 fgtok -s r8_precision.sub "r8con_incl.csh conversion"

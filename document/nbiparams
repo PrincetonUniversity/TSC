@@ -1,0 +1,58 @@
+Parameters that need to be set for NUBEAM besides those in the Machine Description File:
+
+ps%nbeam                      # of beams
+  ps%kvolt_nbi(1:ps%nbeam)    voltage
+  ps%power_nbi(1:ps%nbeam)    power
+  ps%nbion(1:ps%nbeam)        name of species injected by beam(H,D,T,He3,He4)
+
+
+ps%nspec_beam                 # of types of beam species
+  ps%qatom_snbi(1:nspec_beam) atomic number of beam species
+  ps%q_snbi(1:nspec_beam)     charge of beam species
+  ps%m_snbi(1:nspec_beam)     mass of beam species
+      (above 3 are set by "ps_species_convert")
+  ps%nbeami(1:nspec_beam,1:nhro) density of beam species
+
+
+ps%nspec_th                   # of thermal species
+  ps%qatom_s(1:nspec_th) atomic number of thermal species
+  ps%q_s(1:nspec_th)     charge of thermal species
+  ps%m_s(1:nspec_th)     mass of thermal species
+      (above 3 are set by "ps_species_convert")
+  ps%ts                       temperature
+  ps%ns                       density
+  ps%vpars                    parallel velocity
+
+Note that for each beam injected fast specie (one or mor of H,D,T,He3,He4)
+there must be a matching thermal specie.   So, if D is in the list of beam
+species 1:ps%nspec_beam, it must also be in the list of thermal species
+1:ps%nspec_th.
+
+
+also need:
+ps%te        electron temperature
+ps%ti        ion temperature
+ps%ne        electron density
+ps%zeff
+ps%zeff_th
+ps%nhe       helium density
+ps%nhy       hydrogen density
+ps%frac_h    fraction of ps%nhy that is H
+ps%frac_d      "      "    "     "   "  D
+ps%frac_t      "      "    "     "   "  T
+
+NOTE:  The quasi-neutrality condition must be satisfied, including the beam particles.
+this implies that:
+
+ne = sum(nspec_th)[q_s * ns] + sum(nspec_beam)[q_snbi * nbeami]
+     We must obtain nbeami(nspec_beam,nrho) from the plasma state
+
+In the TSC input:   acoef(4955)   acoef(113)
+for H  plasma           1.0          0.0
+for D  plasma           0.0          1.0
+for DT plasma           0.0          0.5
+
+ambeam  (on type 25)
+       = 1 for H beam, 
+         2 for D beam, and 
+         3 for T beam

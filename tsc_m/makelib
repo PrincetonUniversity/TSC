@@ -1,0 +1,53 @@
+SHELL   = /bin/sh
+
+COMPILE = lf95
+CFOPTS = --sav  
+NTCCMOD = ${NTCCHOME}/mod
+NETCDFMOD = ${NETCDFHOME}/include
+
+FLAGS= $(CFOPTS) -I$(NTCCMOD) -I$(NETCDFMOD)
+LINK    = ar -ruv
+LISTS   = ../list
+
+#Modules with NO external dependency
+OBJ0 = 
+#Modules which depend ONLY on kind_spec
+OBJ1 = 
+#Modules which depend ONLY on 
+OBJ2 = 
+#Modules with more complicated dependence
+OBJ3 = 
+OBJA = $(OBJ0) $(OBJ1) $(OBJ2) $(OBJ3)
+COBJ = 
+
+#Defines vsource.Sub (list of source files.o)
+include $(LISTS)/source.lst
+include $(LISTS)/module.lst
+
+libtsc_m.a : $(vmodule.Sub) $(vsource.Sub) $(OBJA) $(COBJ)
+	$(LINK) $@ $(vmodule.Sub) $(vsource.Sub) $(OBJA) $(COBJ)
+
+#Compile Fortran source modules
+$(OBJ0) : ${$(@):.o=.f}
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f)
+$(OBJ1) : ${$(@):.o=.f} 
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f)
+$(OBJ2) : ${$(@):.o=.f} 
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f)
+$(OBJ3) : ${$(@):.o=.f} 
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f)
+
+#Compile module .o files
+$(vmodule.Sub) : ${$(@):.o=.f} $(OBJA)
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f)
+
+
+#Compile C source .o files
+#$(COBJ) : ${$(@):.o=.c}
+#        cc $(FLAGS_C) -I../source -c $(@:.o=.c)
+
+#Compile Fortran source .o files
+$(vsource.Sub) : ${$(@):.o=.f} $(OBJA) $(vmodule.Sub)
+	$(COMPILE) $(FLAGS) -c $(@:.o=.f)
+
+

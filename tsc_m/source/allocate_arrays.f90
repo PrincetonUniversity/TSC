@@ -1,0 +1,66 @@
+      SUBROUTINE  allocate_arrays
+      IMPLICIT NONE
+
+      call alloc_clinam 
+
+      call alloc_arrays 
+      call alloc_balcli 
+      call alloc_balcom1 
+      call alloc_cb 
+      call alloc_cbsvd 
+      call alloc_cintg 
+      call alloc_comsta 
+      call alloc_comwoy 
+      call alloc_decom 
+      call alloc_dercom 
+      call alloc_diagcom 
+      call alloc_eqruns 
+      call alloc_feed 
+      call alloc_fixshp 
+      call alloc_fvv1 
+      call alloc_geopar 
+      call alloc_glf 
+      call alloc_impcom 
+      call alloc_iter1 
+      call alloc_loop1 
+      call alloc_newplot 
+      call alloc_noncor 
+      call alloc_polcur 
+      call alloc_probe1 
+      call alloc_profcom 
+      call alloc_runaway 
+      call alloc_s50com 
+      call alloc_saprop 
+      call alloc_sawcom 
+      call alloc_scadvan 
+      call alloc_scr10 
+      call alloc_scr11 
+      call alloc_scr12a 
+      call alloc_scr12b 
+      call alloc_scr12c 
+      call alloc_scr13 
+      call alloc_scr14 
+      call alloc_scr15 
+      call alloc_scr16 
+      call alloc_scr17 
+      call alloc_scr1 
+      call alloc_scr21 
+      call alloc_scr22 
+      call alloc_scr23 
+      call alloc_scr3 
+      call alloc_scr4 
+      call alloc_scr5 
+      call alloc_scr6 
+      call alloc_scr7 
+      call alloc_scr8 
+      call alloc_scr9 
+      call alloc_scratch 
+      call alloc_specie 
+      call alloc_svdcom 
+      call alloc_tcvcom 
+      call alloc_wallcl 
+      call alloc_wallp 
+      call alloc_worka 
+
+      return
+      END SUBROUTINE allocate_arrays

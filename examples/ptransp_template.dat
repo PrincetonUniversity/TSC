@@ -1,0 +1,324 @@
+  ! ITER Hybrid plasma namelist template -- based on R. Budny namelist
+  !   extracted dmc 26 Jan 2007
+ 
+  ! 2 1MeV 16.5MW high energy beams; xybapa adjustable
+
+  ! model with:
+  ! 1 LH antenna
+  ! 1 ECH antenna
+  ! 1 ICRH antenna
+
+  ! Indicate TRANSP in FSP server mode
+
+NLFSP_SERVER = .TRUE.
+ 
+!NLFSP_TITE  = .TRUE.
+!NLFSP_DENS  = .TRUE.
+!NLFSP_ZEFF  = .TRUE.
+!NLFSP_OMEGA = .TRUE.
+!NLFSP_PRAD  = .TRUE.
+
+! nbi_pserve = 0
+!launch_mpi_sgi = .TRUE.
+ 
+!NLFSP_NO_TRDAT = .TRUE.
+
+  ! model resolution
+NZONES=  50	! default=20
+NZONE_NB=50	! default=20
+DXBSMOO=0.05	! recommended if NZONE_NB>20
+NZONE_FP=20	! default=20
+
+  ! output timesteps
+SEDIT = 0.05
+STEDIT = 0.05
+OUTTIM = 25.,50.,75.,100.,200.,300.,400.,500.
+FI_OUTTIM = 25.,50.,75.,100.,200.,300.,400.,500.
+
+  ! activate state excitation approximation for beam deposition
+NSIGEXC=1       ! 1 for excited states deposition model
+NMSIGX=2        ! Beam deposition on impurity: 1 (default)=Olson, 2=Phaneuf
+
+  ! PTCL BALANCE MODEL
+NMODEL=2	!USE (1) CONST. FRAC (2) CONST V OR (3) CONST D PTCL MODEL
+TAUPMN=0.1
+
+  ! ION ROTATION MODEL
+NLVPHI=.T	! T for rotating plasma
+
+  ! ION power balance analysis
+ALPH0I=.6       ! 3/2 convection
+ALPH0E=.6       ! 3/2 convection
+
+  !----- NCLASS controls
+NCMODEL=2       !  1=old, 2=new (f90)
+NLTINC=.T       ! .T to use Tx/Tmj, i.e. impurity temperature
+NLNCSMOO=.T     ! .T to activate smoothing of temp & density
+TAUSMNNC=0.050  ! smoothing convolution time (tau) for densities
+TAUSMTNC=0.050  ! smoothing convolution time (tau) for temperatures
+XSMN_NC=0.050   ! radial smoothing half width for densities (r/a units)
+XSMT_NC=0.050   ! radial smoothing half width for temperatures (r/a units)
+
+  ! FUSION PRODUCTS MODEL
+NPTCLF=1000    !Monte Carlo particles for fusion ion species
+NLFHE4=.T       ! .T for DT->He4
+PLFHE4=100.0d3  ! 100KW fusion source needed for full statisitics
+NLFATOM=.T      ! for atomic physics -- cx loss of fusion products
+
+  ! MAGNETICS MODELING
+NLBCCW=.F       !* .T for counter-clockwise Btor
+NLJCCW=.F       !* .T for counter-clockwise Ip
+NLBOOT=.T	!* =.T TO INCLUDE BOOTSTRAP CURRENTS
+NLVSUR=.F	!* .F to let surface voltage float;
+
+! limit q(0)
+NLQLIM0=.T	! .T to limit growth of q on axis
+QLIM0=20.0	! max(QLIM0,2*qmin) is limit on q on axis
+
+  ! NEUTRALS MODEL - SEE ALSO PTCL BALANCE
+NSOMOD=1      ! SELECT 1 FOR FRANTIC, 8 FOR SORCE8
+E0IN=50.,2*3.,50.,2*3.,50.,2*3.,50.,2*3.,50.,2*3.,50.,2*3.,50.,2*3.
+FH0ESC=.3       ! FRAC. OF ESC. NEUTRALS REFLECTED TO PLASMA "HOT"
+
+!================================================================
+! ICH Model
+!================================================================
+NLICRF=.T	! .T=to turn on ICH
+NICRF=8		! 1  for new SPRUCE; 8 for TORIC-4/5
+TAUMIN=1.0e6	!Minority confinement time (sec) when minority is thermal
+!
+! *default* minority specification:  He3, 0.1%
+! client overrides this by setting a minority species and fraction explicitly
+
+XZMINI=2.0
+AMINI=3.0
+FRMINI=0.001
+
+!
+NICHPSI=128	!* Number of radial grid points default=128
+NICHCHI=64	!* Number of poloidal grid points default=64
+ERFMAX=10.E6	!* Max grid energy (eV) default=10MeV
+!
+! ICRF semi-circular Antenna descriptions (4 elements per antenna):
+NICHA=1	!Number of ICH antennas
+NGEOANT=15	!* 1 to specify ant geom w RMNICHA, RMJICHA circles;
+           	!* 2-15 to specify ant geom w RGEOANT(i),YGEOANT(i)
+RGEOANT   =841.1,843.7,846.5,848.9,851.0,852.5,852.6,852.5,
+RGEOANT(9)=851.9,849.7,847.4,844.8,841.5,837.9,833.5
+YGEOANT   =123.0,108.0,093.0,078.0,063.0,048.0,044.0,040.0,
+YGEOANT(9)=033.0,018.0,003.0,-12.0,-27.0,-42.0,-57.0
+
+THICHA(1)=8*67.0	!Poloidal extent of each antenna (deg)
+WIDICHA(1)=8*12.5	!Toroidal width of each antenna element (cm)
+SEPICHA(1)=8*30.0	!Toroidal Separation of antenna elements (cm)
+PHICHA(1,1)=0.0,0.0,180.0,180.0 !Phasing of antenna elements (deg)
+
+! Moments description of the IGNITOR Vaccuum Vessel for the ICRF code:
+VVRMOM(1)=580.0,220.0,44.0,5.5     	!Vacuum Vessel R moments (cm)
+VVZMOM(1)=55.0,440.0,-22.0,-11.0	!Vacuum Vessel Z moments (cm)
+
+! ** power must be set by client **
+!    default frequency is provided here:
+FRQICHA(1)=8*52.50E+06	!Frequency of each antenna (Hz)
+
+ICNAMES(1)='IC1'
+!================================================================
+! Toric specific ICH Model
+!================================================================
+
+NMDTORIC=31	  ! # toric poloidal modes -- 2**n - 1 for some integer n
+
+RFARTR=5.0	  ! distance from antenna to Faraday shield (cm)
+ANTLCTR=1.6	  ! effective antenna propagation constant
+		  ! > 0 corrent ends abruptly at feeders
+                  ! < 0 corrent goes smoothly to zero around feeders
+NFLRTR=1	  ! ion FLR contributions
+		  ! = 1 included
+                  ! = 0 ignored
+                  ! = -1 order reduction algorithm
+                  ! (nbpolfp = 0 recommended if nflrfp <= 0)
+                  ! = -2 order reduction algorithm with automatic
+                  ! suppression of spectral pollution
+                  ! (equiv. to nflrfp = -1 and no forced IBW damping)
+NBPOLTR=1	  ! poloidal magnetic field
+                  ! = 1 included
+                  ! = 0 ignored
+NQTORTR=1	  ! toroidal broadening of the plasma dispersion
+                  ! function
+                  ! = 1 included
+                  ! = 0 ignored
+NCOLLTR=0	  ! collisional contribution to argument of
+                  ! plasma dispersion function
+                  ! = 1 included
+                  ! = 0 ignored
+ENHCOLTR=1.0	  ! electron collision enhancement factor
+                  ! with ncollfp
+! ALFVNTR(20)	  ! ad hoc collisionnal broadening of Alfven and ion-ion resonances
+ALFVNTR(1)=0.0	  ! 1.0= included, =0.0 ignored
+ALFVNTR(2)=0.1	  ! enhancement factor ( ~ 0.1)
+ALFVNTR(3)=3.0	  ! value of ABS((n//^2 - S)/R) below which
+		  ! damping added (~10.0)
+ALFVNTR(4)=5.0	  ! value of ABS(w/(k//*v_te)) below which damping calculated;
+	  ! needed to maintain resonable values of RF current (~5.0)-----
+
+!*************************************************************
+! LHCD Model
+!================================================================
+
+NLLH=.F		! .T for LH model
+
+THET0LH=0.056	! # radians for pol angle from out-board midplane for launching
+NRAYSLH=200	! num of rays in peak (10)
+
+NCUPLRLH(1)=1	! 1 for 'PBXMFAST'  ! -- not actually used! cf NDOBRAM=0
+
+NDOBRAM=0	! 1 do  Brambilla calc w JEStevens code (1)
+NANTLH=1	! Only 1 antenna modeled so far
+
+NVLH=401,	! number of v_el/c bins points btw -1 and +1 (199)
+NSLICELH=301,	! num of n_par slices used in Brambilla calc (301)
+WGTITRLH=0.2,
+NGTYPELH=3,	! 1 for linear grid, 2 or 3 for expon grid, 3 is smoother
+NFREQLH=50,	! steps btwn preparing ray plot in 3d (100)
+NSTEPLH=20000	! max steps in following each ray (500)
+NPSILH=80	! 150 numr of psi shells for power/current dep (10)
+NZONESLH=2000	! 4000 number of shell crossings tracked (100)
+NSMOOLH=9,	! num vel bins for smoothing D_ql (9)
+NSMWLH=3,	! characteristic width of fun covering NSMOO vs bins (3)
+
+!    client code to provide power, frequency & timing
+!    default frequency provided:
+FGHZLH=5.0,	! frequency in GHz (5.0 for ITER) -- client provides...
+
+HLH=0.005,	! step length in m along pathlength (0.005 for PBXM)
+PARMINLH=-4.35	! 1.7 left edge of n_parallel peak
+PARMAXLH=+2.35	! 2.5 right edge of n parallel peak
+NGRPSLH=1,	! num of spectrun peaks: num of waveguids if DOBRAM>0 (3)
+CENTERLH(1)=1.95,-3.90     ! 2.20 center of n_parallel peak
+WIDTHSLH(1)=0.20,+0.20     ! 0.25 array (size NGRPS) giving width of n_par peak (1.)
+POWERSLH(1)=0.85,+0.15	   ! relative LH power (usually 1.0)
+!irememfe=0,	! default=0
+PHASEDLH(1)=+90.0,	! phasing in deg between waveguids if NGRPS<1
+NPLFLGLH( 1)=0,0,0,0,0,0,0,0,0,0,	! plot controls
+NPLFLGLH(11)=0,0,0,0,0,0,0,0,0,0,
+NPLFLGLH(21)=0,0,0,0,0,
+NPRPFGLH( 1)=0,0,0,0,0,0,0,0,0,0,
+NPRPFGLH(11)=0,0,0,0,0,0,0,0,0,0,
+NPRPFGLH(21)=0,0,0,0,0,0,0,0,0,0,
+NDORFDLH=1,	!deposition grafs
+NDORFHLH=0,
+NDOPASLH=0,
+NDOSCRLH=1,	! screen output
+NDODBGLH=0,	! debug?
+NRAMPULH=100,	! number of steps to ramp up power
+NFLATLH=101,	! number of times in each step
+NDIAGLH=10,
+
+LHNAMES(1)='LH1'
+
+ !
+ ! TORAY RELATED VARIABLES
+ !
+NLTORAY  = .FALSE.
+NGAFITTOR = 1
+POWINCTOR = 1.00000e+13
+SMAXTOR = 500.0
+DSTOR = 1.000
+PWRFMNTOR = 0.0100
+FDOUTTOR = 1.0
+MRAYTOR(1) = 1
+MRAYTOR(2) = 5
+MRAYTOR(3) = 12
+MRAYTOR(4) = 12
+MRAYTOR(5) = 18
+NGZNTOR = 5
+
+NHARMTOR = 1			      ! 1 for O-mode (ITER) 2 for X-mode (II-D)
+NANTECH  = 1     ! just ONE for now
+NPROFTOR = 81                         ! NUMBER OF TORAY ZONES
+
+!        antenna (only 1st column in use if NANTECH = 1)
+
+NDAMPECH=     8,       8,       8,     8        ! DAMPING MODEL
+NRAYECH=     30,      30,      30,    30	! NUMBER OF RAYS
+XECECH=   880.0,   880.0,   880.0,   0.0        ! launcher major radius (cm)
+ZECECH=   121.0,   121.0,    61.0    0.0	! launcher height (cm)
+THETECH=   90.0,    90.0,    90.0    0.0	! launcher polar angle (deg)
+PHAIECH=  207.5,   207.5,   212.5    0.0	! launcher azimuthal angle (deg)
+!  power (POWECH) & frequency & timing to be set by client
+!  default frequency is provided:
+FREQECH= 170.E9,  170.E9,  170.E9    0.0	! wave freq (Hz)
+
+RFMODECH=   1.0,     1.0,     1.0    1.0	! fraction of RF power launched in O-mode
+BHALFECH=   1.7,     1.7,     1.7    1.7	! divergence angle (deg)
+BSRATECH=   1.0,     1.0,     1.0    1.0	! aspect ratio of beam
+EFFECH=     1.0,     1.0,     1.0    1.0	! effective current drive
+
+ECNAMES(1)='EC1'
+
+  !  beams...
+
+NLBEAM=.T
+WGHTA=20.0	!  default = 20.0
+NPTCLS=1000	! Monte Carlo particles for beam ions
+NDEP0=300	! number of deposition events to trace per step
+GOOMAX=1000.0	! goosing limit parameter.
+
+  !NBLIST.FOR !  FOCAL LENGTHS AND DIVERGENCES - NEW BEAM DEP MODEL
+FOCLZ=1.E6	! vertical focal length of beam
+FOCLR=1.E6	! horizontal focal length of beam
+DIVR=5.00E-3	! horizontal divergence of beam
+DIVZ=5.00E-3	! vertical divergence of beam
+
+  !NBLIST.FOR !
+NLFBM=.T	! .T TO CALC. BEAM DISTRIBUTION FCN FOR FIDE, ETC.
+DN0OUT=5.E12	!external neutral density for orbits beyond the plasma
+NCIRLM=3	! 2 circular limiter components
+CRLMR1=430.0,430.0,1870.0	!center of limiter circles
+CRLMY1= 60.0, 35.0,  55.0
+CRLMRD=440.0,440.0,1500.0	!minor radius of limiter circles
+NLINLM=0	! 0 straight line limiter segments
+ALNLMR=0.0
+ALNLMY=0.0
+ALNLMT=90.0
+  ! BEAMLINE 1C %[TRANSP.TFTR]NBLIST.FOR OUTPUT
+ BNAMES(1)='NB1'
+ NLCO(1) = .T	!F for ctr beam
+ NBSHAPA(1) = 1	        ! 1 for rectangle ion source
+ BMWIDRA(1)=29.1	! beam source half-width (cm)
+ BMWIDZA(1)=68.0	! beam source half-height (cm)
+ RAPEDGA(1)=60.0	! aperture horiz half-width
+ XZPEDGA(1)=40.0	! aperture half-height
+ ABEAMA(1)=2.0	!ctr beam line
+ EINJA(1) =   1.000000E+06
+ !!! PINJA(1) =   1.650000E+07      ! to be set by client...
+ FFULLA(1) =  1.000000E+00
+ FHALFA(1) =  0.000000E+00
+ RTCENA(1) =  5.295000E+02	! beam tangency radius
+ XLBAPA(1) =  2.080000E+03	! distance, ion source to beam aperture
+ XLBTNA(1) =  2.940000E+03	! distance, ion source to beam tang radius
+ XYBSCA(1) =  6.000000E+01	! elevation of beam ion source above/below midplane
+ XYBAPA(1) =  1.000000E+01	! elevation of beam aperature above/below midplane
+  ! BEAMLINE 2A %[TRANSP.TFTR]NBLIST.FOR OUTPUT
+ BNAMES(2)='NB2'
+ NLCO(2) = .T	!F for ctr beam
+ NBSHAPA(2) = 1	        ! 1 for rectangle ion source
+ BMWIDRA(2)=29.1	! beam source half-width (cm)
+ BMWIDZA(2)=68.0	! beam source half-height (cm)
+ RAPEDGA(2)=60.0	! aperture horiz half-width
+ XZPEDGA(2)=40.0	! aperture half-height
+ ABEAMA(2)=2.0	!ctr beam line
+ EINJA(2) =   1.000000E+06
+ !!! PINJA(2) =   1.650000E+07      ! to be set by client...
+ FFULLA(2) =  1.000000E+00
+ FHALFA(2) =  0.000000E+00
+ RTCENA(2) =  5.295000E+02	! beam tangency radius
+ XLBAPA(2) =  2.080000E+03	! distance, ion source to beam aperture
+ XLBTNA(2) =  2.940000E+03	! distance, ion source to beam tang radius
+ XYBSCA(2) =  6.000000E+01	! elevation of beam ion source above/below midplane
+ XYBAPA(2) =  1.000000E+01	! elevation of beam aperature above/below midplane
+
+ NBEAM=2  ! NBLIST.FOR: NO. OF BEAMS
+  ! NBLIST.FOR:  20% .GT. MAX(INJECTION ENERGY):
+ EBDMAX= 1.500000E+06
+ NLBDAT=.F   !F to not read beam UFILE

@@ -1,0 +1,2681 @@
+!#include "f77_dcomplx.h"
+      subroutine inpt
+!=======================================================================
+!......5.30 inpt
+!
+!***********************************************************************
+!                                                                      *
+!.....read in all input                                                *
+!                                                                      *
+!***********************************************************************
+!
+      USE CLINAM
+      USE FVV1
+      USE NONCOR
+      USE RADTAB
+      USE SPECIE
+      USE WALLCL
+      IMPLICIT NONE
+      INTEGER, PARAMETER :: R8=SELECTED_REAL_KIND(12,100)
+ 
+!============
+! idecl:  explicitize implicit INTEGER declarations:
+      INTEGER i,l,l16z,l17z,l18z,l23z,l24z
+      INTEGER l26z,l27z,l28z,l29z,l30z,l31z,l32z,l34z,l35z,l36z
+      INTEGER l42z,l43z,l44z,l45z,l46z,l47z,l48z,l50z,l51z,l52z
+      INTEGER l53z,l54z,l55z,l56z,l57z,l58z,l59z,l60z,l61z,l64z
+      INTEGER l65z,l66z,l67z,l68z,l69z,l70z,l71z,l72z,l73z,l75z
+      INTEGER l76z,l77z,l78z,l79z,l80z,l81z,l83z,l84z
+      INTEGER l85z,l86z,l87z,l88z,l89z
+      INTEGER l90z,l91z,l92z,l93z,l94z,l95z
+      INTEGER itype,inegp,icam,ilnct,ll,iabs,nlimch,nlim0,ii,isave
+      INTEGER jsave,kobs,n,ic0sv,ic01,ic0,ico,nco,icmax,indx,ic
+      INTEGER igroup,inumfb,lll,nnoplot,itempi,itroub,inot,irenum
+      INTEGER in,io,ictype,igr,imptype,ncoilsv,isurfold
+!============
+! idecl:  explicitize implicit REAL declarations:
+      REAL*8 ffacin,xx,zz,radic,allam,btave,tedge
+      REAL*8 ffcu,areacu,rho,gamma,rold,aufe,selfrc,aold,dx,dz,zux
+      REAL*8 xuz,bef,terma,termb,almesh
+      REAL*8 AREAL
+!============
+      REAL*8 card(9)
+!     dimension i32sw(pnplat)
+      character*10 namet(10)
+      character*80 char
+!     dimension l10z(4),l15z(pngroup),l19z(pobs),l09z(4),l37z(pngroup)
+!     dimension l62z(20),l63z(20)
+!     dimension notuse(pncoil),jrenum(2,pncoil),
+!    .                multn(pncoil)  , r0mult(pncoil) , igroupm(pncoil),
+!    . 
+!    .                aturnsm(pncoil)
+!============      
+      INTEGER :: istat = 0 
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: i32sw
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l10z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l15z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l19z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l09z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l37z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l62z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l63z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: l82z
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: notuse
+      INTEGER, ALLOCATABLE, DIMENSION(:,:) :: jrenum
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: multn
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: igroupm
+      REAL*8, ALLOCATABLE, DIMENSION(:) :: r0mult
+      REAL*8, ALLOCATABLE, DIMENSION(:) :: aturnsm
+      logical :: lfirst=.true., lfirst_movie=.true.
+!============      
+      IF(.not.ALLOCATED(i32sw)) ALLOCATE( i32sw(pnplat), STAT=istat)
+      IF(.not.ALLOCATED(l10z)) ALLOCATE( l10z(4), STAT=istat)
+      IF(.not.ALLOCATED(l15z)) ALLOCATE( l15z(pngroup), STAT=istat)
+      IF(.not.ALLOCATED(l19z)) ALLOCATE( l19z(pobs), STAT=istat)
+      IF(.not.ALLOCATED(l09z)) ALLOCATE( l09z(4), STAT=istat)
+      IF(.not.ALLOCATED(l37z)) ALLOCATE( l37z(pngroup), STAT=istat)
+      IF(.not.ALLOCATED(l62z)) ALLOCATE( l62z(20), STAT=istat)
+      IF(.not.ALLOCATED(l63z)) ALLOCATE( l63z(20), STAT=istat)
+      IF(.not.ALLOCATED(l82z)) ALLOCATE( l82z(8), STAT=istat)
+      IF(.not.ALLOCATED(notuse)) ALLOCATE( notuse(pncoil), STAT=istat)
+      IF(.not.ALLOCATED(jrenum)) ALLOCATE( jrenum(2,pncoil), STAT=istat)
+      IF(.not.ALLOCATED(multn)) ALLOCATE( multn(pncoil), STAT=istat)
+      IF(.not.ALLOCATED(r0mult)) ALLOCATE( r0mult(pncoil), STAT=istat)
+      IF(.not.ALLOCATED(igroupm)) ALLOCATE( igroupm(pncoil), STAT=istat)
+      IF(.not.ALLOCATED(aturnsm)) ALLOCATE( aturnsm(pncoil), STAT=istat)
+!============      
+      if (istat .ne. 0) stop 'Allocation Error : inpt  ' 
+!============      
+!
+      pi  = 3.1415926535_R8
+      tpi = 2._R8*pi
+!...........................................................
+!
+!.....initialize some variables used in inpt
+!
+!...........................................................
+      do 1 i=1,9
+    1 card(i) = 0._R8
+      if(lfirst) then
+      ncoilsv = ncoil
+      ncoil   = 0
+      nwire   = 0
+      nobs    = 0
+      numfb   = 0
+      nlim    = 0
+      nopest = 0
+      numicsuf = 0
+      numsaw = 0
+      endif
+      do 853 l=1,pnplat
+  853 i32sw(l) = 0
+      do 850 l=1,4
+      l09z(l) = 0
+  850 l10z(l) = 0
+      do 851 l=1,pngroup
+      l37z(l) = 0
+  851 l15z(l) = 0
+      l16z = 0
+      l17z = 0
+      l18z = 0
+      l19z = 0
+      l23z = 0
+      l24z = 0
+      l26z = 0
+      l27z = 0
+      l28z = 0
+      l29z = 0
+      l30z = 0
+      l31z = 0
+      l32z = 0
+      l34z = 0
+      l35z = 0
+      l36z = 0
+      l42z = 0
+      l43z = 0
+      l44z = 0
+      l45z = 0
+      l46z = 0
+      l47z = 0
+      l48z = 0
+      l50z = 0
+      l51z = 0
+      l52z = 0
+      l53z = 0
+      l54z = 0
+      l55z = 0
+      l56z = 0
+      l57z = 0
+      l58z = 0
+      l59z = 0
+      l60z = 0
+      l61z = 0
+      l62z = 0
+      l63z = 0
+      l64z = 0
+      l65z = 0
+      l66z = 0
+      l67z = 0
+      l68z = 0
+      l69z = 0
+      l70z = 0
+      l71z = 0
+      l72z = 0
+      l73z = 0
+      l75z = 0
+      l76z = 0
+      l77z = 0
+      l78z = 0
+      l79z = 0
+      l80z = 0
+      l81z = 0
+      l82z = 0
+      l83z = 0
+      l84z = 0
+      l85z = 0
+      l86z = 0
+      l87z = 0
+      l88z = 0
+      l89z = 0
+      l90z = 0
+      l91z = 0
+      l92z = 0
+      l93z = 0
+      l94z = 0
+      l95z = 0
+!...........................................................
+!
+!.....read name card
+!
+!...........................................................
+      if(lfirst) then
+      read(nin,2000) (name(i),i=1,8)
+      write(nout,2001) (name(i),i=1,8)
+      do 2 i=1,8
+    2 namet(i) = name(i)
+      endif
+!===========================================================
+!
+!.....read type 0 card
+!
+!===========================================================
+      go to(801,802),iformat
+  801 continue
+      call readcard(nin,nout,nsc1,itype,card,char,inegp)
+      if(inegp.gt.0) ineg=inegp
+      call writcard(nout,itype,card,char)
+      if(itype.lt.0) go to 801
+      if(itype.eq.0) go to 803
+      if(.not. lfirst) then
+      backspace (nin)
+      go to 9
+      endif
+      write(nout,1803)
+ 1803 format(" no type 00 card")
+      ineg=21
+      go to 803
+  802 continue
+      read(nin,1003) itype,(card(i),i=1,9)
+      write(nout,1001) itype,(card(i),i=1,9)
+ 1003 format(i2,9f8.0)
+  803 continue
+!...........................................................
+!
+!...card  0 : control
+!
+!...........................................................
+!
+!.....irst1=1 if restart run, 0 if start run
+      irst1 = int(card(1))
+!
+!.....irst2=1 if restart files is to be written, 0 otherwise
+      irst2 = int(card(2))
+      ipest = int(card(3))
+!
+!
+!.....max number of cycles in problem
+      ncycle = int(card(4))
+!
+!.....number of cycles between print cycle
+      nskipr = int(card(5))
+      if(nskipr.le.0) nskipr=1
+!
+!.....number of cycles between plot cycle
+      nskipl = int(card(6))
+      if(nskipl.le.0) nskipl=1
+!
+      imovie = int(card(7))
+      icam = 2
+      if((imovie.gt.0 .and. imovie.lt.10)) icam = 3
+      if(imovie.ge.3 .and. imovie.lt.10) icam=9
+      ikeep(2:4) = 'suf'
+      ikeep(1:1) = isuffix(1:1)
+!
+      if(lfirst) then
+!tss  call keep80(ikeep,3)
+      if( numargs .lt. 1 ) then
+         filename = 'tsc.cgm'
+      else
+         filename = 'tsc.cgm' // '.' // trim(suffix)
+      end if
+      call ncarcgm(1,trim(filename))
+!tss  call fr80id('film',1,icam)
+!.....set flag to clip data
+      call dders(-1)
+      endif
+!
+      if((imovie.gt.0 .and. imovie.lt.10)) go to 9
+
+        if(lfirst_movie) then
+        call map(0.0_R8,1._R8,0.0_R8,1._R8,0._R8,1._R8,0._R8,1._R8)
+        call  line (0.0_R8,0.906_R8, 1.0_R8,0.906_R8)
+        call  vector (1._R8, 1._R8)
+        call  vector (0._R8, 1._R8)
+        call  vector (0._R8, 0.906_R8)
+!
+        call setld(1._R8,42._R8,1,0,1,0)
+!       call  tversion (s100)
+        write(s100,2000) (name(i),i=1,8)
+      call gtext(s100,80,0)
+        write (s100,2000)
+      call gtext(s100,80,0)
+      call pltcard(s100(1),itype,card,char)
+        ilnct = 4
+        endif
+    9 continue
+!
+!
+      if(ineg.ne.0) return
+      if(.not. lfirst) then
+      do l=1,4999+pncoil
+      redef(l) = 0.
+      enddo
+      ineg   = 0
+      ll = 0
+      go to 5
+      endif
+      if(irst1.ne.1) go to 5
+!...........................................................
+!
+!.....restart calculation, read in common blocks from disk
+!
+!...........................................................
+      call rstrt1
+      isurfold = isurf
+      if(ineg.eq.1) return
+!...........................................................
+!
+!.....redefine some variables
+!
+!...........................................................
+      do 3 i=1,8
+    3 name(i) = namet(i)
+      irst1  = int(card(1))
+      irst2  = int(card(2))
+      ipest  = int(card(3))
+      ncycle = int(card(4))
+      nskipr = int(card(5))
+      nskipl = int(card(6))
+      imovie = int(card(7))
+      do 9001 l=1,4999+pncoil
+ 9001 redef(l) = 0._R8
+!
+      if(nskipr.le.0) nskipr=1
+      if(nskipl.le.0) nskipl=1
+      ineg   = 0
+      ilnct  = 4
+!===========================================================
+!
+!.....read card types .ge. one
+!
+!===========================================================
+      ll = 0
+    5 continue
+      if(ll.gt.ptpts) ineg=6
+
+      if(ineg .eq. 6) print *, " ll,itype = ", ll,itype, " ptpts = ", ptpts
+
+      if(ineg.ne.0) return
+      go to(806,804),iformat
+  806 call readcard(nin,nout,nsc1,itype,card,char,inegp )
+      if(inegp.gt.0) ineg=inegp
+      go to 805
+  804 read(nin,1003) itype,(card(i),i=1,9)
+  805 continue
+        if (acoef(72).lt.0.0_R8)   go to 6
+      call writcard(nout,itype,card,char )
+      if((imovie.gt.0 .and. imovie.lt.10) .or. itype.eq.10) go to 6
+      if(lfirst_movie) then
+      ilnct = ilnct+1
+        if(ilnct.lt.37) go to 4
+      ilnct = 0
+      call frscj(2)
+        call map(0.0_R8,1._R8,0.0_R8,1._R8,0._R8,1._R8,0._R8,1._R8)
+        call setld(1._R8,42._R8,1,0,1,0)
+    4 continue
+      call pltcard(s100(1),itype,card,char )
+      endif
+    6 continue
+      if(itype .lt. 0) go to 5
+      if(itype.eq.99) go to 500
+!..rxw/02/02/88
+      if(itype.ne.0 .and. itype.le.98) go to 7
+      write(nout,2007) itype
+ 2007 format(" illegal card type",i3)
+      ineg=21
+      return
+    7 continue
+!
+!.....process card according to card type
+      go to (10,20,30,40,50,60,70,80,90,100,110,120,                     &  
+     &   130,140,150,160,170,180,190,200,210,220,230,240,                &  
+     &   250,260,270,280,290,300,310,320,330,340,350,360,                &  
+     &   370,380,390,400,410,420,430,440,450,                            &  
+     &   460,470,480,490,495,5101,5201,5301,5401,5501,5601,              &  
+     &   5701,5801,5901,6001,6101,6201,6301,6401,6501,6601,              &  
+     &   6701,6801,6901,7001,7101,7201,7301,7401,7501,7601,              &
+     &   7701,7801,7901,8001,8101,8201,8301,8401,8501,8601,              &
+     &   8701,8801,8901,9051,9151,9251,9351,9451,9551),itype
+!...........................................................
+!
+!...card  1 : dimensions
+!
+!...........................................................
+   10 continue
+!
+      nx      = int(card(1))
+      nz      = int(card(2))
+      alx     =      card(3)
+      alz = card(4)*(1.0_R8+ 1.0E-13_R8)
+      jsym    = int(card(5))
+      isym=iabs(jsym)
+      ccon    =      card(6)
+      idata = int(card(7))
+      zzero = -alz*(1-isym)
+      if(nc0.le.0) nc0 = 1
+!
+      if(irst1.ne.1) go to 5
+      nzp = nz + 1
+      if(isym.eq.0) nzp = 2*(int(AREAL(nz+1)/2._R8+.1_R8))
+      nz = nzp-1
+      nzm = nz-1
+      nxm = nx-1
+      nxp = nx+1
+      nh = (nzp+2)/2
+      if(isym.eq.1) nh=2
+!
+      go to 5
+!...........................................................
+!
+!...card  2 : time step and switches
+!
+!...........................................................
+   20 continue
+!
+      dtmins  =      card(1)*1.E-6_R8
+      dtmaxs  =      card(2)*1.E-6_R8
+      dtfac =      card(3)
+      lrswtch = int(card(4))
+      idens = int(card(5))
+      ipres   = int(card(6))
+      ifunc    = int(card(7))
+      if(ifunc.le.0) ifunc = 1
+!
+      go to 5
+!...........................................................
+!
+!...card  3 : numerical
+!
+!...........................................................
+   30 continue
+!
+      xlim    =      card(1)
+      zlim    =      card(2)
+      xlim2      =      card(3)
+!
+!.....ffac < 0 switch for automatic adjustment of ffac
+      iffac=0
+      if(card(4).lt.0) iffac=1
+      ffacin =      abs(card(4))
+      ndiv    = int(card(5))
+      icirc = int(card(6))
+      isvd = int(card(7))
+!
+      if(ffacin .eq. 0) ffacin = 1._R8
+      if(ndiv.eq.0) ndiv = 1
+!.....find grid point nearest (xlim,zlim)
+      if(irst1  .ne. 1) go to 5
+      iminn = int((xlim-ccon)/deex+2.5_R8)
+      jmaxx = int((zlim-zzero)/deez+2.5_R8)
+      jminn = 2*nh-jmaxx
+      if(isym.eq.1) jminn = 2
+      imaxx = int((xlim2-ccon)/deex+2.5_R8)
+      if(iminn.lt.4) iminn = 4
+      if(jmaxx.gt.nz-1) jmaxx = nz-1
+      if(imaxx.gt.nx-1) imaxx = nx-1
+      write(nterm,1030)
+      write(nout,1030)
+ 1030 format(" WARNING: ffac cannot be changed at restart time by",      &  
+     &     /,"          using type 03 card.   Values from type 35",      &  
+     &     /,"          card are used.")
+!
+      go to 5
+!...........................................................
+!
+!...card  4 : surface average
+!
+!...........................................................
+   40 continue
+!
+      isurf   = int(card(1))
+      npsi    = int(card(2))
+      nskipsfi = int(card(3))
+      tfmult  =      card(4)
+      if(tfmult.le.0) tfmult = 1._R8
+!     fmp 09/2013: replace line below with IF statement
+!     alphar = card(5) 
+      if(irst1.eq.0)  then
+         alphar = card(5)
+      else
+        write(nout,9012) 
+        write(nterm,9012)
+      endif
+!     fmp 09/2013: replace line below with IF statement
+!     betar = card(6)
+      if(irst1.eq.0)  then
+         betar = card(6)
+      else
+        write(nout,9012) 
+        write(nterm,9012)
+      endif
+9012  format("  * warning, cannot change alphar and betar               &
+     &          using type 4 for irst1.ne.0 *")
+      if(alphar.eq.0 .or. betar.eq.0) ineg=38
+      itrmod = card(7)
+      if(itrmod.le.0) itrmod = 1
+!
+      go to 5
+!...........................................................
+!
+!...card  5 : limiter points
+!
+!...........................................................
+   50 continue
+!
+      nlim        = int(card(1))
+      nlimch      = int(card(1)+.99999_R8)
+!     nlimch      = int(card(1)+.9999999_R8)
+      if(nlim.eq.nlimch) go to 54
+      write(nterm,1054)
+      write(nout ,1054)
+      ineg=21
+      go to 5
+ 1054 format(" *** error with type 05 (limiter) card *** ",//,           &  
+     &       " in version 8.00 and all future TSC versions the first",/,  &  
+     &       " field in the type 05 input card is the index number of",/  &  
+     & ,                                                                 &  
+     &       " the first limiter to be defined on the card.  Up to 3 ",/  &  
+     & ,                                                                 &  
+     &       " limiter points can still be defined on each card. An  ",/  &  
+     & ,                                                                 &  
+     &       " example of a proper type 05 card is as follows",//,       &  
+     &       " 05        1.0       2.13      0.12      2.13      0.24",/  &  
+     & /,                                                                &  
+     &       " where this means xlima(1)=2.13, zlima(1)=0.12, ",/,       &  
+     &       "                  xlima(2)=2.13, zlima(2)=0.24, etc"   )
+   54 continue
+      nlim0       = nlim
+      if(nlim.gt.pnlim) go to 55
+      xlima(nlim) = card(2)
+      zlima(nlim) = card(3)
+      if(card(4).le.0) go to 55
+      nlim        = nlim + 1
+      if(nlim.gt.pnlim) go to 55
+      xlima(nlim) = card(4)
+      zlima(nlim) = card(5)
+      if(card(6).le.0) go to 55
+      nlim        = nlim+1
+      if(nlim.gt.pnlim) go to 55
+      xlima(nlim) = card(6)
+      zlima(nlim) = card(7)
+   55 continue
+      if(nlim .gt. pnlim) ineg=6
+
+      if( ineg .eq. 6 ) print *, " nlim = ", nlim, " pnlim = ", pnlim
+
+      if(ineg.ne.0) go to 5
+!.....define new limiter points for a restart run
+      if(irst1.ne.1) go to 5
+      do 52 ii=1,3
+      if(card(2*ii).le.0) go to 52
+      nlim   = nlim0 + ii - 1
+      xx     = xlima(nlim)
+      zz     = zlima(nlim)
+      isave = (xx-ccon)/deex + 2
+      jsave = (zz-zzero)/deez + 2
+      ilima(nlim) = isave
+      jlima(nlim) = jsave
+   52 continue
+      go to 5
+!...........................................................
+!
+!...card  6 : divertor
+!
+!...........................................................
+   60 continue
+!
+      idiv   = int(card(1))
+      psirat =      card(2)
+      x1sep  =      card(3)
+      x2sep  =      card(4)
+      z1sep  =      card(5)
+      z2sep  =      card(6)
+      nsepmax = card(7)
+      if(nsepmax.le.0) nsepmax = 2
+!
+      if(z1sep.lt.zzero) go to 999
+      if(z2sep.lt.z1sep) go to 999
+      if(x1sep.lt. ccon) go to 999
+      if(x2sep.lt.x1sep) go to 999
+      if(psirat.ge.1.0_R8) go to 999
+      if(irst1.ne.1) go to 5
+      iminsep = int((x1sep-ccon)/deex+2.5_R8)
+      jminsep = int((z1sep-zzero)/deez+2.5_R8)
+      imaxsep = int((x2sep-ccon)/deex+2.5_R8)
+      jmaxsep = int((z2sep-zzero)/deez+2.5_R8)
+!
+!
+      go to 5
+!...........................................................
+!
+!...card  7 :  impurities
+!
+!...........................................................
+   70 continue
+!
+      if(irst1.eq.1) then
+      if(   (card(1).eq.2 .and. iimp.ne.2)                               &  
+     & .or. (card(2).eq.1 .and. ilte.ne.1) ) then
+            write(nout,9070)
+            write(nterm,9070)
+            ineg=21
+ 9070 format(" * cannot change impurity parameters at restart time *")
+                                             endif
+                     endif
+!
+      iimp = int(card(1))
+      ilte = int(card(2))
+      impbnd = int(card(3))
+      imppel = int(card(4))
+!
+      amgas = card(5)
+      zgas  = card(6)
+      if(amgas .le. 1.0_R8) amgas = 1.0_R8
+      if(zgas  .le. 1.0_R8)  zgas = 1.0_R8
+!
+      nthe = int(card(7))
+!
+      if(iimp.gt.2) ineg=21
+      if(ilte.gt.1) ineg=21
+      if(ineg.ne.0) return
+!
+      go to 5
+!...........................................................
+!
+!...card  8 : observation pairs
+!
+!...........................................................
+   80 continue
+!
+      kobs = 2*int(card(1))-1
+      if(kobs.gt.pobs) go to 81
+      xobs(kobs) = card(2)
+      zobs(kobs) = card(3)
+      npltobs(kobs) = int(card(6)+0.1_R8)
+   81 kobs = kobs + 1
+      if(kobs.gt.pobs) go to 82
+      xobs(kobs) = card(4)
+      zobs(kobs) = card(5)
+   82 if(kobs.ge.nobs) nobs = kobs
+      if(nobs .gt. pobs) ineg=6
+
+      if(ineg .eq. 6) print *, " nobs = ", nobs, " pobs = ", pobs
+
+
+      if(irst1.ne.1) go to 5
+!
+      do 990 n=nobs-1,nobs
+      if(n.gt.pobs) go to 990
+      xx = xobs(n)
+      zz = zobs(n)
+      isave = (xx-ccon)/deex+2
+      jsave = (zz-zzero)/deez+2
+      iobs(n) = isave
+      jobs(n) = jsave
+  990 continue
+!
+      go to 5
+!...........................................................
+!
+!...card  9 : external coils
+!
+!...........................................................
+   90 continue
+!
+      ic0sv = ic01
+      ic0 = int(card(1))
+!     if(ic0.gt.5000) ineg=21
+      if(ic0.gt.4000) go to 97
+      if(ic0.gt.3000) go to 95
+      if(ic0.gt.2000) go to 93
+      if(ic0.gt.1000) go to 91
+      if(ic0.le.0) ineg=21
+!
+      do 99 l=1,4
+   99 l09z(l) = 0
+      ic01 = ic0
+      if(ic0.ge.ncoil) ncoil = ic0
+      if(ncoil .gt. pncoil) ineg=6
+
+      if(ineg .eq. 6) print *, " ncoil = ", ncoil, " pncoil = ", pncoil
+
+
+      if(ineg.gt.0) go to 5
+      xcoil  (ic0) =      card(2)
+      zcoil  (ic0) =      card(3)
+      igroupc(ic0) =      card(4)
+      aturnsc(ic0) =      card(5)
+      rscoils(ic0) =      card(6)
+!===  if(card(6) .lt. 0) rswires(ic0) = -card(6)*card(2)
+      aindc  (ic0) =      card(7)
+!
+!..rxw/26/10/87
+      if(card(6).lt.0._R8) rscoils(ic0) = -card(6)*card(2)
+      if(card(7).lt.0._R8) then
+        radic = -card(7)
+        aindc(ic0) = xcoil(ic0)*( log(8._R8*xcoil(ic0)/radic) -2._R8+    &  
+     & 0.25_R8)
+      else
+        aindc(ic0) = card(7)/(4._R8*pi*1.E-7_R8)
+      endif
+!...rxw/end
+      go to 5
+!
+   91 continue
+      ngrvc1(ic0sv) = ic0-1000
+      do 92 l=1,6
+      ll = l + l09z(1)
+   92 atnvc1(ll,ic0sv) = card(l+1)
+      l09z(1) = l09z(1) + 6
+      go to 5
+   93 continue
+      ngrvc2(ic0sv) = ic0-2000
+      do 94 l=1,6
+      ll = l + l09z(2)
+   94 atnvc2(ll,ic0sv) = card(l+1)
+      l09z(2) = l09z(2) + 6
+      go to 5
+   95 continue
+      ngrvc3(ic0sv) = ic0-3000
+      do 96 l=1,6
+      ll = l + l09z(3)
+   96 atnvc3(ll,ic0sv) = card(l+1)
+      l09z(3) = l09z(3) + 6
+      go to 5
+   97 continue
+      ngrvc4(ic0sv) = ic0-4000
+      do 98 l=1,6
+      ll = l + l09z(4)
+   98 atnvc4(ll,ic0sv) = card(l+1)
+      l09z(4) = l09z(4) + 6
+      go to 5
+!...........................................................
+!
+!...card 10 : internal coils
+!
+!...........................................................
+  100 continue
+!
+      ic0sv        = ic01
+      ic0          = abs(card(1))
+!     if(ic0.gt.5000) ineg=21
+      if(ic0.gt.4000 .and. card(1).gt.0) go to 107
+      if(ic0.gt.3000 .and. card(1).gt.0) go to 105
+      if(ic0.gt.2000 .and. card(1).gt.0) go to 103
+      if(ic0.gt.1000 .and. card(1).gt.0) go to 101
+      if(ic0.le.0) ineg=21
+!
+      do 109 l=1,4
+  109 l10z(l) = 0
+      ic01 = ic0
+      if(ic0.ge.nwire) nwire = ic0
+      if(nwire .gt. pnwire) ineg=6
+
+      if(ineg .eq. 6) print *, " nwire = ", nwire, " pnwire = ", pnwire
+
+
+      if(ineg.gt.0) go to 5
+      xwire(ic0)   =      card(2)
+      zwire(ic0)   =      card(3)
+      igroupw(ic0) = int(card(4))
+      aturnsw(ic0) =      card(5)
+      rswires(ic0) =      card(6)
+!
+      if(card(6).lt.0) rswires(ic0) = -card(6)*card(2)
+      cwics(ic0) = card(7)*1.E3_R8
+!
+      go to 5
+  101 continue
+      ngrvw1(ic0sv) = ic0-1000
+      do 102 l=1,6
+      ll = l + l10z(1)
+  102 atnvw1(ll,ic0sv) = card(l+1)
+      l10z(1) = l10z(1) + 6
+      go to 5
+  103 continue
+      ngrvw2(ic0sv) = ic0-2000
+      do 104 l=1,6
+      ll = l + l10z(2)
+  104 atnvw2(ll,ic0sv) = card(l+1)
+      l10z(2) = l10z(2) + 6
+      go to 5
+  105 continue
+      ngrvw3(ic0sv) = ic0-3000
+      do 106 l=1,6
+      ll = l + l10z(3)
+  106 atnvw3(ll,ic0sv) = card(l+1)
+      l10z(3) = l10z(3) + 6
+      go to 5
+  107 continue
+      ngrvw4(ic0sv) = ic0-4000
+      do 108 l=1,6
+      ll = l + l10z(4)
+  108 atnvw4(ll,ic0sv) = card(l+1)
+      l10z(4) = l10z(4) + 6
+      go to 5
+!...........................................................
+!
+!...card 11 : acoef array
+!
+!...........................................................
+  110 continue
+!
+      ico   = int(card(1))
+      nco   = int(card(2))
+      if(ico .le. 0 .or. ico .gt. 4999+pncoil-nco) go to 999
+      if(nco .le. 0 .or. nco .gt. 6  ) go to 999
+!
+      icmax = ico+nco-1
+      indx  = 2
+      do 111 ic=ico,icmax
+      indx      = indx+1
+      acoef(ic) = card(indx)
+      if(redef(ic).eq.1) then
+        write(nout,9111) ic
+        write(nterm,9111) ic
+        ineg=59
+ 9111   format(" ERROR:  acoef(",i4,")  defined twice")
+                         endif
+      redef(ic) = 1._R8
+  111 continue
+!
+      go to 5
+!...........................................................
+!
+!...card 12 : transport
+!
+!...........................................................
+  120 continue
+!
+      itevv = 0
+      if(card(1).le.0) itevv = 1
+      if(irst1.eq.0) tevv = abs(card(1))
+      if(tevv.eq.0) tevv = 1._R8
+      udsd   =      card(2)*1.E19_R8
+      qsaw   =      card(3)
+      zeff   =      card(4)
+      ialpha = int(card(5))
+      ibalsw = int(card(6))
+      isaw = int(card(7))
+      if(isaw.le.0) isaw = 1
+!
+      if(zeff.eq.0) zeff = 1._R8
+!
+      if(irst1.ne.1) go to 5
+      allam   = 24._R8-log(1.E-3_R8*sqrt(udsd)/tevv)
+      etav    = (0.5_R8*1.03E-4_R8*allam)*tevv**(-1.5_R8)*usdr
+      write(nterm,1031)
+      write(nout,1031)
+ 1031 format(" WARNING: tevv cannot be changed at restart time by",      &  
+     &     /,"          using type 12 card. Values from type 34,35",     &  
+     &     /,"          card are used.")
+!
+      go to 5
+!...........................................................
+!
+!...card 13 : initial conditions
+!
+!...........................................................
+  130 continue
+!
+      alphag =      card(1)
+      alphap =      card(2)
+      alphae  = alphap
+      neqmax  = int(card(3))
+      xplas  =      card(4)
+      zplas  =      card(5)
+      gzero  =      card(6)
+      qzero  =      card(7)
+!
+       go to 5
+!...........................................................
+!
+!...card 14 : more initial conditions
+!
+!...........................................................
+  140 continue
+!
+      istart = int(card(1))
+      if(istart.le.0) istart=1
+      xzeric = card(2)
+      axic = card(3)
+      zzeric = card(4)
+      bzic = card(5)
+!
+      go to 5
+!...........................................................
+!
+!...card 15 : coil groups
+!
+!...........................................................
+  150 continue
+!
+      igroup = int(abs(card(1)))
+!.....apply zero net current constraint if neg group no
+      iseries(igroup) = 0
+      if(card(1) .lt. 0) iseries(igroup) = 1
+      if(igroup.gt.ngrmax) ngrmax = igroup
+      if(ngrmax.gt.pngroup) ineg=6
+
+      if(ineg .eq. 6)                                                    &  
+     &   print *, " ngrmax = ", ngrmax, " pngroup = ", pngroup
+
+
+      do 151 l=1,6
+      ll = l + l15z(igroup)
+  151 gcur(ll,igroup) = card(l+1)*1.E3_R8
+      l15z(igroup) = l15z(igroup) + 6
+!
+      go to 5
+!...........................................................
+!
+!...card 16 : plasma current
+!
+!...........................................................
+  160 continue
+!
+      do 161 l=1,6
+      ll = l + l16z
+  161 pcur(ll) = card(l+1)*1.E3_R8
+      l16z = l16z + 6
+!
+      go to 5
+!...........................................................
+!
+!...card 17 : plasma pressure
+!
+!...........................................................
+  170 continue
+!
+      do 171 l=1,6
+      ll = l + l17z
+  171 ppres(ll) = card(l+1)
+      l17z = l17z + 6
+!
+      go to 5
+!...........................................................
+!
+!...card 18 : timing
+!
+!...........................................................
+  180 continue
+!
+      do 181 l=1,6
+      ll = l + l18z
+      if(ll.le.ptpts) tpros(ll) = card(l+1)
+      if(card(l+1).ne.0) ntpts = ll
+      if(ntpts .gt. ptpts) ineg=6
+
+      if(ineg .eq. 6) print *, " ntpts = ", ntpts, " ptpts = ", ptpts
+
+
+      if(irst1.eq.1 .and. ineg.eq.0) tpro(ll) = tpros(ll)*usdt
+  181 continue
+      l18z = l18z + 6
+      go to 5
+!...........................................................
+!
+!...card 19 : radial feedback  - 1
+!
+!...........................................................
+  190 continue
+!
+      if(int(card(1)).eq.1000) go to 191
+      inumfb = int(card(1))
+      nrfb(inumfb) = int(card(2))
+      nfeedo(inumfb) = int(card(3))
+      fbfac(inumfb) = card(4)
+      fbcon(inumfb) = card(5)
+      idelay(inumfb) = card(6)
+      fbfaci(inumfb) = card(7)
+      if(inumfb.gt.numfb) numfb = inumfb
+      iflagfb(inumfb) = 0
+      indxd1(inumfb) = 0
+      if(inumfb.gt.pnfeed) ineg=6
+
+      if(ineg .eq. 6)                                                    &  
+     &    print *, " inumfb = ", inumfb, " pnfeed = ", pnfeed
+
+
+      go to 5
+!
+  191 continue
+      iflagfb(inumfb) = 1
+      do 192 l=1,6
+      ll = l + l19z(inumfb)
+      nfeedv(ll,inumfb) = card(l+1)
+      if(nfeedv(ll,inumfb).eq.0) nfeedv(ll,inumfb) = nfeedv(ll-1,inumfb)     
+  192 continue
+      l19z(inumfb) = l19z(inumfb) + 6
+      go to 5
+!...........................................................
+!
+!...card 20 : radial feedback - 2
+!
+!...........................................................
+  200 continue
+      inumfb = int(card(1))
+      tfbons(inumfb) = card(2)
+      tfbofs(inumfb) = card(3)
+      fbfac1(inumfb) = card(4)
+      fbfacd(inumfb) = card(5)
+      ipext(inumfb) = int(card(6))
+      if(irst1.ne.1) go to 5
+      tfbon(inumfb) = card(2)*usdt
+      tfbof(inumfb) = card(3)*usdt
+!
+      go to 5
+!...........................................................
+!
+!...card 21 : optional contour plots
+!
+!...........................................................
+  210 continue
+      icplet = int(card(1))
+      icplgf = int(card(2))
+      icplwf = int(card(3))
+      icplpr = int(card(4))
+      icplbv = int(card(5))
+      icpluv = int(card(6))
+      icplxp = int(card(7))
+      go to 5
+!...........................................................
+!
+!...card 22 : optional vector plots
+!
+!...........................................................
+  220 continue
+      ivplbp = int(card(1))
+      ivplvi = int(card(2))
+      ivplfr = int(card(3))
+      ivpljp = int(card(4))
+      ivplvc = int(card(5))
+      ivplvt = int(card(6))
+      go to 5
+!..............................................................
+!
+!...card 23 : neutral beams
+!
+!...............................................................
+  230 continue
+      do 231 l=1,6
+      ll = l + l23z
+!cj   write(*,*) "--- inpt L1010 beamp(l) =", ll, beamp(ll) 
+  231 beamp(ll) = card(l+1)*1.E6_R8
+      l23z = l23z + 6
+      go to 5
+!.................................................................
+!
+!.....card 24 : normalized density
+!
+!....................................................................
+  240 continue
+      do 241 l=1,6
+      ll = l + l24z
+      rnorm(ll) = card(l+1)
+  241 continue
+      l24z = l24z + 6
+      go to 5
+!.......................................................................
+!
+!.....card 25 : beam deposition profile
+!
+!.......................................................................
+  250 continue
+      abeam = card(1)
+      dbeam = card(2)
+      nebeam = int(card(3))
+      ebeamkev = card(4)
+      ambeam = card(5)
+      fracpar = card(6)
+      ibootst = int(card(7))
+      if(fracpar.ne.0 .and. ebeamkev.eq.0) ebeamkev = 80._R8
+      if(fracpar.ne.0 .and. ambeam  .eq.0) ambeam = 1._R8
+      go to 5
+!.......................................................................
+!
+!.....card 26 : transport multiplier
+!
+!.......................................................................
+  260 continue
+      do 261 l=1,6
+      ll = l + l26z
+  261 fbchia(ll) = card(l+1)
+      l26z = l26z + 6
+      go to 5
+!.......................................................................
+!
+!.....card 27 : time dependent external toroidal field
+!
+!.......................................................................
+  270 continue
+      do 271 l=1,6
+      ll = l + l27z
+  271 gzerov(ll) = card(l+1)
+      l27z = l27z + 6
+      go to 5
+!.......................................................................
+!
+!.....card 28 : pre programmed loop voltage
+!
+!.......................................................................
+  280 continue
+      do 281 l=1,6
+      ll = l + l28z
+  281 vloopv(ll) = card(l+1)
+      l28z = l28z + 6
+      go to 5
+!.......................................................................
+!
+!.....card 29 : Pest output times
+!
+!.......................................................................
+290   continue
+      do 291 l=1,6
+      lll=l+l29z
+      if(lll.gt.100) go to 291
+      tpest(lll)=card(l+1)
+      if(tpest(lll).gt.0._R8) nopest=max(nopest,lll)
+291   continue
+      l29z=l29z+6
+      go to 5
+!..rxw/22/04/87
+!.......................................................................
+!
+!.....card 30 : preprogrammed x-position of magnetic axis
+!
+!.......................................................................
+ 300  continue
+      do 301 l=1,6
+      ll=l+l30z
+      xmagz(ll)=card(l+1)
+ 301  continue
+      l30z=l30z+6
+      go to 5
+!.......................................................................
+!
+!.....card 31 : preprogrammed z-position of magnetic axis
+!
+!.......................................................................
+ 310  continue
+      do 311 l=1,6
+      ll=l+l31z
+      zmagz(ll)=card(l+1)
+ 311  continue
+      l31z=l31z+6
+      go to 5
+!...rxw/end
+!.....................................................................
+!
+!.....card 32 : Divertor Plate info
+!
+!......................................................................
+  320 continue
+      ic0 = int(card(1))
+      if(ic0.ge.1000) go to 321
+      iplate = 1
+      l32z = 0
+      if(ic0.gt.nplate) nplate = ic0
+      xlplate(ic0) = card(2)
+      zlplate(ic0) = card(3)
+      xrplate(ic0) = card(4)
+      zrplate(ic0) = card(5)
+      fplate(ic0,1) = card(6)
+      fplate(ic0,2) = card(7)
+      go to 5
+  321 continue
+      do 322 l=1,3
+      if(card(2*l).le.0) go to 322
+      i32sw(nplate) = i32sw(nplate)+1
+      if(l+l32z .gt. pnseg+1) go to 322
+      xsega(nplate,l+l32z) = card(2*l)
+      zsega(nplate,l+l32z) = card(2*l+1)
+  322 continue
+      l32z = l32z + 3
+      go to 5
+!.....................................................................
+!
+!.....card 33 : additional coil group informations
+!
+!.....................................................................
+!     card(1) : coil group number
+!     card(2) : gap resistance in ohms (resgs)
+!     card(3) : initial energy in coil group
+!
+ 330  continue
+      resgs( iabs(int(card(1))) ) = card(2)
+      engrupi (iabs(int(card(1))) ) = card(3)
+      go to 5
+!...rxw/end
+!.......................................................................
+!
+!.....card 34 : preprogrammed vacuum temperature tevv
+!.......................................................................
+  340 continue
+      do 341 l=1,6
+      ll=l+l34z
+      tevv0(ll) = card(l+1)
+  341 continue
+      l34z = l34z+6
+      go to 5
+!.......................................................................
+!
+!.....card 35: preprogrammed mass enhancement ffac
+!
+!.......................................................................
+  350 continue
+      do 351 l=1,6
+      ll=l+l35z
+      ffac0(ll) = card(l+1)
+  351 continue
+      l35z = l35z+6
+      go to 5
+!.......................................................................
+!
+!.....card 36: preprogrammed z-effective zeff
+!
+!.......................................................................
+  360 continue
+      do 361 l=1,6
+      ll=l+l36z
+      zeffv(ll) = card(l+1)
+  361 continue
+      l36z = l36z+6
+      go to 5
+!......................................................................
+!
+!.....card 37: preprogrammed group voltage
+!
+!......................................................................
+  370 continue
+      igroup = int(abs(card(1)))
+      do 371 l=1,6
+      ll = l + l37z(igroup)
+  371 gvolt(ll,igroup) = card(l+1)*1.E3_R8
+      l37z(igroup) = l37z(igroup) + 6
+!
+      go to 5
+!....................................................................
+!
+!.....card 38: lower hybrid heating and current drive parameters
+!
+!....................................................................
+  380 continue
+      ilhcd = int(card(1))
+      w1lim = card(2)
+      freqlh = card(3)
+      aion = card(4)
+      zion = card(5)
+      cprof = card(6)
+      ifk = int(card(7))
+      go to 5
+!..................................................................
+!
+!.....card 39: additional external coil info
+!
+!..................................................................
+  390 continue
+      ic0 = int(card(1))
+      dxcoil(ic0) = card(2)
+      dzcoil(ic0) = card(3)
+      fcu(ic0)    = card(4)
+      if(fcu(ic0) .eq. 1.0_R8) fcu(ic0) = .999_R8
+      fss(ic0)    = card(5)
+      tempc(ic0)  = card(6)
+      if(tempc(ic0) .le. 0) tempc(ic0) = 293._R8
+      ccics(ic0) = card(7)*1.E3_R8
+      go to 5
+!
+!..rxw/02/03/88
+!..................................................................
+!
+!.....card 40: plot output suppression (noplot)
+!
+!..................................................................
+!
+ 400  continue
+      do 401 l=1,7
+       nnoplot = int(card(l))
+       if(nnoplot) 402,403,404
+ 404   continue
+        noplot(nnoplot) = 1
+        goto 401
+ 402   continue
+        nnoplot = -nnoplot
+        noplot(nnoplot) = -1
+ 401  continue
+ 403  continue
+      goto 5
+!..................................................................
+!
+!.....card 41: TF ripple parameters
+!
+!..................................................................
+  410 continue
+      irippl = int(card(1))
+      ntfcoil= int(card(2))
+      ripmax = card(3)
+      rtfcoil= card(4)
+      npitch = card(5)
+      ripmult = card(6)
+      if(ripmult.le.0) ripmult = 1._R8
+      iripmod = int(card(7))
+      if(iripmod.le.0) iripmod = 1
+      go to 5
+!...........................................................................
+!
+!.....card 42 : preprogrammed center of last flux surface
+!
+!.......................................................................
+ 420  continue
+      do 421 l=1,6
+      ll=l+l42z
+      rzerv(ll)=card(l+1)
+ 421  continue
+      l42z=l42z+6
+      go to 5
+!.......................................................................
+!
+!.....card 43 : preprogrammed minor radius
+!
+!.......................................................................
+ 430  continue
+      do 431 l=1,6
+      ll=l+l43z
+      azerv(ll)=card(l+1)
+ 431  continue
+      l43z=l43z+6
+      go to 5
+!.......................................................................
+!
+!.....card 44 : preprogrammed ellipticity
+!
+!.......................................................................
+ 440  continue
+      do 441 l=1,6
+      ll=l+l44z
+      ezerv(ll)=card(l+1)
+ 441  continue
+      l44z=l44z+6
+      go to 5
+!.......................................................................
+!
+!.....card 45 : preprogrammed triangularity
+!
+!.......................................................................
+ 450  continue
+      do 451 l=1,6
+      ll=l+l45z
+      dzerv(ll)=card(l+1)
+ 451  continue
+      l45z=l45z+6
+      go to 5
+!
+!..................................................................
+!
+!.....CARD 46:  preprogramed Lower Hybrid heating powers
+!
+!...................................................................
+  460 continue
+      do 461 l=1,6
+      ll=l+l46z
+      plhamp(ll)=card(l+1)*1.E6_R8
+ 461  continue
+      l46z=l46z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 47:  preprogrammed density exponent --- 1
+!
+!...................................................................
+  470 continue
+      do 471 l=1,6
+      ll=l+l47z
+      alpharv(ll)=card(l+1)
+ 471  continue
+      l47z=l47z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 48:  preprogrammed density exponent
+!
+!...................................................................
+  480 continue
+      do 481 l=1,6
+      ll=l+l48z
+      betarv(ll)=card(l+1)
+ 481  continue
+      l48z=l48z+6
+      go to 5
+!...................................................................
+!
+!.....card 49 : Multipole "coils"
+!
+!...................................................................
+ 490 continue
+      ic0 = int(card(1))
+      if(ic0 .ge. nmult)nmult = ic0
+      multn(ic0) = card(2)
+      r0mult(ic0) = card(3)
+      igroupm(ic0) = card(4)
+      aturnsm(ic0) = card(5)
+!
+      if(ic0 .le. 0) ineg=21
+      if(multn(ic0) .lt.0 .or. multn(ic0) .gt.10) ineg=21
+      if(r0mult(ic0) .le. 0) ineg=21
+      if(igroupm(ic0) .le.0 .or. igroupm(ic0) .gt. pngroup) ineg=21
+      go to 5
+!..................................................................
+!
+!.....CARD 50:  fraction_of_beam_parallel_to_B
+!
+!...................................................................
+  495 continue
+      do 496 l=1,6
+      ll=l+l50z
+      frcparv(ll)=card(l+1)
+ 496  continue
+      l50z=l50z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 51:  position of the peak of the lh power profile
+!
+!...................................................................
+ 5101 continue
+      do 5102 l=1,6
+      ll=l+l51z
+      alhd(ll)=card(l+1)
+ 5102 continue
+      l51z=l51z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 52:  width of the lh power profile
+!
+!...................................................................
+ 5201 continue
+      do 5202 l=1,6
+      ll=l+l52z
+      dlhd(ll)=card(l+1)
+ 5202 continue
+      l52z=l52z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 53:  exponent value near center of the lh power profile
+!
+!...................................................................
+ 5301 continue
+      do 5302 l=1,6
+      ll=l+l53z
+      a1lhd(ll)=card(l+1)
+ 5302 continue
+      l53z=l53z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 54:  exponent value at edge of the lh power profile
+!
+!...................................................................
+ 5401 continue
+      do 5402 l=1,6
+      ll=l+l54z
+      a2lhd(ll)=card(l+1)
+ 5402 continue
+      l54z=l54z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 55:  position of the peak of the current profile
+!
+!...................................................................
+ 5501 continue
+      do 5502 l=1,6
+      ll=l+l55z
+      aclhd(ll)=card(l+1)
+ 5502 continue
+      l55z=l55z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 56:  width of the current profile
+!
+!...................................................................
+ 5601 continue
+      do 5602 l=1,6
+      ll=l+l56z
+      dclhd(ll)=card(l+1)
+ 5602 continue
+      l56z=l56z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 57:  exponent value near center for current profile
+!
+!...................................................................
+ 5701 continue
+      do 5702 l=1,6
+      ll=l+l57z
+      a1clhd(ll)=card(l+1)
+ 5702 continue
+      l57z=l57z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 58:  exponent value at edge of the current profile
+!
+!...................................................................
+ 5801 continue
+      do 5802 l=1,6
+      ll=l+l58z
+      a2clhd(ll)=card(l+1)
+ 5802 continue
+      l58z=l58z+6
+      go to 5
+!...............................................................
+ 5901 continue
+      iicrh = 1
+      do 5902 l=1,6
+      ll=l+l59z
+      picrh(ll)=card(l+1)*1.E6_R8
+ 5902 continue
+      l59z=l59z+6
+      go to 5
+!...............................................................
+ 6001 continue
+      do 6002 l=1,6
+      ll=l+l60z
+      thalov(ll)=card(l+1)
+ 6002 continue
+      l60z=l60z+6
+      go to 5
+!...............................................................
+ 6101 continue
+      do 6102 l=1,6
+      ll=l+l61z
+      whalov(ll)=card(l+1)
+ 6102 continue
+      l61z=l61z+6
+      go to 5
+!..............................................................
+ 6201 continue
+      igroup = int(abs(card(1)))
+      do 6202 l=1,6
+      ll = l + l62z(igroup)
+ 6202 xcon0(ll,igroup) = card(l+1)
+      l62z(igroup) = l62z(igroup) + 6
+      ncnt = max(ncnt,igroup)
+      icnt(ncnt)=int(card(1))
+      go to 5
+!..............................................................
+ 6301 continue
+      igroup = int(abs(card(1)))
+      do 6302 l=1,6
+      ll = l + l63z(igroup)
+ 6302 zcon0(ll,igroup) = card(l+1)
+      l63z(igroup) = l63z(igroup) + 6
+      ncnt = max(ncnt,igroup)
+      icnt(ncnt)=int(card(1))
+      go to 5
+!
+!.....................................................................
+!.....CARD 64:  FWCD Current
+!
+!...................................................................
+ 6401 continue
+      ifwcd = 1
+      do 6402 l=1,6
+      ll=l+l64z
+      fwcd(ll)=card(l+1)*1.E6_R8
+ 6402 continue
+      l64z=l64z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 65:  position of the peak of the fw power profile
+!
+!...................................................................
+ 6501 continue
+      do 6502 l=1,6
+      ll=l+l65z
+      afwd(ll)=card(l+1)
+ 6502 continue
+      l65z=l65z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 66:  width of the fw power profile
+!
+!...................................................................
+ 6601 continue
+      do 6602 l=1,6
+      ll=l+l66z
+      dfwd(ll)=card(l+1)
+ 6602 continue
+      l66z=l66z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 67:  exponent value near center of the fw power profile
+!
+!...................................................................
+ 6701 continue
+      do 6702 l=1,6
+      ll=l+l67z
+      a1fwd(ll)=card(l+1)
+ 6702 continue
+      l67z=l67z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 68:  exponent value at edge of the fw power profile
+!
+!...................................................................
+ 6801 continue
+      do 6802 l=1,6
+      ll=l+l68z
+      a2fwd(ll)=card(l+1)
+ 6802 continue
+      l68z=l68z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 69:  position of the peak of the current profile
+!
+!...................................................................
+ 6901 continue
+      do 6902 l=1,6
+      ll=l+l69z
+      acfwd(ll)=card(l+1)
+ 6902 continue
+      l69z=l69z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 70:  width of the current profile
+!
+!...................................................................
+ 7001 continue
+      do 7002 l=1,6
+      ll=l+l70z
+      dcfwd(ll)=card(l+1)
+ 7002 continue
+      l70z=l70z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 71:  exponent value near center for current profile
+!
+!...................................................................
+ 7101 continue
+      do 7102 l=1,6
+      ll=l+l71z
+      a1cfwd(ll)=card(l+1)
+ 7102 continue
+      l71z=l71z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 72:  exponent value at edge of the current profile
+!
+!...................................................................
+ 7201 continue
+      do 7202 l=1,6
+      ll=l+l72z
+      a2cfwd(ll)=card(l+1)
+ 7202 continue
+      l72z=l72z+6
+      go to 5
+!..................................................................
+!
+!.....CARD 73:  helium time constant
+!
+!...................................................................
+ 7301 continue
+      do 7302 l=1,6
+      ll=l+l73z
+      heactv(ll)=card(l+1)
+ 7302 continue
+      l73z=l73z+6
+      go to 5
+!
+!....CARD 74 special input for writing ufiles of impurity charge states
+ 7401 continue
+      if(card(1).le.0) go to 5
+      do 7402 l=1,6
+      itempi = int(card(1+l) + 0.1_R8)
+      if(itempi.le.0) go to 7402
+      numicsuf = numicsuf + 1
+      impnum(numicsuf) = int(card(1) + 0.1_R8)
+      ichargst(numicsuf) = itempi
+ 7402 continue
+      go to 5
+!.......................................................................
+!
+!.....card 75 : Sawtooth times for isaw=2
+!
+!.......................................................................
+ 7501 continue
+      do 7502 l=1,6
+      lll=l+l75z
+      if(lll.gt.500) go to 7502
+      sawtime(lll)=card(l+1)
+      if(sawtime(lll).gt.0._R8) numsaw=max(numsaw,lll)
+7502   continue
+      l75z=l75z+6
+      go to 5
+!...............................................................
+!
+!.....card 76 : Transport multiplier for ions used in itrmod=13
+!
+!.......................................................................
+ 7601 continue
+      do 7602 l=1,6
+      lll=l+l76z
+      fbchiia(lll)=card(l+1)
+7602   continue
+      l76z=l76z+6
+      go to 5
+!.......................................................................
+!
+!.....card 77 : qadd (for itrmod=2)  ...acoef(123)
+!
+!.......................................................................
+ 7701 continue
+      do 7702 l=1,6
+      ll=l+l77z
+      qaddv(ll)=card(l+1)
+ 7702 continue
+      l77z=l77z+6
+      go to 5
+!.......................................................................
+!
+!.....card 78 : fhmode  .... acoef(3003)
+!
+!.......................................................................
+ 7801 continue
+      do 7802 l=1,6
+      ll=l+l78z
+      fhmodeiv(ll)=card(l+1)
+ 7802 continue
+      l78z=l78z+6
+      go to 5
+!.......................................................................
+!
+!.....card 79 : pwidthc    (1-pedistal width) acoef(3011)
+!
+!.......................................................................
+ 7901 continue
+      do 7902 l=1,6
+      ll=l+l79z
+      pwidthcv(ll)=card(l+1)
+ 7902 continue
+      l79z=l79z+6
+      go to 5
+!.......................................................................
+!
+!.....card 80 : chiped  chi value in pedistal  acoef(3006)
+!
+!.......................................................................
+ 8001 continue
+      do 8002 l=1,6
+      ll=l+l80z
+      chipedv(ll)=card(l+1)
+ 8002 continue
+      l80z=l80z+6
+      go to 5
+!.......................................................................
+!
+!.....card 81 : tped  ... pedestal temp in eV acoef(3102)
+!
+!.......................................................................
+ 8101 continue
+      do 8102 l=1,6
+      ll=l+l81z
+      tpedv(ll)=card(l+1)
+ 8102 continue
+      l81z=l81z+6
+      go to 5
+!...............................................................
+!
+!.....card 82 : Impurity fractions
+!
+!.......................................................................
+ 8201 continue
+      imptype = int(abs(card(1)))
+      if(imptype .gt.8) then
+        ineg=6
+        write(*,*) "imptype must be .le. 8, input val=", imptype
+      endif
+      do 8251 l=1,6
+      ll = l + l82z(imptype)
+ 8251 fraciv(imptype,ll) = card(l+1)
+      l82z(imptype) = l82z(imptype) + 6
+      go to 5
+!.......................................................................
+!
+!.....card 83 : nflag  ... flag for setting density profile with expn1 and expn2  acoef(3012)
+!
+!.......................................................................
+ 8301 continue
+      do 8302 l=1,6
+      ll=l+l83z
+      nflagv(ll)=card(l+1)
+ 8302 continue
+      l83z=l83z+6
+      go to 5
+!.......................................................................
+!
+!.....card 84 : expn1 ... first density exponent  acoef(3113)
+!
+!.......................................................................
+ 8401 continue
+      do 8402 l=1,6
+      ll=l+l84z
+      expn1v(ll)=card(l+1)
+ 8402 continue
+      l84z=l84z+6
+      go to 5
+!.......................................................................
+!
+!.....card 85 : expn2 ... second density exponent  acoef(3114)
+!
+!.......................................................................
+ 8501 continue
+      do 8502 l=1,6
+      ll=l+l85z
+      expn2v(ll)=card(l+1)
+ 8502 continue
+      l85z=l85z+6
+      go to 5
+!.......................................................................
+!
+!.....card 86 : firitb ... first itb coefficient   acoef(3004)
+!
+!.......................................................................
+ 8601 continue
+      do 8602 l=1,6
+      ll=l+l86z
+      firitbv(ll)=card(l+1)
+ 8602 continue
+      l86z=l86z+6
+      go to 5
+!.......................................................................
+!
+!.....card 87 : secitb ... second itb coefficient  acoef(3005)
+!
+!.......................................................................
+ 8701 continue
+      do 8702 l=1,6
+      ll=l+l87z
+      secitbv(ll)=card(l+1)
+ 8702 continue
+      l87z=l87z+6
+      go to 5
+!.......................................................................
+!
+!.....card 88 : fracn0  .. fraction of n0 for edge density   acoef(881)
+!
+!.......................................................................
+ 8801 continue
+      do 8802 l=1,6
+      ll=l+l88z
+      fracn0v(ll)=card(l+1)
+ 8802 continue
+      l88z=l88z+6
+      go to 5
+!.......................................................................
+!
+!.....card 89 : newden  ... new density coefficient acoef(889)
+!
+!.......................................................................
+ 8901 continue
+      do 8902 l=1,6
+      ll=l+l89z
+      newdenv(ll)=card(l+1)
+ 8902 continue
+      l89z=l89z+6
+      go to 5
+
+!.......................................................................
+!
+!.....card 90 : ECRH Power (MW)
+!
+!.......................................................................
+ 9051 continue
+      iecrh = 1
+      do 9052 l=1,6
+      ll=l+l90z
+      pecrh(ll)=card(l+1)*1.E6_R8
+ 9052 continue
+      l90z=l90z+6
+      go to 5
+
+!.......................................................................
+!
+!.....card 91 : ECCD Toroidal Current (MA) 
+!
+!.......................................................................
+ 9151 continue
+      ieccd = 1
+      do 9152 l=1,6
+      ll=l+l91z
+      eccd(ll)=card(l+1)*1.E6_R8
+ 9152 continue
+      l91z=l91z+6
+      go to 5
+
+!.......................................................................
+!
+!.....card 92 : First shape parameter a for ECCD heating AND CD
+!
+!.......................................................................
+ 9251 continue
+      do 9252 l=1,6
+      ll=l+l92z
+      aecd(ll)=card(l+1)
+ 9252 continue
+      l92z=l92z+6
+      go to 5
+
+!.......................................................................
+!
+!.....card 93 : Second shape parameter d for ECCD heating AND CD 
+!
+!.......................................................................
+ 9351 continue
+      do 9352 l=1,6
+      ll=l+l93z
+      decd(ll)=card(l+1)
+ 9352 continue
+      l93z=l93z+6
+      go to 5
+
+!.......................................................................
+!
+!.....card 94 : Third shape parameter a1 for ECCD heating AND CD
+!
+!.......................................................................
+ 9451 continue
+      do 9452 l=1,6
+      ll=l+l94z
+      a1ecd(ll)=card(l+1)
+ 9452 continue
+      l94z=l94z+6
+      go to 5
+
+!.......................................................................
+!
+!.....card 95 : Fourth shape parameter a2 for ECCD heating AND CD
+!
+!.......................................................................
+ 9551 continue
+      do 9552 l=1,6
+      ll=l+l95z
+      a2ecd(ll)=card(l+1)
+ 9552 continue
+      l95z=l95z+6
+      go to 5
+
+!...............................................................
+!
+!
+!
+!===========================================================
+!
+!....... end card read
+!
+!===========================================================
+!
+  500 continue
+!
+!.....check impurity density ufile variables
+      if(numicsuf .gt. 0) then
+      itroub = 0
+      if(numicsuf .gt. 18) itroub = 1
+        do i=1,numicsuf
+        if(impnum(i).gt.6 .or. impnum(i).le.0) itroub = 1
+        if(ichargst(i).le.0 .or. ichargst(i).gt.nchrgsr(impnum(i)))      &  
+     &  itroub = 1
+        enddo
+      if(itroub.eq.1) then
+      write(nout,7410) numicsuf
+      write(nout,7411) (impnum(i),i=1,18)
+      write(nout,7412) (ichargst(i),i=1,18)
+ 7410 format(" numicsuf= ",i5," (max of 18 allowed)")
+ 7411 format("impnum ",18i5)
+ 7412 format("ichargst ",18i5)
+      ineg=21
+      endif
+!
+!
+      endif
+!
+!.....check values of some input variables
+      if(ccon.le.0 .or. alx.le.0 .or. alz.le.0) then
+      write(nout,7712) ccon,alx,alz
+ 7712 format(" ccon,alx,alz=",1p3e12.4,"  must be .gt. 0" )
+      ineg=21
+      endif
+      if(ccon*(2*nx-1).le.alx) then
+      write(nout,6612) ccon,alx,nx
+ 6612 format(" ccon,alx,nx=",1p2e12.4,i4," Need: ccon(2*nx-1)>alx")
+      ineg=21
+      endif
+      if(acoef(2) .gt. 1) then
+      write(nout,7713)
+ 7713 format("   ---> acoef(2) .gt. 1.0   ")
+      ineg=21
+      return
+      endif
+      if(acoef(1).ne.3) go to 7715
+      if(acoef(290).eq.4._R8.or. acoef(296).eq.4) go to 7715
+      write(nout,7714)
+ 7714 format("  --> ACOEF(1) .eq. 3 only for ASDEX-U",                   &  
+     & /,    "      for BPX, use ACOEF(1)=2         ")
+ 7715 continue
+!
+!
+!.....define some variables from acoef array
+!
+      eqrate = acoef(4)
+      dpar = acoef(6)
+      th = acoef(7)
+      if(th .gt. 0.9_R8) th = 0.9_R8
+      if(th .lt. 0.0_R8) th = 0.0_R8
+      thm = 1._R8- th
+      phirpg = acoef(8)
+      amu = acoef(9)
+      teflat_time = acoef(19)
+      dtmovie = acoef(34)
+!
+!   define amux for restart run, otherwise define it setup
+      if(lfirst) then
+      if(irst1 .ne. 1) go to 501
+      if(acoef(853+imppel).eq.0._R8.and. imppel.gt.0)                    &  
+     &         acoef(853+imppel) = 1.E-6_R8
+      btave = gzero/(.5_R8*(xary(3)+xary(nx)))
+      amux = amu*.003_R8*sqrt((alx-ccon)*alz)
+      dtmin = dtmins*usdt
+      dtmax = dtmaxs*usdt
+      if(redef(13) .eq. 0 .and. lrswtch.ne.0) acoef(13) = 1._R8
+      if(isurf.eq.1 .and. isurfold.eq.0) then
+         npts = npsi-1
+         call flxvol(1)
+         idefnpe = 1
+      endif
+  501 continue
+      endif
+      resgap = acoef(41)
+      npert = int(acoef(75))
+!
+      if(acoef(13) .ge. 0 .and. acoef(13) .le. 4) iflux=int(acoef(13))
+      icube = int(acoef(17))
+      delg = acoef(25)
+      irfp=int(acoef(44))
+      gprfp = acoef(26)
+      betaj = acoef(27)
+!
+!......iwayne=1 on input if array ajphi to be written
+!      tjphi= initial time for binary write
+!      dtjphi = time interval for the 100 writes
+      iwayne = acoef(30)
+      tjphi = abs(acoef(31))
+      dtjphi = acoef(32)
+        vvl = acoef(52)
+        vvr = acoef(53)
+      igone = int(acoef(79))
+!
+!.....these coefficients needed for ilhcd=2
+      nslhrt = acoef(700)
+      nslhpc = acoef(701)
+      hyperfrac = acoef(65)
+      transmult = acoef(124)
+      itemp = int(acoef(104)  )
+      irunaway = acoef(795)
+      crashtime = acoef(69)
+!
+      if(.not.lfirst) return
+      lfirst=.false.
+      lfirst_movie = .false.
+!
+      if((imovie.eq.0 .or. imovie.ge.10)) call frscj(2)
+      if(irst1.eq.1) go to 620
+      if(isym .eq. 0) nthe = 2*(nthe/2._R8)
+!...........................................................
+!
+!.....check if parameters are too large
+!
+!...........................................................
+      if(nx    .gt. pnx-2  ) ineg=6
+      
+      if(ineg .eq. 6) print *, " nx = ", nx, " pnx = ", pnx
+
+
+      if(nz    .gt. pnz-2  ) ineg=6
+
+      if(ineg .eq. 6) print *, " nz = ", nz, " pnz = ", pnz
+
+
+      if(nwire .gt. pnwire ) ineg=6
+
+      if(ineg .eq. 6) print *, " nwire = ", nwire, " pnwire = ", pnwire
+
+
+      if(ncoil .gt. pncoil ) ineg=6
+
+      if(ineg .eq. 6) print *, " ncoil = ", ncoil, " pncoil = ", pncoil
+
+
+      if(npsi  .gt. ppsi-1) ineg=6
+
+      if(ineg .eq. 6) print *, " npsi = ", npsi, " ppsi = ", ppsi
+
+      if(nthe.gt.pnthe-4 .and.                                           &  
+     &  (iwall.eq.1 .or. ibalsw.gt.0 .or. irippl.gt.0)) ineg=6
+
+      if(ineg .eq. 6) print *, " nthe = ", nthe, " pnthe = ", pnthe
+
+
+      if(nthe .gt. pnthew-4 .and. iwall.eq.1) ineg=6
+
+      if(ineg .eq. 6) print *, " nthe = ", nthe, " pnthew = ", pnthew
+
+
+      if(iimp.gt.0 .and. 2.gt. pimp   ) ineg=6
+
+      if(ineg .eq. 6) print *, " iimp = ", iimp, " pimp = ", pimp
+
+
+      if(nobs  .gt. pobs   ) ineg=6
+
+      if(ineg .eq. 6) print *, " nobs = ", nobs, " pobs = ", pobs
+
+
+      if(ngrmax.gt.pngroup) ineg=6
+
+      if(ineg .eq. 6)                                                    &  
+     &   print *, " ngrmax = ", ngrmax, " pngroup = ", pngroup
+
+
+      if(nlim  .gt. pnlim ) ineg=6
+
+      if(ineg .eq. 6) print *, " nlim = ", nlim, " pnlim = ", pnlim
+
+
+      if(nplate .gt. pnplat) ineg=6
+
+      if(ineg .eq. 6)                                                    &  
+     &    print *, " nplate = ", nplate, " pnplat = ", pnplat
+
+
+      if(nsepmax.gt.pnsep) ineg=6
+
+      if(ineg .eq. 6)                                                    &  
+     &   print *, " nsepmax = ", nsepmax, " pnsep = ", pnsep
+
+
+      if(udsd .le. 0) ineg=29
+!
+      if(ineg.ne.0) return
+!...........................................................
+!
+!.....define some units conversion parameters
+!
+!...........................................................
+!
+!
+      udsi  = 1._R8/(4._R8*pi*1.E-7_R8)
+      udsp  = udsi
+      udsh  = 4.96E24_R8
+!
+      usdd  = 1._R8/udsd
+      usdi  = 1._R8/udsi
+      usdp  = 1._R8/udsp
+      usdh  = 1._R8/udsh
+!
+      dtmin   = dtmins*usdt
+      dtmax   = dtmaxs*usdt
+!
+!
+!...helium ash confinement time
+      heact = acoef(93)
+      qadd = acoef(123)
+      fhmodei = acoef(3003)
+      pwidthc = acoef(3011)
+      chiped = acoef(3006)
+      tped = acoef(3102)
+!
+!.....halo and edge stuff
+      whalos = acoef(97)
+      thalos = acoef(98)
+      tedge = tevv
+      if(whalos.gt.0 .or. teflat_time.gt.0) tedge = max(tevv,thalos)
+      if(acoef(880) .gt. 0) tedge=acoef(880)
+      smallt  = tedge*(usdh/usdd)
+      p0      = ppres(istart)*usdp
+      tcuro   = pcur(istart)*usdi
+      vloopp =  vloopv(istart)
+!..rxw/23/04/87
+      xmagw   = xmagz(istart)
+      rzerw = rzerv(istart)
+      azerw = azerv(istart)
+      ezerw = ezerv(istart)
+      dzerw = dzerv(istart)
+      zmagw   = zmagz(istart)
+!...rxw/end
+!...................................................................
+!.....initial density and electron pressure
+      e0      = acoef(2)*p0
+      r0      = 1._R8
+      if(rnorm(istart).ne.0) r0 = rnorm(istart)
+      if(gzerov(istart).ne.0) gzero = gzerov(istart)
+      if(tevv0(istart).ne.0 .and. itevv.eq.0) tevv = tevv0(istart)
+      ffac = ffacin
+      if(ffac0(istart).ne.0 .and. iffac.eq.0) ffac = ffac0(istart)
+      if(zeffv(istart).ne.0) zeff = zeffv(istart)
+      if(alpharv(istart).ne.0) alphar = alpharv(istart)
+      if(betarv (istart).ne.0) betar  = betarv (istart)
+      if(frcparv(istart).ne.0) fracpar = frcparv(istart)
+!...................................................................
+!
+      xcurf   = xplas
+      zcurf   = 0._R8
+      tcurdtp = tcuro/tpi
+      if(lrswtch.gt.0) tcurdtp = 0._R8
+!
+!.....redefine time dependent arrays if input cards not present
+      do 510 l=1,ntpts
+      if(l24z .eq. 0) rnorm(l) = 1._R8
+      if(l27z .eq. 0) gzerov(l) = gzero
+      if(l34z .eq. 0) tevv0(l) = tevv
+      if(l35z .eq. 0) ffac0(l) = ffacin
+      if(l36z .eq. 0) zeffv(l) = zeff
+      if(l47z .eq. 0) alpharv(l) = alphar
+      if(l48z .eq. 0) betarv(l)  = betar
+      if(l50z .eq. 0) frcparv(l) = fracpar
+      if(l60z .eq. 0) thalov(l) = thalos
+      if(l61z .eq. 0) whalov(l) = whalos
+      if(l73z .eq. 0) heactv(l) = heact
+      if(l77z .eq. 0) qaddv(l) = acoef(123)
+      if(l78z .eq. 0) fhmodeiv(l) = acoef(3003)
+      if(l79z .eq. 0) pwidthcv(l) = acoef(3011)
+      if(l80z .eq. 0) chipedv(l) = acoef(3006)
+      if(l81z .eq. 0) tpedv(l) = acoef(3102)
+      do i=1,8
+        if(l82z(i).eq. 0) fraciv(i,l) = acoef(853+i)
+      enddo
+      if(l83z .eq.0) nflagv(l) = acoef(3012)
+      if(l84z .eq.0) expn1v(l) = acoef(3013)
+      if(l85z .eq.0) expn2v(l) = acoef(3014)
+      if(l86z .eq.0) firitbv(l) = acoef(3004)
+      if(l87z .eq.0) secitbv(l) = acoef(3005)
+      if(l88z .eq.0) fracn0v(l) = acoef(881)
+      if(l89z .eq.0) newdenv(l) = acoef(889)
+
+      if(zeffv(l).ge.zimp) then
+      ineg=21
+      write(nout,1510) zimp
+ 1510 format(" *** error *** zeff.gt.zimp      zimp=",1pe12.4)
+                           endif
+      if(zeffv(l).lt.zgas) then
+      ineg=21
+      write(nout,1511) zgas, zeffv(l), l
+ 1511 format(" *** error ***  zeff.lt.zgas      zgas=",1p2e12.4,i3)
+                           endif
+  510 continue
+      thalos = thalov(istart)
+      whalos = whalov(istart)
+!
+!......initial impurity fractions
+      do i=1,8
+        fraci(i) = fraciv(i,istart)
+      enddo
+  511 continue
+      nflag = nflagv(istart)
+      expn1 = expn1v(istart)
+      expn2 = expn2v(istart)
+      firitb = firitbv(istart)
+      secitb = secitbv(istart)
+      fracn0 = fracn0v(istart)
+      newden = newdenv(istart)
+!
+      if(ncoil.eq.0) ncoil = ncoilsv
+!
+      if(nmult.le.0) go to 516
+!
+!.....add multipolar coils to regular coils
+      do 515 l=1,nmult
+      if(r0mult(l).le.0) go to 516
+      ncoil = ncoil + 1
+      xcoil(ncoil) = 100._R8+multn(l)
+      zcoil(ncoil) = r0mult(l)
+      igroupc(ncoil) = igroupm(l)
+!
+!.....divide aturns by 2 for isym=1 to compensate for
+!     reflection about midplane         ...added 8/10/89
+!
+      aturnsc(ncoil) = aturnsm(l)/(1._R8+isym)
+      rscoils(ncoil) = 1._R8
+      aindc(ncoil) = 1._R8
+  515 continue
+  516 continue
+!
+!...........................................................
+!
+!.....check for renumbering of coils (type 09)
+!
+!...........................................................
+      inot = 0
+      irenum = 0
+      in = 0
+      if(ncoil.le.0) go to 509
+      do 508 io=1,ncoil
+      if(xcoil(io).le.0) go to 507
+      if(isym.eq.1 .and. zcoil(io) .lt.0) goto 507
+      in = in+1
+      if(in.eq.io) go to 508
+      xcoil(in)   = xcoil(io)
+      zcoil(in)   = zcoil(io)
+      igroupc(in) = igroupc(io)
+      aturnsc(in) = aturnsc(io)
+      rscoils(in) = rscoils(io)
+      aindc(in)   = aindc(io)
+!
+      dxcoil(in) = dxcoil(io)
+      dzcoil(in) = dzcoil(io)
+      fcu(in)    = fcu(io)
+      fss(in)    = fss(io)
+      tempc(in)  = tempc(io)
+      ccics(in) = ccics(io)
+      ngrvc1(in) = ngrvc1(io)
+      ngrvc2(in) = ngrvc2(io)
+      ngrvc3(in) = ngrvc3(io)
+      ngrvc4(in) = ngrvc4(io)
+      do 506 l=1,ntpts
+      atnvc1(l,in) = atnvc1(l,io)
+      atnvc2(l,in) = atnvc2(l,io)
+      atnvc3(l,in) = atnvc3(l,io)
+  506 atnvc4(l,in) = atnvc4(l,io)
+        irenum = irenum + 1
+        jrenum(1,irenum) = io
+        jrenum(2,irenum) = in
+      go to 508
+  507 continue
+        inot = inot + 1
+        notuse(inot) = io
+  508 continue
+      ncoil = in
+!                                                     ROS   16 Jul 87
+        if (inot.gt.0)  then
+                        write (nout, 1502)
+ 1502                   format (/" coils not used :")
+                        write (nout, 1504)   (notuse(io), io=1,inot)
+ 1504                   format (20i5)
+                        endif
+        if(irenum.gt.0)  then
+                         write (nout, 1506)
+ 1506                    format (/" coils :")
+                         write (nout, 1504)  (jrenum(1,io), io=1,irenum)     
+                         write (nout, 1508)
+ 1508                    format ( "renumbered as :")
+                         write (nout, 1504)  (jrenum(2,io), io=1,irenum)     
+                         endif
+  509 continue
+      in = 0
+!                                                     ROS   16 Jul 87
+        inot = 0
+        irenum = 0
+!...........................................................
+!
+!.....check for renumbering of wires(type10)
+!
+!...........................................................
+      if(nwire.le.0) go to 505
+      do 504 io=1,nwire
+      if(xwire(io).le.0) go to 503
+      if(isym.eq.1 .and. zwire(io).lt.0) go to 503
+      in = in+1
+      if(in.eq.io) go to 504
+      xwire(in)   = xwire(io)
+      zwire(in)   = zwire(io)
+      igroupw(in) = igroupw(io)
+      aturnsw(in) = aturnsw(io)
+      rswires(in) = rswires(io)
+      aindw(in)   = aindw(io)
+      cwics(in) = cwics(io)
+      ngrvw1(in) = ngrvw1(io)
+      ngrvw2(in) = ngrvw2(io)
+      ngrvw3(in) = ngrvw3(io)
+      ngrvw4(in) = ngrvw4(io)
+      do 502 l=1,ntpts
+      atnvw1(l,in) = atnvw1(l,io)
+      atnvw2(l,in) = atnvw2(l,io)
+      atnvw3(l,in) = atnvw3(l,io)
+  502 atnvw4(l,in) = atnvw4(l,io)
+      do 512 n=1,numfb
+  512 if(ipext(n).eq.1000+io) ipext(n) = 1000+in
+        irenum = irenum + 1
+        jrenum(1,irenum) = io
+        jrenum(2,irenum) = in
+      go to 504
+  503 continue
+        inot = inot + 1
+        notuse(inot) = io
+!
+  504 continue
+      nwire = in
+!                                                     ROS   16 Jul 87
+        if (inot.gt.0)  then
+                        write (nout, 1503)
+ 1503                   format (/" wires not used :")
+                        write (nout, 1504)   (notuse(io), io=1,inot)
+                        endif
+        if(irenum.gt.0)  then
+                         write (nout, 1505)
+ 1505                    format (/" wires :")
+                         write (nout, 1504)  (jrenum(1,io), io=1,irenum)     
+                         write (nout, 1508)
+                         write (nout, 1504)  (jrenum(2,io), io=1,irenum)     
+                         endif
+  505 continue
+!..................................................................
+!
+!.....check for renumbering of limiter points (type 05)
+!
+!...........................................................
+      in = 0
+      if(nlim.le.0) go to 705
+      do 704 io=1,nlim
+      if(isym.eq.1 .and. zlima(io).lt.0) go to 703
+      in = in + 1
+      if(in.eq.io) go to 704
+      xlima(in) = xlima(io)
+      zlima(in) = zlima(io)
+      write(nout,1704) io,in
+ 1704 format(" limiter point ",i3," renumbered as",i3)
+      go to 704
+  703 continue
+      write(nout,1703) io
+ 1703 format(" limiter point ",i3," not used ")
+  704 continue
+      nlim = in
+  705 continue
+!...........................................................
+!
+!.....check for renumbering of observation points
+!
+!...........................................................
+      in = -1
+      if(nobs.le.0) go to 715
+      do 714 io=1,nobs-1,2
+      if(isym.eq.1 .and. zobs(io  ).lt.0) zobs(io  )=-zobs(io  )
+      if(isym.eq.1 .and. zobs(io+1).lt.0) zobs(io+1)=-zobs(io+1)
+      in = in + 2
+      if(in.eq.io) go to 714
+      xobs(in)    = xobs(io)
+      zobs(in)    = zobs(io)
+      npltobs(in) = npltobs(io)
+      xobs(in+1)  = xobs(io+1)
+      zobs(in+1)  = zobs(io+1)
+      write(nout,1714) io,in
+ 1714 format(" observation pair ",i3," renumbered as ",i3)
+      if(numfb.le.0) go to 713
+      do 717 n=1,numfb
+      if(nfeedo(n).ne.io) go to 717
+      nfeedo(n) = in
+      write(nout,1717) n,io,in
+ 1717 format(" feedback system ",i3," changed from ",                    &  
+     &       "observation point ",i3," to ",i3 )
+  717 continue
+!
+      do 917 l=1,ntpts
+      do 817 n=1,numfb
+      if(nfeedv(l,n).ne.io) go to 817
+      nfeedv(l,n) = in
+  817 continue
+  917 continue
+!
+  713 continue
+      write(nout,1713) io
+ 1713 format(" observation pair ",i3," not used ")
+      if(numfb.le.0) go to 714
+      do 718 n=1,numfb
+      if(nfeedo(n).ne.io) go to 718
+      write(nout,1718) n,io
+      ineg=20
+ 1718 format(" error, feedback system ",i3," refers to invalid",         &  
+     &       " observation point ",i3)
+  718 continue
+!
+      do 918 l=1,ntpts
+      do 818 n=1,numfb
+      if(nfeedv(l,n).ne.io) go to 818
+      write(nout,1718) n,io
+      ineg=20
+  818 continue
+  918 continue
+!
+  714 continue
+      nobs = in + 1
+  715 continue
+!
+      do 724 l=1,pnplat
+      if(i32sw(l).eq.0) go to 724
+      if(i32sw(l).gt.pnseg+1) ineg=27
+      nseg(l) = i32sw(l)-1
+      do 722 i=1,nseg(l)+1
+      if(xsega(l,i).le.0)     ineg=27
+  722 continue
+  724 continue
+!...........................................................
+!
+!.....a) error checks for coils and wires
+!.....b) put wires into coils
+!.....c) inductance of a mesh point
+!
+!...........................................................
+      if(ncoil.eq.0) go to 602
+      do 601 n=1,ncoil
+!
+      if(dxcoil(n).le.0 .or. dzcoil(n).le.0) go to 611
+!
+!.....recalculate inductance and resistance of coil
+      ictype=int(fcu(n))+1
+      ffcu=fcu(n)-ictype+1
+      areacu=ffcu*dxcoil(n)*dzcoil(n)
+      if(areacu .le. 0) go to 612
+      call getrho(ictype,tempc(n),rho,gamma)
+      rold = rscoils(n)
+      rscoils(n) = tpi*xcoil(n)*rho/areacu
+  612 continue
+      aufe = selfrc(xcoil(n),dzcoil(n),dxcoil(n),1._R8,20)/usdi
+      aold = aindc(n)
+      aindc(n) = aufe
+  611 continue
+      if(  xcoil(n).le.0) ineg=2
+      if(igroupc(n).eq.0) ineg=2
+      if(iabs(igroupc(n)) .gt. ngrmax) ngrmax = iabs(igroupc(n))
+      if(iabs(igroupc(n)).gt.pngroup) ineg=6
+
+      if(ineg .eq. 6)                                                    &  
+     &  print *, " igroupc = ", n, igroupc(n), " pngroup = ", pngroup
+
+
+      if(aturnsc(n).eq.0) ineg=2
+      if(rscoils(n).eq.0) ineg=2
+      if(ineg.ne.0) return
+  601 continue
+  602 continue
+!
+      if(nwire.eq.0) go to 605
+      do 604 n=1,nwire
+      ncoil = ncoil + 1
+      igr = iabs(igroupw(n))
+      if(igr .gt. ngrmax) ngrmax = igr
+      if(igr .gt. pngroup) ineg=6
+
+      if(ineg .eq. 6) print *, " igr = ", igr, " pngroup = ", pngroup
+
+
+      xcoil(ncoil) = xwire(n)
+      zcoil(ncoil) = zwire(n)
+      ccoils(ncoil) = gcur(istart,igr)*aturnsw(n)
+      igroupc(ncoil) = igroupw(n)
+      aturnsc(ncoil) = aturnsw(n)
+      ccics(ncoil) = cwics(n)
+      cwire0(n) = ccoils(ncoil)*usdi
+!.....check for passive coil, if found set ilwire=1
+      ilwire(n) = 1
+      do 613 l=1,ntpts
+  613 if(gcur(l,igr).ne.0) ilwire(n)=0
+      if(xwire(n).le.0) ineg=2
+      if(igroupw(n).eq.0) ineg=2
+      if(aturnsw(n).eq.0) ineg=2
+      if(rswires(n).le.0) ineg=2
+      if(ineg.ne.0) return
+      dx       = (alx-ccon)/(nx-1)
+      dz       = 2._R8*alz/((nz-1)*(1+isym))
+      zux      = dz/dx
+      xuz      = dx/dz
+      xx       = xwire(n)
+      bef      = (4._R8*pi*1.E-7_R8)*xx/(.5_R8*(zux+xuz))
+      terma    = zux*(log(8._R8*xx/dx)-2._R8)
+      termb    = xuz*(log(8._R8*xx/dz)-2._R8)
+      almesh   = bef*(.5_R8*(terma+termb)+.5_R8*pi)
+      aindw(n) = almesh
+  604 continue
+  605 continue
+      if(ncoil.gt.pncoil) ineg=6
+
+      if(ineg .eq. 6) print *, " ncoil = ", ncoil, " pncoil = ", pncoil
+
+
+!...........................................................
+!.....special initial conditions for lrswtch .gt. 0
+!...........................................................
+      if(lrswtch.eq.0) go to 607
+      do 606 n=1,nwire
+      nn = ncoil-nwire+n
+      if(iabs(igroupw(n)).ne.lrswtch) go to 606
+      if(zcoil(nn).gt.0) ccoils(nn) = acoef(12)/rswires(n)
+      if(zcoil(nn).lt.0) ccoils(nn) =-acoef(12)/rswires(n)
+  606 cwire0(n) = ccoils(nn)*usdi
+  607 continue
+      if(ncoil.eq.nwire) go to 615
+      do 622 n=1,ncoil-nwire
+      igr = iabs(igroupc(n))
+      ccoils(n) = gcur(istart,igr)*aturnsc(n)
+  622 continue
+  615 continue
+!
+      do 610 n=1,ncoil
+  610 ccoil(n) = ccoils(n)*usdi
+!
+!....the following is processed even at restart time
+  620 continue
+      if(ifunc.eq.6) call splinfit
+      do 618 l=1,numfb
+      if(nrfb(l) .lt. 0) ineg=20
+      if(nfeedo(l) .le. 0 .and. ipext(l).le.3) ineg=20
+      if(ipext(l).le.0) ipext(l) = 1
+      if(ipext(l).gt.14 .and. ipext(l).le.20) ineg=20
+      if(ipext(l).gt.25 .and. ipext(l).le.1000) ineg=20
+      if(ipext(l).gt.1000+pncoil) ineg=20
+      if(ipext(l).gt.6 .and. isvd .le.0.and.ipext(l).le.10) ineg=20
+      if(tfbofs(l).eq.0) tfbofs(l) = tpros(ntpts)
+      if(idelay(l).gt.pdelay) ineg=6
+
+      if(ineg .eq. 6)                                                    &  
+     & print *, " idelay = ", l, idelay(l), " pdelay = ", pdelay
+
+
+      do 619 ll=1,ntpts
+      if(iflagfb(l).eq.1) go to 617
+      nfeedv(ll,l) = nfeedo(l)
+  617 continue
+      if(2*nfeedv(ll,l)-1 .gt. nobs) ineg=20
+  619 continue
+  618 continue
+!.....check that lower-hybrid coefficients are defined
+      if(ilhcd .ne. 1 .or. ifk .ne. 0 .or. acoef(4968) .ne. 0) go to 8619
+      do 8618 n=1,ntpts
+      if(dlhd(n) .gt. 0) go to 8618
+      ineg=21
+      write(nout,8620)
+ 8620 format(" error --> dlh must be defined on type 52 card",           &  
+     &       " for ilhcd=1 and ifk=0")
+      return
+ 8618 continue
+ 8619 continue
+!
+!.....define units and vacuum temperature
+      call rscale
+!
+      if(iffac.eq.1) then
+      if(acoef(801).le. 0._R8.or. acoef(801).ge. 1._R8) ineg=42
+      if(acoef(802).le. .5_R8.or. acoef(802).ge. 1._R8) ineg=42
+      if(acoef(803).le. 1._R8.or. acoef(803).ge. 2._R8) ineg=42
+      if(acoef(804).le. 1._R8.or. acoef(804).ge. 1.E12_R8) ineg=42
+      if(acoef(805).lt. 1._R8.or. acoef(805).ge. acoef(804)) ineg=42
+                     endif
+!
+      return
+!
+!
+  999 continue
+      ineg=21
+      write(nout,1999)
+ 1999 format(" one or more fields on preceeding card is",                &  
+     &       " outside specified range")
+!
+      return
+!1000 format(i2,8x,7f10.0)
+ 1001 format(" type",i2,2x,1p9e11.3)
+!1002 format(i2,1p7e10.2)
+ 2000 format(8a10)
+ 2001 format(20x,8a10)
+      end
+! 15Apr2005 fgtok -s r8_precision.sub "r8con.csh conversion"
+! 15Apr2005 fgtok

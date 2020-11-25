@@ -1,0 +1,37 @@
+#!/bin/csh
+#PBS -q sque
+#PBS -l nodes=1:ppn=1
+#PBS -o svn.out
+#PBS -e svn.err
+
+mkdir -p /local/jchen/tsc.svn_o
+cd /local/jchen/tsc.svn_o
+rm -rf *
+
+#cp /p/swim/jchen/IPS/ips_stix/run/NB_o/simulation_setup/epa_tsc_tsc_3/tsc_svn.dat/inputa .
+#cp /p/swim/jchen/IPS/ips_stix/run/NB_o/simulation_setup/epa_tsc_tsc_3/tsc_svn.dat/input.lhh .
+cp /p/swim/jchen/IPS/ips_stix/run/NB_o/simulation_setup/epa_tsc_tsc_3/output_debug.tsc_svn_o/inputa .
+cp /p/swim/jchen/IPS/ips_stix/run/NB_o/simulation_setup/epa_tsc_tsc_3/output_debug.tsc_svn_o/input.lhh .  
+cp /p/swim/jchen/tsc/gotlsc .
+#cp /p/swim/jchen/tsc/gotlsc_lfc .
+#cp /p/waveead/cmodat/sprsina .
+#cp /p/waveead/cmodat/lhcdoua .
+#cp /p/waveead/cmodat/ray.dat .
+#cp /p/waveead/cmodat/movie.cdf .
+
+module load lff95/6.20c
+#module load intel/11.0.081
+#module load vsmpich2/1.0.8-vSMP0.2
+#module load tv80/20090721
+#module load ncarg/4.4.1
+#module load ntcc/tshare
+#module load nag/r3
+#module load netcdf/4.0.1
+#module load mdsplus/v2.1-0-gt4.0.7_x86_64
+#module load globus/gt4.0.7_x86_64
+
+
+/local/jchen/tsc.svn_o/gotlsc  >& log.tsc_svn
+
+cp -f --reply={yes} * /p/swim/jchen/IPS/ips_stix/run/NB_o/simulation_setup/epa_tsc_tsc_3/output_debug.tsc_svn_o
+exit 0

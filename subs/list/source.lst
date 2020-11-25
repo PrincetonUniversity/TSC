@@ -1,0 +1,3 @@
+ vsource.Sub = \
+ getcarg.o \
+ gf.o  

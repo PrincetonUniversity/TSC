@@ -1,0 +1,50 @@
+      subroutine fixup
+!============
+! idecl:  explicitize implicit INTEGER declarations:
+      IMPLICIT NONE
+      INTEGER, PARAMETER :: R8=SELECTED_REAL_KIND(12,100)
+!     INTEGER missionc,missionw
+!============
+! idecl:  explicitize implicit REAL declarations:
+!     REAL*8 reginit,runaway,rawmeas,regler,vforce,restcon,vforcepl
+!     REAL*8 fpplot,appvolto,spdpbx,spdtftr,spdpbxm,spdpbxn,fedtsc
+!     REAL*8 spdasdex,growth,ripplot,colorc,ripple,d02bae,clock
+!============
+      entry reginit
+c     entry walld
+      entry runaway_sub
+      entry rawmeas
+      entry regler
+      entry vforce
+      entry restcon
+      entry vforcepl
+      entry fpplot
+c     entry hyper
+c     entry lingin1
+c     entry lingin2
+c     entry lingin3
+      entry appvolto
+      entry spdpbx
+      entry spdtftr
+c     entry spdd3d
+      entry spdpbxm
+      entry spdpbxn
+      entry fedtsc
+      entry spdasdex
+      entry missionc
+      entry missionw
+      entry growth
+      entry ripplot
+c     entry lingplt
+c     entry lingpl2
+c     entry lingpl3
+      entry colorc
+c     entry balloon
+      entry ripple
+c     entry tridiag
+      entry d02bae
+c     for double precision nag use d02baf
+      entry clock
+      return
+      end
+! 25May2005 fgtok -s r8_precision.sub "r8con.csh conversion"

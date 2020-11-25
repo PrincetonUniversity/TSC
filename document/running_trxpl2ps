@@ -1,0 +1,16 @@
+Instructions to run trxpl2ps from /p/tsc/transp_data
+
+1)
+create a subdir with $machinename_$shotnumber
+
+2)
+cd to just created subdir $machinename_$shotnumber, and
+create a subsubdir "abc"
+
+3)
+run trxpl2ps from $machinename_$shotnumber
+using the following syntax as a reference:
+
+trxpl2ps MDS+ transpgrid.pppl.gov:TRANSP_D3D\(D3D,131498B06\) abc -all_times -mdescr:D3D_05.mdescr
+
+trxpl2ps MDS+ transpgrid.pppl.gov:TRANSP_NSTX\(NSTX,124379A10\) abc -all_times -mdescr:NSTX.mdescr

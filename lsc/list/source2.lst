@@ -1,0 +1,3 @@
+ vsource2.Sub = \
+ subs_EZ.o  \
+ subs_XrayCamera.o  

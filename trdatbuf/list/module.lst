@@ -1,0 +1,8 @@
+ vmodule.Sub = \
+module_param.o \
+module_clinam.o \
+trdatbuf_aux.o \
+tdbsub_uts.o \
+trdatbuf_obj.o \
+trdatbuf_iface.o \
+trdatbuf_module.o 

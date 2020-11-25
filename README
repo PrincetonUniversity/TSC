@@ -1,0 +1,74 @@
+
+A)   TSC CVS
+     Free-form FORTRAN 90 version of TSC based on various V10.8
+     Versions with capability to couple with TRANSP/Plasma_State 
+
+B)   To build the executable from scratch
+     1. module load subversion 
+     2. in a clean directory: do 
+        svn co svn+ssh://svnsrv.pppl.gov/svn/tsc
+
+        you will get
+
+        tsc_m, /source, list -- corresponding to unx10.9m
+        tsc_a, /source, list -- corresponding to unx10.9a
+        tsc_r, /source, list -- corresponding to unx10.9r
+        tv80 , /source, list -- corresponding to tv80lib
+        fixup, /source, list -- corresponding to fixup
+        glf23, /source, list -- corresponding to glf routines
+        modules              -- modules
+        fixuplsc, /source, list -- fixup for LHCD version
+        lsc  , /source, modules, list -- LHCD routines
+        tr_tsc, /source, list -- routines modified for TRANSP/SWIM coupling
+     3. at top level, do "gmake tsc >& logfile &"
+     4. if executed properly, the executable "gotsc" will
+        be created in the top level directory
+
+C)   To re-build after modifying the code
+     1. to modify:
+        in the directory containing codes to be modified, 
+        a)"cd source" to modify the code, e.g., "vi xxx.f90"
+        b)"cd ../.." back to top level directory
+        f)"gmake tsc" to update the executable
+     2. to add a new subroutine, e.g. new_sub.f90
+        a) put new_sub.f90 in one of the code directories
+        b) add "new_sub.o" in "source.lst" in the "list" directory
+        e)"cd ../.." to back to top level directory
+        f)"gmake tsc" to update the executable
+
+D)   To clean up after build
+     in main level directory
+     do "gmake cleanup" to remove all binaries, save the executable 
+
+E)   Run ID now may be parsed from the execution line:
+
+     ./gotsc "ID" "machine" "year" "shot_number" "initialization_flag"
+        input: input.ID, sprsin.ID
+        output: output.ID, tsc.cgm.ID, sprsou.ID, ...
+        "machine, year, shot", if present, used by TRANSP
+         and SWIM to label the plasma state
+        "initialization_flag," if present as "init", will 
+         just read input and write out the initial plasma state 
+         without executing the actual run. 
+
+     ./gotsc
+        input: inputa sprsina
+        output: outputa, tsc.cgm, ....
+        "S12345", "ITER", "07" are used in TRANSP for shot number, machine
+        name and run year, respectively, if acoef(4960)=1
+
+F)   Note:
+     "ptransp_modify.dat", "ptransp_template.dat" required if acoef(4960)=1
+     "wall_data" if exist and  if acoef(4961)=1, will override the wall data
+     when writing the geqdsk file.
+
+G)   NERSC
+     Check out a copy from pppl svn and bring it to NERSC.
+
+     To build on NERSC CORI or EDISON as the date of May 11, 2016,
+     env is set up by
+
+     module swap intel intel/16.0.0.109
+     module load cray-netcdf/4.3.3.1
+
+     then do "make" to build TSC, and "make tlsc" to build TLSC.

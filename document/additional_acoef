@@ -1,0 +1,54 @@
+acoef(3012) : constant in the Coppi model to make chi profile steeper at the edge (0)
+acoef(3013) : n1
+acoef(3014) : n2
+
+acoef(4950) : time to start TRANSP coupling (10^8)
+acoef(4951) : time step for TRANSP forward integration (0.0)
+acoef(4952) :
+acoef(4953) : # of grids for profiles written to plasma state
+acoef(4954) : zimp
+acoef(4955) : H fraction in thermal ion species to be outputted 
+              to PS (0.0) (note: acoef(113)= D fraction) 
+acoef(4956) : beam power for each NBI used by TRANSP/NUBEAM (0.0)
+acoef(4957) : number of Newton iterations for GLF linearization (1)
+acoef(4958) : step size for derivatives in Newton iteration for GLF (-1.0)
+acoef(4959) : switch for SWIM if >0 (0=no)
+acoef(4960) : switch for TRANSP coupling if >0 (0=no)
+acoef(4961) : switch for writing plasma state if >0 (0=no)
+acoef(4962) : switch for using TSC in beam heating/current drive (0=yes)
+acoef(4963) : switch for using TSC in fast ion source (0)
+acoef(4964) : switch for using TSC in fast wave heating/current drive (0)
+acoef(4965) : switch for using TSC in lower hybrid heating/current drive (0)
+acoef(4966) : switch for using TSC in ECH heating/current drive (0)
+acoef(4967) : switch for using external beam data if >0 (0)
+acoef(4968) : switch for using external lower hybrid data if >0 (0)
+acoef(4969) : switch for using external fast wave data if >0 (0)
+acoef(4970) : switch for using external electron density data if >0 (0)
+acoef(4971) : fraction of RF power to electrons when using analytic internal 
+              algorithm (1.0)
+acoef(4972) : switch for using external electron rotation data if >0 (0)
+acoef(4973) : switch to allow stored energy control using NB power if >0 (0)
+acoef(4974) : switch to allow stored energy control using RF power if >0 (0)
+acoef(4975) : switch for nb internal model, standard 0 (0)
+acoef(4976) : switch for icrf internal model, standard 0 (0)
+acoef(4977) : switch for density profile (0)
+acoef(4978) :
+acoef(4979) : 
+acoef(4980) : stop if reading PS failed if 1 (0)
+acoef(4981) : itport(1) in GLF (0)
+acoef(4982) : itport(2) in GLF (1)
+acoef(4983) : itport(3) in GLF (1)
+acoef(4984) : itport(4) in GLF (0)
+acoef(4985) : itport(5) in GLF (0)
+acoef(4986) : angular velocity used in GLF (0.0)
+              angrotp(i)=acoef(4986)*(npsit-i)/npsit
+acoef(4987) : alpha value for the "alpha-effect" in GLF (0.0)
+acoef(4988) : switch for rotational stabilization in GLF (0=off)
+acoef(4989) :
+acoef(4990) :
+
+-----> added 06/07/2010
+acoef(4991) : if .gt. 0; get pressure profile from experiment
+acoef(4992) : if .gt. 0; get electron pressure from experiment
+acoef(4993) : if .gt. 0; get density profile from experiment
+acoef(4994) : if .gt. 0; get nbi parameters from experiment

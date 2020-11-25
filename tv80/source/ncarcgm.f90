@@ -1,0 +1,159 @@
+        subroutine ncarcgm (iwk,connam)
+ 
+!**************************************************************************
+!
+!  tggks.f  -  Routines to initialize the gks drivers
+!
+!  contents    The routines in this file open GKS if it is not already
+!        opened and then open a specific workstation given a
+!        workstation identifier and a connection id.  The names
+!        and the workstation that is opened will change depending
+!        on what workstations are available with your implementation
+!        of GKS.  After initializing a workstation, tginit should
+!        be called to put the workstation in a state that is
+!        consistent with what the library thinks it should be.
+!
+!    National Energy Research Supercomputer Center
+!    Lawrence Livermore National Laboratory
+!    University of California
+!    Livermore, California 94550, USA
+!
+!    (C) Copyright 1991 The Regents of the University of California.
+!    All Rights Reserved.
+!
+!**************************************************************************
+ 
+ 
+!**************************************************************************
+!
+!  ncarcgm -  NCAR CGM binary
+!
+!  description    NCARGKS will generate a GKS binary metafile.  It does not
+!        set the filename in the standar gks fashion.  Version 3.1
+!        uses an environment variable called NCARG_GKS_OUTPUT.  By
+!        setting this variable, I can name the output file.  The
+!        standard GKS method of calling GSCNID does not work.  It
+!        does not exist in the GKS written by NCAR.  The connection
+!        identifier in NCAR is the unit number that will be used
+!        when the file is created.
+!
+!**************************************************************************
+ 
+!============
+! idecl:  explicitize implicit INTEGER declarations:
+      USE tgcblk     
+      USE tgchar     
+      USE tgcolr     
+      USE tgmap      
+      USE tgpnts     
+      IMPLICIT NONE
+      INTEGER, PARAMETER :: R8=SELECTED_REAL_KIND(12,100)
+      INTEGER iwk,iopstate,idum
+!============
+        character*(*) connam
+ 
+      character*80 filnam
+ 
+! include the standard common block
+ 
+!**************************************************************************
+!
+!  tgcommon  -  TV80 to GKS common blocks
+!
+!  description  This is used by routines in tv80gks to make a common
+!               place for accessing commons.
+!
+!    National Energy Research Supercomputer Center
+!    Lawrence Livermore National Laboratory
+!    University of California
+!    Livermore, California 94550, USA
+!
+!    (C) Copyright 1991 The Regents of the University of California.
+!    All Rights Reserved.
+!
+!**************************************************************************
+ 
+!       parameter (MAXPNT=200)
+!       integer WRDSIZ
+!       parameter (WRDSIZ=8)
+!
+!       logical dotrans
+!       REAL   transx,transy
+!       REAL   scalex,scaley
+!       REAL   rotat
+!       REAL   centrx,centry
+!       REAL   trnmat(3,3)
+!       logical matmade
+!       character*8 tgname
+!       logical doinit
+!
+!       common /tgcblk/ dotrans,transx,transy,scalex,scaley,rotat,
+!    +    centrx,centry,trnmat,matmade,tgname,doinit
+!
+!       REAL   xvmin,xvmax,yvmin,yvmax
+!       REAL   xwmin,xwmax,ywmin,ywmax
+!       integer maptyp,iclip
+!
+!       common /tgmap/ xvmin,xvmax,yvmin,yvmax,xwmin,xwmax,ywmin,ywmax,
+!    +    maptyp,iclip
+!
+!       REAL   chx,chy
+!       integer ichcase
+!       integer ichindx
+!       REAL   chrot
+!       integer ichangle
+!       REAL   chparm(4,4)
+!       REAL   chupx,chupy
+!       integer ichfont
+!       REAL   chaddx,chaddy
+!       logical autofeed
+!
+!       common /tgchar/ chx,chy,ichcase,ichindx,chrot,chparm,
+!    +                  ichfont,chupx,chupy,ichangle,chaddx,chaddy,
+!    +                  ichclip,minfont,maxfont,autofeed
+!
+!       REAL   red(16),green(16),blue(16)
+!       integer icurclr
+!
+!       common /tgcolr/ icurclr,red,green,blue
+!
+!       integer numpnt
+!       REAL   xpnt(MAXPNT),ypnt(MAXPNT)
+!       integer ilncase,ilnfont,ilnindx,ilnspace,iptspace
+!       common /tgpnts/ numpnt,xpnt,ypnt,ilncase,ilnfont,
+!    +                  ilnindx,ilnspace,iptspace
+ 
+#ifndef NCAR_DUMMY 
+ 
+! Set library entry routine name
+ 
+        if (tgname .eq. 'NONE') tgname = 'NCARCGM'
+ 
+ 
+ 
+! Open gks if it was not done already
+ 
+        call gqops (iopstate)
+        if (iopstate .eq. 0) call gopks (6,0)
+ 
+! Open the workstation.  The second parameter is the connection identifier.
+! In NCAR GKS, this is actually the number that will be used as the unit
+! number for the output file when the OPEN statement is performed.  Use
+! the same number for the connection identifier as for the workstation
+! identifier.  Note that on many systems, unit 5 and 6 are reserved for
+! output and input.
+ 
+        filnam = connam
+        call gesc (-1391,1,filnam,0,idum,filnam)
+        call gopwk (iwk,iwk,1)
+        call gacwk (iwk)
+ 
+        call tginit (iwk)
+ 
+        if (tgname .eq. 'NCARCGM') tgname = 'NONE'
+#endif
+
+        return
+ 
+        end
+! 15Apr2005 fgtok -s r8_precision.sub "r8con.csh conversion"

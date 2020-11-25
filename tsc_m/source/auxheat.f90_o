@@ -1,0 +1,494 @@
+      subroutine auxheat
+!
+!.....defines source terms for auxiliary heating and alpha heating
+!
+      USE CLINAM
+      USE SAPROP
+      USE SCR3
+      USE WALLCL
+      IMPLICIT NONE
+      INTEGER, PARAMETER :: R8=SELECTED_REAL_KIND(12,100)
+!============
+! idecl:  explicitize implicit INTEGER declarations:
+      INTEGER ifrstah,j,l,lsav,ns,jj,jstop
+!============
+! idecl:  explicitize implicit REAL declarations:
+      REAL*8 sumhe,tion,exparg,svdt,zlnzti,rdtcgs
+      REAL*8 ddens,tdens,savtotj,fac,pval,ppval,sumne,rval,rpval
+      REAL*8 sum7,palphat,auxmax,sum1,uintt,term,termd,bpfeed,zeffx
+      REAL*8 facden,ar,f1,expr,f2,ecrit,ebeam,facibm,denom,ffact,f3
+      REAL*8 afw,dfw,a1fw,a2fw,bedge,bmag0,akpar,omega,rho,blocal
+      REAL*8 andu,alphe,cnorm,psiint,fnorm,befo,term1,term2,term3
+      REAL*8 omegb,testop,veth,warg
+      REAL*8 sum, aint
+!============
+!     dimension form(ppsi)
+!     dimension seun(ppsi),siun(ppsi),alphaea(ppsi)
+      data ifrstah/ 1 /
+!============      
+      INTEGER :: istat = 0 
+      REAL*8, ALLOCATABLE, DIMENSION(:) :: form
+      REAL*8, ALLOCATABLE, DIMENSION(:) :: seun
+      REAL*8, ALLOCATABLE, DIMENSION(:) :: siun
+      REAL*8, ALLOCATABLE, DIMENSION(:) :: alphaea
+!============      
+      IF(.not.ALLOCATED(form)) ALLOCATE( form(ppsi), STAT=istat)
+      IF(.not.ALLOCATED(seun)) ALLOCATE( seun(ppsi), STAT=istat)
+      IF(.not.ALLOCATED(siun)) ALLOCATE( siun(ppsi), STAT=istat)
+      IF(.not.ALLOCATED(alphaea)) ALLOCATE( alphaea(ppsi), STAT=istat)
+!============      
+      if (istat .ne. 0) stop 'Allocation Error : auxheat  ' 
+!============      
+      if(ifrstah .eq. 1) then
+      ifrstah = 0
+      if(irst1.eq.0) then
+      toldaux = times
+                     endif
+                         endif
+!
+      do 10 j=1,npsit
+      savee(j) = 0._R8
+      savei(j) = 0._R8
+      savia(j) = 0._R8
+      savea(j) = 0._R8
+      sraveb(j) = 0._R8
+      savelh(j) = 0._R8
+      savefw(j) = 0._R8
+   10 continue
+!
+!.(1)...............................................................
+!...local alpha heating
+!...expressions from   hively,  nuc. fus. vol 17 p873  1977
+!
+!.....calculate alpha power for all values of ialpha, but include in
+!     rest of calculation only for ialpha=1
+!
+      sumhe=0.0_R8
+      do 50 j=1,npsit
+      tion=ti(j)*.001_R8
+      if(tion.lt.0.5_R8) tion = 0.5_R8
+      if(tion.gt.240._R8) tion = 240._R8
+      if(tion.gt.80._R8) goto 60
+      exparg= -23.836_R8- 22.712_R8*tion**(-0.275_R8) - 9.393E-2_R8*     &  
+     & tion                                                              &  
+     &     +7.994E-4_R8*tion**2 - 3.144E-6_R8*tion**3
+      svdt=exp(exparg)
+      goto 61
+60    zlnzti=log(tion)
+      exparg=-.187_R8*zlnzti**2+1.447_R8*zlnzti-37.43_R8
+      svdt=1.027_R8*exp(exparg)
+61    continue
+!
+!.....note:  assumes 50%/50% DT mix, includes dilution due to alpha-ash
+      rdtcgs=0.5_R8*(anhy(j))*1.E-6_R8
+!
+!.....energy due to alpha-particles assuming all heat is
+!     deposited at same surface
+      ddens = acoef(113)*rdtcgs/.5_R8
+      tdens = (1._R8-acoef(113))*rdtcgs/.5_R8
+      savtotj =5.6E-7_R8*ddens*tdens*svdt*usdp/usdt
+!.....70% to electrons and 30% to ions
+      savea(j) = 0.70_R8*savtotj
+      savia(j) = 0.30_R8*savtotj
+!
+!.....number of alpha-particles born on this surface per sec
+      alphanu(j) = rdtcgs**2*svdt*vp(j)*dpsi*1.E6_R8
+!
+!.....add to density of helium ash
+      if(acoef(93).le.0._R8) acoef(93)=1.E6_R8
+      if(ialpha.ge.1) then
+      anheb(j) = anheb(j) + (times-toldaux)*rdtcgs**2*svdt*1.E6_R8       &  
+     &         - (times-toldaux)*anheb(j)/acoef(93)
+      endif
+      if(anheb(j).le.0._R8) anheb(j) = 0._R8
+      sumhe = sumhe + anheb(j)*vp(j)*dpsi
+!
+!.....define alpha density and alpha pressure here
+      alphade(j) = 0._R8
+      alphapr(j) = 0._R8
+      if(tion.lt.3.7_R8) go to 50
+      fac = .029_R8*((anhy(j))/ane(j))**2*(tion-3.7_R8)
+      call peval(xsv(j),2,pval,ppval,imag,jmag)
+      alphapr(j) = fac*pval
+      alphade(j) = anheb(j)
+   50 continue
+!
+!.....thermal helium density redefined to have electron profile shape
+!.....NOTE: anhe is thermal helium density, anheb is helium birth
+!.....      density, the integrals of these are always assumed equal
+      sumne=0.0_R8
+      do 52 j=1,npsit
+      call reval(xsv(j),idens,isurf,rval,rpval,imag,jmag)
+      sumne = sumne + rval*vp(j)*dpsi*udsd
+   52 continue
+      do 53 j=1,npsit
+      call reval(xsv(j),idens,isurf,rval,rpval,imag,jmag)
+      anhe(j) = (sumhe/sumne)*rval*udsd
+      anhe(j) = 0.25_R8*anheb(j) + 0.75_R8*anhe(j)
+  53  continue
+      toldaux = times
+51    continue
+      if(irippl .gt. 0 .and. iskipsf.le.1) call ripple
+!
+!.....calculate total alpha power
+      sum7 = 0._R8
+      do 71 j=2,npsit
+   71 sum7 = sum7 + (vary(j)-vary(j-1))*(savea(j) + savia(j))
+      palphat = sum7*ialpha*udsp/udst
+!
+!.....limit max auxialliary heating for burn control
+      auxmax = acoef(47)*1.E6_R8- (palphat+pohmic)
+      if(auxmax .le.0._R8 ) auxmax = 0._R8
+      if(acoef(47) .eq. 0) auxmax = 1.E12_R8
+!
+!
+!.....new feedback on DT species ratio added 7/28/94
+      if(acoef(114) .le. 0 .or. kcycle.le.0) go to 55
+      sum1 = 0._R8
+      do 6609 l=2,npsit
+      call peval(xsv(l),2,pval,ppval,imag,jmag)
+ 6609 sum1 = sum1 + pval*vp(l)*dpsi
+      uintt = 1.5_R8*sum1*udsi
+      term = 1.0_R8*(acoef(114)*1.E6_R8- uintt)
+      termd = -acoef(115)*(uintt-uintold)/(dts)
+      bpfeed = bpowers+term+termd
+      if(bpfeed .lt. 0._R8) bpfeed=0._R8
+!     if(acoef(113) .lt. 0.01 .or. acoef(113) .gt. 0.49) go to 54
+!     fnt = uintt / (acoef(113)*(1.-acoef(113)))
+!     denom = (1. - 2.*acoef(113))*fnt
+!     if(denom .le. 0 .or. dts .le. 0) go to 54
+!     term = 0.1*( acoef(114)*1.e6
+!    1                           - (uintt)) / denom
+!     termd = -acoef(115)*(uintt - uintold)/(denom*dts)
+!c    tmax = 0.10*acoef(113)
+!c    if(abs(term) .gt. tmax) term = sign(tmax,term)
+!     acoef(113) = acoef(113) + term + termd
+!  54 continue
+!     if(acoef(113) .gt. 0.49) acoef(113) = 0.49
+!     if(acoef(113) .lt. 0.01) acoef(113) = 0.01
+      uintold=uintt
+   55 continue
+!
+!.....end of alpha heating coding
+!..................................................................
+!##############################################################################
+!#                                                                            #
+!#               * * *   NOTE   * * *                                         #
+!#   SPECIAL FORMS FOR THE SOURCE FUNCTIONS FOR ACOEF(296)=5.                 #
+!#                                                                            #
+!############################################################################## #
+      if(acoef(296) .eq. 5._R8) go to 6600
+!
+!.(2).bremstrahlung and cyclotron radiation
+!
+!         formula from NRL Plasma Formulary
+!
+!                                    (assumes Gaunt factor of 1.0)
+      do 81 j=1,npsit
+!
+      zeffx = zeff
+      if(iimp.gt.0 .and. zeffb.gt.0._R8) zeffx = zeffb
+      savebre(j) = (1.6E-38_R8)*(ane(j))**2*zeffx*sqrt(te(j))*usdp/usdt  &  
+     &    * acoef(877)
+!
+!....temporary fix for hydrogen radiative recombination
+!   (suggested by Paul Barks and Brad Merrill  9/01/99)
+      if(te(j).le.100._R8) then
+      savebre(j) = savebre(j)*(1._R8+33._R8/te(j))
+                        endif
+!
+      if(rmajor.le.0._R8 .or. rminor.le.0._R8) go to 81
+!
+!....Reference:   Trubnikov, Reviews of Plasma Physics, Vol 7 (1979)
+      savecyc(j) = (1.3E-18_R8)*sqrt(ane(j))*(te(j))**2.5_R8             &  
+     &             *(gzero/rmajor)**2.5_R8*(1._R8-acoef(55))**0.5_R8/    &  
+     & rminor**0.5_R8                                                    &  
+     &             *(1._R8+570._R8*rminor/rmajor/te(j)**0.5_R8)**0.5_R8*  &  
+     & usdp/usdt
+   81 continue
+!
+!
+!
+!.......................................................................
+!.(3).auxiliary heating from beamp array
+!
+      do 20 l=1,ntpts
+      if(beamp(l) .gt. 0._R8) go to 30
+   20 continue
+      go to 512
+   30 continue
+!
+      do 400 l=1,ntpts-1
+      lsav = l
+      if(tpro(l).le.time .and. tpro(l+1).gt.time) go to 410
+  400 continue
+  410 continue
+      bpowers = beamp(lsav)
+      if(acoef(114) .ne. 0._R8.and. bpfeed .lt. beamp(lsav))             &  
+     &bpowers=bpfeed
+      if(bpowers .gt. auxmax) bpowers = auxmax
+      fac = bpowers*usdp/usdt
+      facden = 0._R8
+      if(ebeamkev.ne.0) facden = (bpowers/(ebeamkev*1.6E-16_R8))*usdd/   &  
+     & usdt
+      sum = 0._R8
+      do 510 j=2,npsit
+      ar = (xsv(j)-psimin)/(psilim-psimin)
+      if(abs(ar).ge.1.0_R8) go to 508
+      f1 = dbeam**2/((ar-abeam)**2 + dbeam**2)
+      expr = 1._R8
+      if(nebeam.ne.0) expr=nebeam
+      f2 = (1._R8-ar**2)**expr
+      form(j) = f1*f2
+      go to 509
+  508 form(j) = 0._R8
+  509 continue
+      sum = sum + form(j)*(vary(j)-vary(j-1))
+  510 continue
+      do 511 j=2,npsit
+      ecrit = 14.8_R8*ambeam*te(j)*zeffa2(j)
+      ebeam = ebeamkev*1000._R8
+      facibm = (0.33_R8*ecrit/ebeam)*(log((ecrit-sqrt(ecrit*ebeam)       &  
+     &+ebeam)/(ecrit+2._R8*sqrt(ecrit*ebeam)+ebeam))+2._R8*sqrt(3._R8)*  &  
+     &atan((2._R8*sqrt(ebeam)-sqrt(ecrit))/sqrt(3._R8*ecrit))+           &  
+     &(sqrt(3._R8)*pi/3._R8))
+      savei(j) = facibm*fac*form(j)/sum
+      savee(j) = (1._R8-facibm)*fac*form(j)/sum
+      sraveb(j) = facden*form(j)/sum
+  511 continue
+!
+!......................................................................
+!.(4).power from lower hybrid
+!
+  512 continue
+      IF ( ilhcd .LT. 1) GOTO 612
+      if(ifk.gt.0) go to 700
+!
+!.....use profiles from input file
+      do 598 l=1,ntpts
+      if(plhamp(l).gt.0) go to 599
+  598 continue
+      go to 612
+  599 continue
+!
+      do 600 l=1,ntpts-1
+      lsav = l
+      if(tpro(l).le.time .and. tpro(l+1).gt.time) go to 607
+  600 continue
+  607 continue
+!.....linear time point interpolation
+      denom = tpro(lsav+1)-tpro(lsav)
+      if(denom.eq.0) denom = 1._R8
+      ffact = (time-tpro(lsav))/denom
+      bpowers = plhamp(lsav)
+      alh = alhd(lsav) + ffact * (alhd(lsav+1) - alhd(lsav))
+      dlh = dlhd(lsav) + ffact * (dlhd(lsav+1) - dlhd(lsav))
+      a1lh = a1lhd(lsav) + ffact * (a1lhd(lsav+1) - a1lhd(lsav))
+      a2lh = a2lhd(lsav) + ffact * (a2lhd(lsav+1) - a2lhd(lsav))
+      fac = bpowers*usdp/usdt
+      sum = 0._R8
+      do 610 j=2,npsit
+      ar = (xsv(j)-psimin)/(psilim-psimin)
+      if(ar.le.0) go to 608
+      if(abs(ar).ge.1.0_R8) go to 608
+      f1 = dlh**2/((ar-alh)**2 + dlh**2)
+      f2 = 1._R8
+      if(a1lh .gt. 0._R8) f2 = ar**a1lh
+      f3 = 1._R8
+      if(a2lh .gt. 0._R8) f3 = (1._R8-ar)**a2lh
+      form(j) = f1*f2*f3
+      go to 609
+  608 form(j) = 0._R8
+  609 continue
+      sum = sum + form(j)*(vary(j)-vary(j-1))
+  610 continue
+      do 611 j=2,npsit
+      savelh(j) = fac*form(j)/sum
+  611 continue
+      go to 612
+!
+!.....use values read from disk file tscouta
+!                          powtsc is in watts/cc
+  700 continue
+      do 711 j=2,npsit
+      savelh(j) = powtsc(j)*1.E6_R8*usdp/usdt
+      if (nspc.lt.1) go to 711
+      savio(j) = 0._R8
+      do 710 ns=1,nspc
+      savio(j) = savio(j) + powtsci(ns,j)*1.E6_R8*usdp/usdt
+  710 continue
+  711 continue
+  612 continue
+!
+!.(5).power from fast wave icrh
+!
+      IF ( iicrh .LT. 1) GOTO 812
+!
+!.....use profiles from input file
+      do 898 l=1,ntpts
+      if(rhamp(l).gt.0) go to 899
+  898 continue
+      go to 812
+  899 continue
+!
+      do 800 l=1,ntpts-1
+      lsav = l
+      if(tpro(l).le.time .and. tpro(l+1).gt.time) go to 807
+  800 continue
+  807 continue
+!.....linear time point interpolation
+      denom = tpro(lsav+1)-tpro(lsav)
+      if(denom.eq.0) denom = 1._R8
+      ffact = (time-tpro(lsav))/denom
+      bpowers = rhamp(lsav)
+      afw = afwd(lsav) + ffact * (afwd(lsav+1) - afwd(lsav))
+      dfw = dfwd(lsav) + ffact * (dfwd(lsav+1) - dfwd(lsav))
+      a1fw = a1fwd(lsav) + ffact * (a1fwd(lsav+1) - a1fwd(lsav))
+      a2fw = a2fwd(lsav) + ffact * (a2fwd(lsav+1) - a2fwd(lsav))
+      fac = bpowers*usdp/usdt
+      sum = 0._R8
+      do 810 j=2,npsit
+      ar = (xsv(j)-psimin)/(psilim-psimin)
+      if(ar.le.0) go to 808
+      if(abs(ar).ge.1.0_R8) go to 808
+      f1 = dfw**2/((ar-afw)**2 + dfw**2)
+      f2 = 1._R8
+      if(a1fw .gt. 0) f2 = ar**a1fw
+      f3 = 1._R8
+      if(a2fw .gt. 0) f3 = (1._R8-ar)**a2fw
+      form(j) = f1*f2*f3
+      go to 809
+  808 form(j) = 0._R8
+  809 continue
+      sum = sum + form(j)*(vary(j)-vary(j-1))
+  810 continue
+      do 811 j=2,npsit
+      savefw(j) = fac*form(j)/sum
+  811 continue
+  812 continue
+      return
+ 6600 continue
+!
+! --->  SPECIAL CODING FOR ACOEF(296)=5 TO GO WITH SUBROUTINE MISSIONC
+!       DEFINES SOURCE TERMS NEEDED FOR OPTIMAL CONTROL
+!
+!
+!.....initialize arrays to zero
+      do 6599 j=1,npsi
+      siun(j) = 0._R8
+      seun(j) = 0._R8
+!.....ICRH heating arrays
+      savebm(j) = 0._R8
+      savibm(j) = 0._R8
+!.....Fast wave heating and current drive arrays
+      savee(j) = 0._R8
+      ajavcd(j) = 0._R8
+!.....Lower-Hybrid heating and current drive arrays
+      savelh(j) = 0._R8
+      ajavlh(j) = 0._R8
+      ajavlh2(j) = 0._R8
+ 6599 continue
+      if(kcycle.le.0) go to 6699
+!.............................................................................
+!     Section 2.0 * * * Fast Wave Sources * * *
+!.............................................................................
+      bedge = gzero/(rmajor+rminor)
+      bmag0 = gzero/xmag
+!
+!.....k-parallel
+      akpar = 1.62E2_R8*bedge/sqrt(te(2))
+      omega = 9.58E7_R8*bedge
+      do 6610 j=2,npsit
+!
+!.....normalized square root of toroidal flux
+      rho = sqrt((j-1.5_R8)/(npsit-1+fraclst))
+!
+!.....local magnetic field strength
+      blocal = gzero / (rmajor + rho*rminor)
+!
+!.....deuterium density
+      andu = 0.5_R8*anhy(j)
+!
+!.....absorption coefficient
+      alphe = 4.44E-33_R8*bedge/blocal**3 * sqrt(te(2)*te(j))            &  
+     &       * sqrt(andu+1.5_R8*andu)*ane(j)                             &  
+     &       *exp(-(te(2)/te(j)))
+      alphaea(j) = alphe
+ 6610 continue
+      cnorm = 0._R8
+      do 6620 j=2,npsit
+      aint = 0._R8
+      do 6630 l=j,npsit
+      psiint = (l-1)*dpsi
+      aint = aint + dpsi*(alphaea(l)/sqrt(psiint))
+ 6630 continue
+      seun(j) = alphaea(j)*exp(-rminor/(2._R8*sqrt((npsit-1)*dpsi))*     &  
+     & aint)
+      cnorm = cnorm + seun(j)*vp(j)*dpsi
+ 6620 continue
+      fnorm = pfwmc*1.E6_R8*usdp/usdt/cnorm
+!
+!.....source terms
+      do 6611 j=2,npsit
+      savee(j) = fnorm*seun(j)
+      befo = 1.92E15_R8*rmajor*te(j)/ane(j)
+      term1 = 8.42_R8*sqrt(te(j)/te(1))/(0.678_R8+zeffa(j))
+      term2 = 4.13_R8/zeffa(j)**(0.707_R8)
+      term3 = 8._R8/(5._R8+zeffa(j))*(te(1)/te(j))
+      ajavfw(j)=befo*(term1+term2+term3)*(1._R8-0.5_R8*(ftrap(j)+        &  
+     & ftrap(j-1)))                                                      &  
+     &     *savee(j)*udsp/udst*usdi
+ 6611 continue
+!
+!.............................................................................
+!     Section 3.0 * * * Lower Hybrid Sources * * *
+!.............................................................................
+!
+!.....central deuterium density
+      andu = 0.5_R8*anhy(2)
+!
+!.....broadcast frequency
+      omegb = 2.79_R8*sqrt(0.5_R8*anhy(2))/ (1._R8+(1.03E-19_R8)*ane(2)/  &  
+     & bmag0**2)
+!.....k-parallel
+      akpar = 9.31E-9_R8*sqrt(andu)*(1.0_R8+ 1._R8/sqrt(9.71E18_R8*      &  
+     & bmag0**2/ane(2)                                                   &  
+     &                                             + 1.0_R8))
+!
+      testop = 2.3E-5_R8*omegb/akpar
+      if(testop .le. te(npsit)) go to 6699
+!
+      do 6612 j=2,npsit-1
+      jj = 1+npsit-j
+      if(te(jj).gt.testop) go to 6613
+ 6612 continue
+      jj = 1
+ 6613 jstop = jj+1
+      cnorm = 0._R8
+      do 6614 j=jstop,npsit
+      veth = 5.92E5_R8*sqrt(te(j))
+      warg = omegb/(akpar*veth)
+      seun(j) = ane(j)**2*sqrt(te(j))*exp(-warg**2)
+      cnorm = cnorm + seun(j)*vp(j)*dpsi
+ 6614 continue
+      fnorm = plhmc*1.E6_R8*usdp/usdt/cnorm
+      do 6615 j=jstop,npsit
+      savelh(j) = fnorm*seun(j)
+      befo = 1.92E15_R8*rmajor*te(j)/ane(j)
+      term1 = (1.26E6_R8/zeffa(j))*(akpar/omegb)*sqrt(te(j))
+      term2 = 3.83_R8/zeffa(j)
+      term3 = 2.28E-11_R8*(omegb/akpar)**2/(te(j)*(5._R8+zeffa(j)))
+      ajavlh(j) = befo*(term1+term2+term3)*(1._R8-ftrap(j))*             &  
+     &          savelh(j)*udsp/udst*usdi*xplas/gzero
+ 6615 continue
+!
+!.....define surface centered arrays
+      do 720 j=1,npsit
+      ajavlh2(j) = .5_R8*(ajavlh(j)+ajavlh(j+1))
+  720 continue
+ 7630 format(" j       savelh       ajavlh")
+ 7631 format(i3,1p3e13.4)
+ 6699 continue
+      return
+      end
+! 15Apr2005 fgtok -s r8_precision.sub "r8con.csh conversion"
