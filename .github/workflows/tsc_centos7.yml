@@ -1,5 +1,5 @@
 #https://docs.github.com/en/actions/quickstart
-name: GitHub Actions Demo
+name: TSC Actions centos7
 on: [push]
 jobs:
   Explore-GitHub-Actions:
