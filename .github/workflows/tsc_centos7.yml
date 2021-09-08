@@ -1,8 +1,8 @@
 #https://docs.github.com/en/actions/quickstart
-name: TSC Actions centos7
+name: TSC Actions stellar
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  TSC-GitHub-Actions:
     runs-on: stellar-intel
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
