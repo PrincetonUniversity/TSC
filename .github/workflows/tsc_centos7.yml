@@ -28,3 +28,13 @@ jobs:
           cp -p ../../../makefile.stellar .
           make -f makefile.stellar
       - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: run tsc in the workspace
+        run: |
+          cp -p ../../../run.stellar .
+          run.stellar
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: check tsc run in the workspace
+        run: |
+          cp -p ../../../check.stellar .
+          check
+      - run: echo "🍏 This job's status is ${{ job.status }}."
