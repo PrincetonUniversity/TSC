@@ -22,4 +22,8 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           pwd
-      - run: echo "🍏 This job's status is ${{ job.status }}."      
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: compile in the repository
+        run: |
+          make -f makefile.stellar
+      - run: echo "🍏 This job's status is ${{ job.status }}."
