@@ -20,6 +20,7 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: cd to the workspace
         run: |
+          cp -p makefile.stellar ${{ github.workspace }}
           cd ${{ github.workspace }}
           pwd
       - run: echo "🍏 This job's status is ${{ job.status }}."
