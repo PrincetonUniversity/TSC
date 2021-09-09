@@ -32,11 +32,11 @@ jobs:
         run: |
           pwd
           cp -p ../../../run.stellar .
-          run.stellar
+          ./run.stellar
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: check tsc run in the workspace
         run: |
           pwd
           cp -p ../../../check.stellar .
-          check
+          ./check.stellar
       - run: echo "🍏 This job's status is ${{ job.status }}."
