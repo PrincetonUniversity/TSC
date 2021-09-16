@@ -3,6 +3,7 @@ name: TSC Actions stellar
 on: [push]
 jobs:
   setup:
+    name: setup
     runs-on: self-hosted
     steps:
       - run: echo $PATH
@@ -26,6 +27,7 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
   build:
+    name: build
     needs: setup
     runs-on: self-hosted
     steps:
@@ -37,7 +39,8 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
  
   test:
-    needs: build
+    name: test
+    needs: [setup, build]
     runs-on: self-hosted
     steps:
       - name: run tsc in the workspace
