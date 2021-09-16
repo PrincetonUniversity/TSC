@@ -37,7 +37,6 @@ jobs:
           pwd
           cp -p ../../../compile.stellar .
           ./compile.stellar
-          working-directory: .
           shell: bash
       - run: echo "🍏 This job's status is ${{ job.status }}."
  
@@ -51,7 +50,6 @@ jobs:
           pwd
           cp -p ../../../run.stellar .
           ./run.stellar
-          working-directory: .
           shell: bash
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: check tsc in the workspace
@@ -59,6 +57,5 @@ jobs:
           pwd
           cp -p ../../../check.stellar .
           ./check.stellar
-          working-directory: .
           shell: bash
       - run: echo "🍏 This job's status is ${{ job.status }}."
