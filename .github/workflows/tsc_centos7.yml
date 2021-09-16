@@ -9,6 +9,7 @@ jobs:
       - run: echo $PATH
       - run: echo $HOME
       - run: echo $HOSTNAME
+      - run: echo $SHELL
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} stellar hosted by PrincetonUniversity!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
