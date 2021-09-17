@@ -9,7 +9,6 @@ jobs:
       - run: echo $PATH
       - run: echo $HOME
       - run: echo $HOSTNAME
-      - run: echo $SHELL
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} stellar hosted by PrincetonUniversity!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
@@ -20,7 +19,6 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-        shell: bash
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: prepare tsc in the workspace
         run: |
@@ -38,7 +36,6 @@ jobs:
           pwd
           cp -p ../../../compile.stellar .
           ./compile.stellar
-          shell: bash
       - run: echo "🍏 This job's status is ${{ job.status }}."
  
   test:
@@ -51,12 +48,10 @@ jobs:
           pwd
           cp -p ../../../run.stellar .
           ./run.stellar
-          shell: bash
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: check tsc in the workspace
         run: |
           pwd
           cp -p ../../../check.stellar .
           ./check.stellar
-          shell: bash
       - run: echo "🍏 This job's status is ${{ job.status }}."
