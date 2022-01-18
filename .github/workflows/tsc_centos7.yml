@@ -1,0 +1,57 @@
+#https://docs.github.com/en/actions/quickstart
+name: TSC Actions stellar
+on: [push]
+jobs:
+  setup:
+    name: setup
+    runs-on: self-hosted
+    steps:
+      - run: echo $PATH
+      - run: echo $HOME
+      - run: echo $HOSTNAME
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} stellar hosted by PrincetonUniversity!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: prepare tsc in the workspace
+        run: |
+          cd ${{ github.workspace }}
+          pwd
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+  build:
+    name: build
+    needs: setup
+    runs-on: self-hosted
+    steps:
+      - name: build tsc in the workspace
+        run: |
+          pwd
+          cp -p ../../../compile.stellar .
+          ./compile.stellar
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+ 
+  test:
+    name: test
+    needs: [setup, build]
+    runs-on: self-hosted
+    steps:
+      - name: run tsc in the workspace
+        run: |
+          pwd
+          cp -p ../../../run.stellar .
+          ./run.stellar
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: check tsc in the workspace
+        run: |
+          pwd
+          cp -p ../../../check.stellar .
+          ./check.stellar
+      - run: echo "🍏 This job's status is ${{ job.status }}."
