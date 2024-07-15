@@ -41,7 +41,6 @@
       character*50,   dimension(:),   allocatable :: current_name
        REAL(KIND=r8)                              :: amaxtemp, tffactor
  
-      integer  :: icolor
       integer            :: ntest = 11
       integer            :: numnumerrec_shotfile
       integer            :: nhalosensors, nf

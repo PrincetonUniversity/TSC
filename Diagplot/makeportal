@@ -5,16 +5,16 @@ TV80DIR = ./
 TSCINC = ./
 TV80INC = ./
 
-NTCC_MOD = ${NTCCHOME}/mod
-NTCC_LIB = -L${NTCCHOME}/lib
+NTCC_MOD = ${NTCC_ROOT}/mod
+NTCC_LIB = -L${NTCC_ROOT}/lib
 
 NETCDFMOD = ${NETCDFHOME}/include
 
 NAG_LIB = -L$(NAG_ROOT)
 NCARG_LIB = $(NCARG_ROOT)/lib
 
-CFOPTS = --dbl --sav    -I$(NTCC_MOD)
-LSOPTS =       --sav    -I$(NTCC_MOD)
+CFOPTS =       --save   -I$(NTCC_MOD)
+LSOPTS =       --save   -I$(NTCC_MOD)
 
 J = $(TSCINC)
 H = $(TV80INC)
@@ -28,15 +28,10 @@ TSCOBJS = plot.o subs.o tv80lib.o
 EZCDF=$(NTCC_LIB) -lezcdf -L$(NETCDFHOME)/lib -lnetcdf
 
 LDRTSC = \
- -L$(NCARG_LIB) -L/usr/X11R6/lib64 \
- $(NAG_LIB) \
- -L/usr/pppl/lff95/8.x86_64-pkgs/tv80-20050306.x86_64/lib \
- -L$(TV80HOME)/lib -ltv80d \
--lncarg \
--lncarg_gks \
--lncarg_c \
--lnag \
--lX11 $(EZCDF)
+ -Wl,-rpath -Wl,${NCARG_ROOT} -L${NCARG_ROOT}/lib -lncarg -lncarg_gks -lncarg_c -lncarg_ras -lngmath -lcgm -lz -lsz \
+ -Wl,-rpath -Wl,$/usr/lib -L/usr/lib -lfreetype -lX11 \
+ -L$(CAIRO_HOME)/lib -lcairo \
+ -lX11 $(EZCDF)
 
 goplot: $(TSCOBJS)
 	$(F90) -o $@ $(TSCOBJS) $(LDRTSC)
@@ -52,4 +47,8 @@ $(J)comfile.i $(J)param.i
 tv80lib.o: $(TV80DIR)tv80lib.f \
 $(H)param.i
 	$(COMPTV80)
+
+.PHONY: clean
+clean:
+	@rm *.o goplot
 

@@ -4,24 +4,8 @@ SHELL   = /bin/sh
 #computer_arch:= $(shell uname -m)
 #computer_name:= $(shell uname -n)
 
-ifeq ($(computer_arch),i686)
-endif
-
-ifeq ($(computer_arch),ia64)
-endif
-
-ifeq ($(computer_arch),x86_64)
-
-ifneq (, $(finstring, jaguar, $(computer_name)))
-endif	# --- jaguar end --- #
-
-# --- edison start --- #
-ifeq ($(shell uname -n | cut -c-6),edison)
-
-else
-# --- cori start --- #
-
 ifeq ($(shell uname -n | cut -c-4),cori)
+# --- cori start --- #
 COMPILE = ftn
 C_COMPILE = cc
 CC_COMPILE = CC
@@ -42,45 +26,19 @@ COMPILE = $(F90)
 NTCCMOD = ${NTCC_ROOT}/mod
 NETCDFMOD = ${NETCDFHOME}/include
 TRANSP_MOD = ${NTCC_ROOT}/mod
-ifeq "$(findstring lfc,$(FC))" "lfc" 
-	CFOPTS =  --sav --o2  -I${TRANSP_MOD}
-endif 
-ifeq "$(findstring pathscale,$(F95HOME))" "pathscale"
-	CFOPTS =  -static-data  -I${TRANSP_MOD} -module ../object
-endif 
 ifeq "$(findstring intel,$(F90HOME))" "intel"
 	CFOPTS = -save -ftz -I${TRANSP_MOD} -I/p/swim/jchen/TSC/INTEL2019/mod
 endif 
 
 endif # end of pppl
-endif # end of edison
-endif # end of x86_64
 
 ifeq "$(findstring intel,$(F90HOME))" "intel"
 FLAGS= $(CFOPTS) \
 	-cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -I${MPIHOME}/include #-g
 endif
-ifeq "$(findstring lfc,$(FC))" "lfc"
-FLAGS= $(CFOPTS) \
-	-Cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -I${MPIHOME}/include #-g
-endif
 ifeq "$(findstring pathscale,$(F95HOME))" "pathscale"
 FLAGS= $(CFOPTS) \
 	-cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -I${MPIHOME}/include #-g
-endif
-ifeq ($(shell uname -n | cut -c-6),edison) 
-FLAGS= $(CFOPTS) \
-        -cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG #-DNCAR_DUMMY -g
-else
-ifeq ($(shell uname -n | cut -c-4),cori) 
-ifeq ($(shell echo ${NTCCHOME} | cut -c41-43),pgi)
-FLAGS= $(CFOPTS) \
-        -Mpreprocess -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -DNCAR_DUMMY #-g
-else  #pathscale
-FLAGS= $(CFOPTS) \
-        -cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG #-DNCAR_DUMMY -g
-endif
-endif
 endif
 
 LINK    = ar -ruv
