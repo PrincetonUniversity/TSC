@@ -21,16 +21,26 @@ VERSION = f90lib
 EXE = gotsc_$(computer_name)
 EXE_LSC = gotlsc_$(computer_name)
 
-NTCCMOD = ${NTCCHOME}/mod
-NETCDFMOD = ${NETCDFHOME}/include
+ifeq ($(computer_arch),i686)
+endif
 
-ifeq ($(shell uname -n | cut -c-4),cori)
+ifeq ($(computer_arch),ia64)
+endif
+
+ifneq (, $(finstring, jaguar, $(computer_name)))
+endif	# --- jaguar end --- # 
+
+# --- edison start --- #
+ifeq ($(shell uname -n | cut -c-6),edison)
+endif   #end of edison
+	# --- edison end --- # 
+
 # --- cori start --- #
+ifeq ($(shell uname -n | cut -c-4),cori)
 export NTCCHOME = /global/homes/j/jinchen/project/ntccsvn/files/tshare/LINUX_cori_intel
 export NTCCMOD = ${NTCCHOME}/mod
 export NTCCINC = ${NTCCHOME}/include
 export NTCCLIB = -L${NTCCHOME}/lib
-export NETCDFMOD = ${NETCDF_DIR}/include
 export NETCDFLIB = ${NETCDF_DIR}/lib
 
 XPLASMA_LIB = -L${NTCCHOME}/lib \
@@ -50,54 +60,70 @@ XPLASMA_LIB = -L${NTCCHOME}/lib \
 #and the compiler wrappers perform the linking automatically.
 LAPACK_LIB = 
 EZCDF=-L${NTCCHOME}/lib -lezcdf #$(NETCDF_FLIB)
-
+TMP_LIB = -L/opt/pgi/9.0.4/linux86-64/9.0-4/lib -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lnspgc -lpgc -lrt -lm
 LDRTSC = $(NCAR) $(XLIB)
 LD = ftn
+endif   #end of cori
 
-else
 # --- pppl start --- #
-TRXPL2PS_LIB = -L${NTCC_ROOT}/lib \
+ifeq ($(shell uname -n | cut -c-4),flux)
+TL = $(NTCC_ROOT)/lib
+
+TRXPL2PS_LIB = -L${NTCC_HOME}/lib -L/p/pshare/transp/opt/ufiles/0.4.1/intel/2023/lib\
 -ltrxplib -ltrread -ltr_getnl -lrp_kernel -lrplot_io -lxdatmgr -lsplitn \
 -ltrdatbuf_lib -lechmod_iolib -luflib -lmds_sub -lufhdf -lkey_access \
 -L/usr/lib/gcc/x86_64-redhat-linux/4.4.4 -lstdc++
 
-XPLASMA_LIB = -L${NTCC_ROOT}/lib \
+XPLASMA_LIB = -L${PLASMA_STATE_HOME}/lib -L/u/jchen/NTCC/LINUX/lib \
   -lplasma_state -lps_xplasma2 -lplasma_state_kernel \
   -lold_xplasma -lxplasma2 -lgeqdsk_mds \
   -lmdstransp -lnscrunch -lfluxav -lr8bloat -lsmlib -lmclib \
   -linterp_sub -lezcdf \
-  -lvaxonly -ltridiag -lcomput -lpspline \
+  -lvaxonly -ltrdatbuf_lib -lcomput -lpspline \
   -llsode -llsode_linpack \
   -lportlib \
   -L${MDSPLUS}/lib -lMdsLib \
+ -lps_comput -lps_physconst -lps_portlib -lcstate_lib -lps_bloat -lps_smlib \
+ -lmdescr -lxplasma_debug
 
+NCARG=/p/swim/jchen/LIB/ncl_ncarg-6.6.2
+NCARG_ROOT=/p/swim/jchen/TSC/INTEL2021
 LDRTSC = \
- -Wl,-rpath -Wl,${NCARG_ROOT} -L${NCARG_ROOT}/lib -lncarg -lncarg_gks -lncarg_c -lncarg_ras -lngmath -lcgm -lz -lsz \
- -Wl,-rpath -Wl,$/usr/lib -L/usr/lib -lfreetype -lX11 \
+ -Wl,-rpath,${NCARG_ROOT} -L${NCARG_ROOT}/lib -lncarg -lncarg_gks -lncarg_c -lncarg_ras -lngmath -lcgm -lz -lsz \
+ -Wl,-rpath,$/usr/lib -L/usr/lib64 -lfreetype -lbz2 -lpng16 -lharfbuzz -lX11 \
  -L$(CAIRO_HOME)/lib -lcairo \
 
-ifeq "$(findstring intel,$(F90HOME))" "intel"
-NCDIR=$(NETCDF_C_HOME)
-NFDIR=$(NETCDF_FORTRAN_HOME)
-LAPACK_LIB = -L${F90HOME}/mkl/lib/intel64 \
+ifeq "$(findstring lfc,$(FC))" "lfc"
+endif 
+ifeq "$(findstring pathscale,$(FC))" "pathscale"
+	LAPACK_LIB = -L${ACML_HOME}/pathscale64/lib -lacml
+	EZCDF=-L$(NTCCHOME)/lib -lezcdf -L$(NETCDFHOME)/lib -lnetcdf -lnetcdff
+	LD = mpif90 -static-data
+endif
+#ifeq "$(findstring intel,$(FC))" "intel"
+	NCDIR=$(NETCDF_C_HOME)
+	NFDIR=$(NETCDF_FORTRAN_HOME)
+	LAPACK_LIB = -L${MKLROOT}/lib/intel64 \
              -lmkl_core -lmkl_intel_lp64 \
              -lmkl_lapack95_lp64 -lmkl_blas95_lp64 \
              -lmkl_sequential \
              ##-lmkl_ipf -lmkl_em64t -lbmkl_cdft -lguide
-EZCDF=-Wl,-rpath -Wl,${PSPLINE_HOME}/lib -L$(PSPLINE_HOME)/lib -lpspline /p/swim/jchen/TSC/INTEL2019/lib/libpspline.a -Wl,-rpath,$(NCDIR)/lib -Wl,-rpath,$(NFDIR)/lib -L$(NCDIR)/lib -L$(NFDIR)/lib -lnetcdf -lnetcdff
-#LD = mpif90 -save -xcheck bounds
-LD = mpif90 -save
-endif
-
-endif
+	EZCDF=-Wl,-rpath,${PSPLINE_HOME}/lib -L$(PSPLINE_HOME)/lib -lpspline /p/swim/jchen/TSC/INTEL2021/lib/libpspline.a \
+	      -Wl,-rpath,$(NCDIR)/lib -L$(NCDIR)/lib64 -lnetcdf \
+	      -Wl,-rpath,$(NFDIR)/lib -L$(NFDIR)/lib -lnetcdff
+	#LD = mpif90 -save -xcheck bounds
+	LD = mpif90 -save
+#endif
+endif   #end of pppl
 
 TSC_LIB  = libtrtsc.a libsubs.a libtsc_m.a libglf.a libmmm_7_1.a libtsc_a.a libtsc_r.a libtv80.a libfixupp.a libtrdatbuf.a  
+TSC_LIB2 = libtrtsc.a libsubs.a libtsc_m.a libglf.a libmmm_7_1.a libtsc_a.a libtsc_r.a           libfixupp.a libtrdatbuf.a  
 TLSC_LIB = libtrtsc.a libsubs.a libtsc_m.a libglf.a libmmm_7_1.a libtsc_a.a liblsc.a   libtv80.a libfixlsc.a libtrdatbuf.a
 
-LINK_LIB     = $(TSC_LIB) $(TRXPL2PS_LIB) $(XPLASMA_LIB) $(LAPACK_LIB) $(EZCDF) $(LDRTSC) $(HDF5_HOME)/lib/libhdf5.a $(HDF5_HOME)/lib/libhdf5_cpp.a $(HDF5_HOME)/lib/libhdf5_fortran.a
-LINK_LIB_LSC = $(TLSC_LIB) $(XPLASMA_LIB) $(LAPACK_LIB) $(EZCDF) $(LDRTSC) $(HDF5_HOME)/lib/libhdf5.a $(HDF5_HOME)/lib/libhdf5_cpp.a $(HDF5_HOME)/lib/libhdf5_fortran.a
+LINK_LIB     = $(TSC_LIB) $(TRXPL2PS_LIB) $(XPLASMA_LIB) $(LAPACK_LIB) $(EZCDF) $(LDRTSC)
+LINK_LIB_LSC = $(TLSC_LIB) $(XPLASMA_LIB) $(LAPACK_LIB) $(EZCDF) $(LDRTSC)
 
-tsc: get_svn_version.c
+tsc: 
 	@echo "Beginning making a new tsc"
 	@echo "compile on machine: " ${computer_os} ${computer_arch} ${computer_name}
 	@echo "transp lib: " ${NTCCHOME}/lib

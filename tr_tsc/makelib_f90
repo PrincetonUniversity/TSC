@@ -4,41 +4,71 @@ SHELL   = /bin/sh
 #computer_arch:= $(shell uname -m)
 #computer_name:= $(shell uname -n)
 
-ifeq ($(shell uname -n | cut -c-4),cori)
+ifeq ($(computer_arch),i686)
+endif
+
+ifeq ($(computer_arch),ia64)
+endif
+
+
+# --- edison start --- #
+ifeq ($(shell uname -n | cut -c-6),edison)
+endif # end of edison
+
 # --- cori start --- #
-COMPILE = ftn
-C_COMPILE = cc
-CC_COMPILE = CC
-ifeq ($(PE_ENV),PGI)   # Using PGI compiler on cori
-	CFOPTS = -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
-else
-	ifeq ($(PE_ENV),PATHSCALE)   # Using PATHSCALE compiler on cori
-		CFOPTS =  -static-data -O -I${NTCCINC} -I${NTCCMOD}
-		CFOPTS =  -static-data -g -I${NTCCINC} -I${NTCCMOD}
-	else #default: INTEl compiler on cori
-		CFOPTS =  -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
+ifeq ($(shell uname -n | cut -c-4),cori)
+	COMPILE = ftn
+	C_COMPILE = cc
+	CC_COMPILE = CC
+	ifeq ($(PE_ENV),PGI)   # Using PGI compiler on cori
+		CFOPTS = -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
+	else
+		ifeq ($(PE_ENV),PATHSCALE)   # Using PATHSCALE compiler on cori
+			CFOPTS =  -static-data -O -I${NTCCINC} -I${NTCCMOD}
+		else #default: INTEl compiler on cori
+			CFOPTS =  -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
+		endif
 	endif
-endif
+endif # end of cori
 
-else
 # --- pppl start --- #
-COMPILE = $(F90)
-NTCCMOD = ${NTCC_ROOT}/mod
-NETCDFMOD = ${NETCDFHOME}/include
-TRANSP_MOD = ${NTCC_ROOT}/mod
-ifeq "$(findstring intel,$(F90HOME))" "intel"
-	CFOPTS = -save -ftz -I${TRANSP_MOD} -I/p/swim/jchen/TSC/INTEL2019/mod
-endif 
+ifeq ($(shell uname -n | cut -c-4),flux)
+	COMPILE = $(FC)
+	PSPLINE_HOME=/p/swim/jchen/TSC/INTEL2021
+	ifeq "$(findstring lfc,$(FC))" "lfc" 
+		CFOPTS =  --sav --o2  -I${TRANSP_MOD}
+	endif 
+	ifeq "$(findstring pathscale,$(FC))" "pathscale"
+		CFOPTS =  -static-data  -I${TRANSP_MOD} -module ../object
+	endif 
+#	ifeq "$(findstring intel,$(FC))" "intel"
+		CFOPTS = -save -ftz -I${PLASMA_STATE_HOME}/mod -I$(PSPLINE_HOME)/mod -I$(PSPLINE_HOME)/include
+		FLAGS= -cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG $(CFOPTS)
+#	endif 
 
-endif # end of pppl
+endif # end of flux
 
-ifeq "$(findstring intel,$(F90HOME))" "intel"
+ifeq "$(findstring lfc,$(FC))" "lfc"
+FLAGS= $(CFOPTS) \
+	-Cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -I${MPIHOME}/include #-g
+endif
+ifeq "$(findstring pathscale,$(FC))" "pathscale"
 FLAGS= $(CFOPTS) \
 	-cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -I${MPIHOME}/include #-g
 endif
-ifeq "$(findstring pathscale,$(F95HOME))" "pathscale"
+ifeq ($(shell uname -n | cut -c-6),edison) 
 FLAGS= $(CFOPTS) \
-	-cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -I${MPIHOME}/include #-g
+        -cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG #-DNCAR_DUMMY -g
+else
+ifeq ($(shell uname -n | cut -c-4),cori) 
+ifeq ($(shell echo ${NTCCHOME} | cut -c41-43),pgi)
+FLAGS= $(CFOPTS) \
+        -Mpreprocess -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG -DNCAR_DUMMY #-g
+else  #pathscale
+FLAGS= $(CFOPTS) \
+        -cpp -DOLD -DPARTIAL_PLASMA_STATE -DxI_HAVE_MPI -DxI_HAVE_MPI_DEBUG #-DNCAR_DUMMY -g
+endif
+endif
 endif
 
 LINK    = ar -ruv

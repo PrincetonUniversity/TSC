@@ -6,39 +6,65 @@ SHELL   = /bin/sh
 
 CC = gcc 
 
-ifeq ($(shell uname -n | cut -c-4),cori)
-# --- cori start --- #
-COMPILE = ftn
-C_COMPILE = cc
-CC_COMPILE = CC
-ifeq ($(PE_ENV),PGI)   # Using PGI compiler on cori
-	CFOPTS = -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
-else
-	ifeq ($(PE_ENV),PATHSCALE)   # Using PATHSCALE compiler on cori
-		CFOPTS =  -static-data -O -I${NTCCINC} -I${NTCCMOD}
-		CFOPTS =  -static-data -g -I${NTCCINC} -I${NTCCMOD}
-	else #default: INTEl compiler on cori
-		CFOPTS =  -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
-	endif
+ifeq ($(computer_arch),i686)
 endif
 
-else
+ifeq ($(computer_arch),ia64)
+endif
+
+ifneq (, $(finstring, jaguar, $(computer_name)))
+endif   # --- jaguar end --- #
+
+# --- edison start --- #
+ifeq ($(shell uname -n | cut -c-6),edison)
+	ifeq ($(PE_ENV),PGI)   # Using PGI compiler on edison
+		CFOPTS = -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
+	else
+		ifeq ($(PE_ENV),PATHSCALE)   # Using PATHSCALE compiler on edison
+			CFOPTS =  -static-data -O -I${NTCCINC} -I${NTCCMOD}
+			CFOPTS =  -static-data -g -I${NTCCINC} -I${NTCCMOD}
+		else #default: INTEl compiler on edison
+			CFOPTS =  -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
+		endif
+	endif
+endif # --- edison end --- #
+
+
+# --- cori start --- #
+ifeq ($(shell uname -n | cut -c-4),cori)
+	COMPILE = ftn
+	C_COMPILE = cc
+	CC_COMPILE = CC
+	ifeq ($(PE_ENV),PGI)   # Using PGI compiler on cori
+		CFOPTS = -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
+	else
+		ifeq ($(PE_ENV),PATHSCALE)   # Using PATHSCALE compiler on cori
+			CFOPTS =  -static-data -O -I${NTCCINC} -I${NTCCMOD}
+			CFOPTS =  -static-data -g -I${NTCCINC} -I${NTCCMOD}
+		else #default: INTEl compiler on cori
+			CFOPTS =  -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
+		endif
+	endif
+endif # --- end of x86_64 --- #
+
 # --- pppl start --- #
-COMPILE = $(F90)
-NTCCMOD = ${NTCC_ROOT}/mod
-NETCDFMOD = ${NETCDFHOME}/include
-TRANSP_MOD = ${NTCC_ROOT}/mod
-#ifeq ($(PATHSCALE),1)
-ifeq "$(findstring pathscale,$(F95HOME))" "pathscale"
-	CFOPTS =  -static-data -I${TRANSP_MOD}
-endif
-ifeq "$(findstring intel,$(F90HOME))" "intel"
-	#CFOPTS =  -save -ftz -check bounds -I${TRANSP_MOD} 
-	CFOPTS =  -save -ftz -I${TRANSP_MOD} 
-endif
+ifeq ($(shell uname -n | cut -c-4),flux)
+	COMPILE = $(FC)
+	PSPLINE_HOME=/p/swim/jchen/TSC/INTEL2021
+	ifeq "$(findstring lfc,$(FC))" "lfc"
+		CFOPTS =  --sav --o2  -I${TRANSP_MOD}
+	endif
+	ifeq "$(findstring pathscale,$(FC))" "pathscale"
+		#TRANSP_MOD = /p/tshare/transp/PS/mod
+		CFOPTS =  -static-data -I${TRANSP_MOD}
+	endif
+	#ifeq "$(findstring intel,$(FC))" "intel"
+		#CFOPTS =  -save -ftz -check bounds -I${TRANSP_MOD} 
+		CFOPTS =  -save -ftz -I${PLASMA_STATE_HOME}/mod -I/u/jchen/NTCC/LINUX/mod
+		FLAGS= $(CFOPTS) -I$(PSPLINE_HOME)/mod -I$(PSPLINE_HOME)/include #-g
+	#endif
 endif # --- pppl end --- #
 
-FLAGS= $(CFOPTS) -I$(NTCCMOD) #-g
 LINK    = ar -ruv
 LISTS   = ../list
 

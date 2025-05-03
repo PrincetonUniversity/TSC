@@ -4,38 +4,56 @@ SHELL   = /bin/sh
 #computer_arch:= $(shell uname -m)
 #computer_name:= $(shell uname -n)
 
-ifeq ($(shell uname -n | cut -c-4),cori)
-# --- cori start --- #
-COMPILE = ftn
-C_COMPILE = cc
-CC_COMPILE = CC
-ifeq ($(PE_ENV),PGI)   # PGI compiler on cori
+ifeq ($(computer_arch),i686)
+	COMPILE = lf95 
+	CFOPTS = --dbl --sav   
+	NTCCMOD = ${NTCCHOME}/mod
+	NETCDFMOD = ${NETCDFHOME}/include
+endif
+
+ifeq ($(computer_arch),ia64)
+	COMPILE = ifort
+	NTCCMOD = ${NTCCHOME}/mod
+	NETCDFMOD = ${NETCDFHOME}/include
+	CFOPTS = -r8 -save -ftz
+endif
+
+ifneq (, $(finstring, jaguar, $(computer_name)))
+	COMPILE = ftn
+	NTCCHOME = /ccs/proj/fus013/NUBEAM_Cray_XT
+	NTCCMOD = ${NTCCHOME}/mod
+	NETCDFMOD = ${NETCDF_DIR}/include
+	TRANSP_MOD = ${NTCCHOME}/mod
+	PS_INC = /ccs/proj/fus013/lpku/ips/include
+	CFOPTS = -r8 -Msave -Kieee -pc 64 -O
+endif   # --- jaguar end --- #
+
+# --- franklin start --- #
+ifeq ($(shell echo ${NTCCHOME} | cut -c41-43),pgi)
 	CFOPTS = -r8 -Msave -Kieee -pc 64 -O -I${NTCCINC} -I${NTCCMOD}
 else
-	ifeq ($(PE_ENV),PATHSCALE)   # PATHSCALE compiler on cori
-		CFOPTS = -r8 -static-data -O -I${NTCCINC} -I${NTCCMOD}
-	else   # default: INTEL compiler on cori
-		CFOPTS = -r8 -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
-	endif
+	CFOPTS = -r8 -save -ftz -O -I${NTCCINC} -I${NTCCMOD}
 endif
 
-else
 # --- pppl start --- #
-COMPILE = $(F90)
-NTCCMOD = ${NTCCHOME}/mod
-NETCDFMOD = ${NETCDFHOME}/include
-TRANSP_MOD = ${NTCCHOME}/mod
-ifeq "$(findstring pathscale,$(F95HOME))" "pathscale"
-	CFOPTS =  -r8 -static-data  -I${TRANSP_MOD}
-endif
-ifeq "$(findstring intel,$(F90HOME))" "intel"
-	#CFOPTS = -r8 -save -ftz -check bounds -I${TRANSP_MOD}
-	CFOPTS = -r8 -save -ftz -I${TRANSP_MOD}
-endif
-
+ifeq ($(shell uname -n | cut -c-4),flux)
+	COMPILE = $(FC)
+	NTCCMOD = ${NTCCHOME}/mod
+	NETCDFMOD = ${NETCDFHOME}/include
+	TRANSP_MOD = ${NTCCHOME}/mod
+	ifeq "$(findstring lfc,$(FC))" "lfc"
+		CFOPTS =  --dbl --sav --o2  -I${TRANSP_MOD}
+	endif
+	ifeq "$(findstring pathscale,$(F95HOME))" "pathscale"
+		CFOPTS =  -r8 -static-data  -I${TRANSP_MOD}
+	endif
+	ifeq "$(findstring intel,$(F90HOME))" "intel"
+		#CFOPTS = -r8 -save -ftz -check bounds -I${TRANSP_MOD}
+		CFOPTS = -r8 -save -ftz -I${PLASMA_STATE_HOME}
+		FLAGS= $(CFOPTS) #-g
+	endif
 endif # --- pppl end --- #
 
-FLAGS= $(CFOPTS) #-g
 LINK    = ar -ruv
 LISTS   = ../list
 
