@@ -569,12 +569,12 @@
         cmd= "namelist_adapt "//trim(template)//" "//                   &
      &        trim(modfile)//" "//trim(xplasma_filename)//" "           &
      &        //trim(trfile)
-        ierr = jsystem(trim(cmd))
+!        ierr = jsystem(trim(cmd))
         if( ierr .ne.0) then
         write(6,*) "ps_interface: TRANSP namelist adapt error"
         call flush(6)
         cmd="date > transp_kill.dat"
-        istat = jsystem(trim(cmd))
+!        istat = jsystem(trim(cmd))
         return
         endif
         endif
@@ -885,7 +885,7 @@
 !
       if(.not. use_swim) then
        cmd="cp "//trim(xplasma_filename)//" "//trim(suffix2)//"_psp.cdf"
-       istat = jsystem(trim(cmd))
+!       istat = jsystem(trim(cmd))
       endif
  
       ELSE !cj the opposite of IF( l_first ) 
@@ -903,7 +903,7 @@
       if(ierr .ne. 0) then
       write(6,*) "ps_interface: plasma_state read error"
       cmd="date > transp_kill.dat"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
       return
       endif
 
@@ -914,7 +914,7 @@
       if(ierr .ne. 0) then
       write(6,*) "ps_interface: plasma state commit error"
       cmd="date > transp_kill.dat"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
       return
       endif
       endif
@@ -935,7 +935,7 @@
       if(ierr .ne. 0) then
       write(6,*) "ps_interface: plasma state eq update error"
       cmd="date > transp_kill.dat"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
       stop
       endif
 
@@ -976,7 +976,7 @@
       if(ierr .ne. 0) then
       write(6,*) "ps_interface: plasma state store error"
       cmd="date > transp_kill.dat"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
       return
       endif
  
@@ -1492,7 +1492,7 @@
       if(ierr .ne. 0) then
       write(6,*) "ps_interface: plasma state store error in pa"
       cmd="date > transp_kill.dat"
-      ierr = jsystem(trim(cmd))
+!      ierr = jsystem(trim(cmd))
       stop
       endif
       

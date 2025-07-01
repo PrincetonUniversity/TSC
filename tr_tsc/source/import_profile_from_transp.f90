@@ -275,7 +275,7 @@
             trim(dpath)//                                               &
             " "//                                                       &
             "xyz transp.mdescr >& log.trxpl_init"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
             if( istat.ne.0) then
               write(*,*) "trxpl_init: err trxpl_server init"
               ineg=62
@@ -411,7 +411,7 @@
             "KILL"//                                                    &
             " "//                                                       &
             "xyz >& log.trxpl_kill"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
             if( istat.ne.0) then
               write(6,*) "trxpl_kill: err trxpl_server kill"
               ineg=62
@@ -532,7 +532,7 @@
             trim(ADJUSTL(psfilename(i0)))//                             &
             " "//                                                       &
             "gog_ps.cdf"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
             if( istat.ne.0) then
               write(6,*) "cp: err cp ps0 gog_ps.cdf"
               ineg=62
@@ -550,7 +550,7 @@
             "xyz"//                                                     &
             " "//                                                       &
             "gog_ps >& log.trxpl_fetch"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
             if( istat.ne.0) then
               write(6,*) "trxpl_fetch: err trxpl_server fetch t0"
               ineg=62
@@ -592,7 +592,7 @@
             trim(ADJUSTL(psfilename(i1)))//                             &
             " "//                                                       &
             "gog_ps_t1.cdf"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
             if( istat.ne.0) then
               write(6,*) "cp: err cp ps0 gog_ps_t1.cdf"
               ineg=62
@@ -610,7 +610,7 @@
             "xyz"//                                                      &
             " "//                                                       &
             "gog_ps_t1 >& log.trxpl_fetch_t1"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
             if( istat.ne.0) then
               write(6,*) "trxpl_fetch: err trxpl_server fetch t1"
               ineg=62

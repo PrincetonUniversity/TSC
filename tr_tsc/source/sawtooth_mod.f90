@@ -28,9 +28,9 @@
       call wrgeqdsk
       call wrxpls
       extension="cp "//trim(suffix2)//"_ps.geq"//" "//"saw0_state.geq"
-      istat=jsystem(trim(extension))
+!      istat=jsystem(trim(extension))
       extension="cp "//trim(suffix2)//"_ps.geq"//" "//"saw1_state.geq"
-      istat=jsystem(trim(extension))
+!      istat=jsystem(trim(extension))
       call put_plasma_state_saw0
       if(ierr .ne. 0) then
       ineg=70
@@ -78,7 +78,7 @@
       write(51,"(f12.6,2x,A)") ps%t1, trim(xplasma_filename)
       close(51)
       extension="mv tmpfile transp_step.dat"
-      istat=jsystem(trim(extension))
+!      istat=jsystem(trim(extension))
       extension=""
       call flush(6)
 
@@ -106,7 +106,7 @@
       call wrgeqdsk
       call wrxpls
       extension="cp "//trim(suffix2)//"_ps.geq"//" "//"saw1_state.geq"
-      istat=jsystem(trim(extension))
+!      istat=jsystem(trim(extension))
       call put_plasma_state_saw1
       if(ierr .ne. 0) then 
       ineg=70
@@ -183,7 +183,7 @@
       call ps_copy_plasma_state(ps,saw0,ierr)
       if(ierr .ne. 0) then
       write(6,*) "Error when copying ps to saw0"
-      istat=jsystem("date > transp_kill.dat")
+!      istat=jsystem("date > transp_kill.dat")
       return
       endif
 
@@ -195,7 +195,7 @@
       if(ierr .ne. 0) then
       write(6,*) "plasma state eq update error"
       cmd="date > transp_kill.dat"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
       return
       endif
 
@@ -502,7 +502,7 @@
       call ps_store_plasma_state(ierr,trim(saw0_filename),state=saw0)
       if(ierr .ne. 0) then
       write(6,*) "Error when storing saw0"
-      istat=jsystem("date > transp_kill.dat")
+!      istat=jsystem("date > transp_kill.dat")
       endif
 
       return
@@ -543,7 +543,7 @@
       call ps_copy_plasma_state(ps,saw1,ierr)
       if(ierr .ne. 0) then
       write(6,*) "Error when copying ps to saw1"
-      istat=jsystem("date > transp_kill.dat")
+!      istat=jsystem("date > transp_kill.dat")
       return
       endif
 
@@ -555,7 +555,7 @@
       if(ierr .ne. 0) then
       write(6,*) "plasma state eq update error"
       cmd="date > transp_kill.dat"
-      istat = jsystem(trim(cmd))
+!      istat = jsystem(trim(cmd))
       return
       endif
 
@@ -860,7 +860,7 @@
       call ps_store_plasma_state(ierr,trim(saw1_filename),state=saw1)
       if(ierr .ne. 0) then
       write(6,*) "Error when storing saw1"
-      istat=jsystem("date > transp_kill.dat")
+!      istat=jsystem("date > transp_kill.dat")
       endif
 
       return
