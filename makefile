@@ -86,12 +86,10 @@ XPLASMA_LIB = -L${PLASMA_STATE_HOME}/lib -L/u/jchen/NTCC/LINUX/lib \
  -lps_comput -lps_physconst -lps_portlib -lcstate_lib -lps_bloat -lps_smlib \
  -lmdescr -lxplasma_debug
 
-NCARG=/p/swim/jchen/LIB/ncl_ncarg-6.6.2
-NCARG_ROOT=/p/swim/jchen/TSC/INTEL2021
 LDRTSC = \
  -Wl,-rpath,${NCARG_ROOT} -L${NCARG_ROOT}/lib -lncarg -lncarg_gks -lncarg_c -lncarg_ras -lngmath -lcgm -lz -lsz \
  -Wl,-rpath,$/usr/lib -L/usr/lib64 -lfreetype -lbz2 -lpng16 -lharfbuzz -lX11 \
- -L$(CAIRO_HOME)/lib -lcairo \
+ -L$(CAIRO_HOME)/lib -lcairo -lgfortran \
 
 ifeq "$(findstring lfc,$(FC))" "lfc"
 endif 
@@ -102,7 +100,7 @@ ifeq "$(findstring pathscale,$(FC))" "pathscale"
 endif
 #ifeq "$(findstring intel,$(FC))" "intel"
 	NCDIR=$(NETCDF_C_HOME)
-	NFDIR=$(NETCDF_FORTRAN_HOME)
+	NFDIR=$(NETCDF_F_HOME)
 	LAPACK_LIB = -L${MKLROOT}/lib/intel64 \
              -lmkl_core -lmkl_intel_lp64 \
              -lmkl_lapack95_lp64 -lmkl_blas95_lp64 \

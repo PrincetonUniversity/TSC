@@ -1,3 +1,25 @@
+#new 20250305
+
+module load intel/2023.2.0
+module load openmpi/4.1.6-intel-2023.2.0
+module load mod_ntcc 
+module load ntcc/intel/2023/24.4.0_flux
+module load mdsplus/7.132.0-intel-2023.2.0
+
+module load openmpi-4.1.6/gcc-13.2.0/ncl/6.6.2-xc5oj4y 
+
+setenv NTCC_CODE /u/jchen/NTCC
+
+setenv HDF5_HOME /opt/pppl/software/spack/linux-rocky9-zen/intel-2023.2.0/hdf5-1.14.3-4nzzyanjshg3fh7bjvdh4vlbk32ia5h7
+setenv NETCDF_C_HOME /opt/pppl/software/spack/linux-rocky9-zen/intel-2023.2.0/netcdf-c-main-nzscmrx7nix7i72zs5y2gsoxqzxtwhd6/
+setenv NETCDF_F_HOME /opt/pppl/software/spack/linux-rocky9-zen/intel-2023.2.0/netcdf-fortran-4.6.1-cepgoinrjitqdehlejpd7lrpn3l3pqwd/
+
+cd p_swim/TSC/tsc_svn_copy20240709/tsc.243/
+#cd p_swim/TSC/tsc.n/
+
+
+========
+
 
 A)   TSC CVS
      Free-form FORTRAN 90 version of TSC based on various V10.8

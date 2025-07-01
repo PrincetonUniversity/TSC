@@ -54,7 +54,7 @@ ifeq ($(shell uname -n | cut -c-4),flux)
 	endif 
 	#ifeq "$(findstring intel,$(FC))" "intel"
 		#CFOPTS =  -save -ftz -check bounds -I${TRANSP_MOD} 
-		CFOPTS = -save -ftz -I$(PLASMA_STATE_HOME)/mod -I$(PSPLINE_HOME)/mod -I/u/jchen/NTCC/LINUX/mod -I${NETCDF_FORTRAN_HOME}/include
+		CFOPTS = -save -ftz -I$(PLASMA_STATE_HOME)/mod -I$(PSPLINE_HOME)/mod -I/u/jchen/NTCC/LINUX/mod -I${NETCDF_F_HOME}/include
 		FLAGS= -cpp $(CFOPTS)
 	#endif
 endif # --- pppl end --- #
