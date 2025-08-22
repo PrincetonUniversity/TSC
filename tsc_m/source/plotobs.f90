@@ -334,6 +334,9 @@
       call trace(big2(1),big1(1),nrecord,-1,-1,0._R8,0._R8)
 !     call trace(big2(1),big4(1),nrecord,-1,-1,0.,0.)
       call tracep(big2(1),big5(1),nrecord,-1,-1,-1)
+! kdm for moviedata.f90
+      obsdiag(1,(n+1)/2)=big1(1)
+      obsdiag(2,(n+1)/2)=big1(2)
  9998 if(iflopx.eq.2) then
       write(s100,9991) xobs(n),zobs(n),xobs(n+1),zobs(n+1)
       call gtextm(s100,80,0,1,3)

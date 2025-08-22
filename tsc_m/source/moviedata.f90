@@ -67,7 +67,9 @@
 !
 !     scalar current variables (physics)
 !     global     8      141    142    146     198    213    242
-      integer :: aplid, bsiid, cdiid, alhiid, fwiid, tniid, eciid
+      integer :: aplid, bsiid, cdiid, alhiid, fwiid, tniid, eciid, &
+!                235
+                 tcurid
 !
 !     scalar shape variables (geometry)
 !     global      34      35       36      37
@@ -83,7 +85,7 @@
         rvolid, rorgrid, te0id, ti0id, flxstid, vstaxid,               &
         vsiaxid, vsraxid, vsipoyid, vsrpoyid, thaloid, whaloid,        &
         tpedid, psipedid,fz1id, fz2id, fz3id, fz4id, fz5id, fz6id,     &
-        fz7id, fz8id, injcurrid, injcur2id, helicityid,                &
+        fz7id, fz8id, injcurrid, injcur2id, helicityid, gapvoltid,     &
         gcur01id, gcur02id, gcur03id, gcur04id, gcur05id, gcur06id,    &
         gcur07id, gcur08id, gcur09id, gcur10id,                        &
         gcur11id, gcur12id, gcur13id, gcur14id, gcur15id, gcur16id,    &
@@ -110,16 +112,22 @@
       integer :: rbndid,zbndid
 !
 !     2D variables
-      integer :: psiid,divflxid,ajphiid, prid, gsid,imaskid
+      integer :: psiid,divflxid,ajphiid, prid, gsid,imaskid,chivoltid, &
+                 lvltdiagid,icoilid
 !
 !.....variables added for idata=9 or idata=11 option
       integer :: atotid, csumid, vesppeid, vescureid, totcureid, pfluxid, efluxid, &
                  ppcurid, fbcurid, csumaid, netcdfc, netcdffl
-              
+! KDM integer array for the observation points
+      character*8 nobschr
+      integer :: obsind
+      integer, dimension(:), allocatable :: nobsids
 !
       save
       data ifirstmd/0/
       data eps/1.e-6/
+
+      if(.not.allocated(nobsids)) allocate(nobsids(nobs*2))             
 !
 !
       call globe
@@ -465,6 +473,8 @@
            if(status.ne.0) call movieerr(12,status)
        status = nf_def_var(ncid,'eci' ,NF_DOUBLE,1,netcdft,eciid)
            if(status.ne.0) call movieerr(12,status)
+       status = nf_def_var(ncid,'tcur' ,NF_DOUBLE,1,netcdft,tcurid)
+           if(status.ne.0) call movieerr(12,status)
        status = nf_def_var(ncid,'tni' ,NF_DOUBLE,1,netcdft,tniid)
        status = nf_def_var(ncid,'vloop' ,NF_DOUBLE,1,netcdft,vloopid)
        status = nf_def_var(ncid,'xplas' ,NF_DOUBLE,1,netcdft,xplasid)
@@ -518,6 +528,7 @@
        status = nf_def_var(ncid,'injcurr' ,NF_DOUBLE,1,netcdft,injcurrid)
        status = nf_def_var(ncid,'injcur2' ,NF_DOUBLE,1,netcdft,injcur2id)
        status = nf_def_var(ncid,'helicity' ,NF_DOUBLE,1,netcdft,helicityid)
+       status = nf_def_var(ncid,'gapvolt',NF_DOUBLE,1,netcdft,gapvoltid)
        status = nf_def_var(ncid,'gcur01' ,NF_DOUBLE,1,netcdft,gcur01id)
        status = nf_def_var(ncid,'gcur02' ,NF_DOUBLE,1,netcdft,gcur02id)
        status = nf_def_var(ncid,'gcur03' ,NF_DOUBLE,1,netcdft,gcur03id)
@@ -540,6 +551,14 @@
        status = nf_def_var(ncid,'gcur20' ,NF_DOUBLE,1,netcdft,gcur20id)
        status = nf_def_var(ncid,'gcur21' ,NF_DOUBLE,1,netcdft,gcur21id)
        status = nf_def_var(ncid,'gcur22' ,NF_DOUBLE,1,netcdft,gcur22id)
+       do i=1,nobs
+       do j=1,2
+         write(nobschr,'(A,I0.2,A,I0.1)') 'nobs',i,'_',j
+         obsind = (i*2)+j
+         status = nf_def_var(ncid,nobschr,NF_DOUBLE,1,netcdft,          &
+                  nobsids(obsind))
+       enddo
+       enddo
            if(status.ne.0) call movieerr(12,status)
 !
        status = nf_put_att_text(ncid,aplid,'name',18,    &
@@ -560,6 +579,9 @@
        status = nf_put_att_text(ncid,eciid,'name',30,    &
                 'Electron Cyclotron Current (A)')
            if(status.ne.0) call movieerr(12,status) 
+       status = nf_put_att_text(ncid,tcurid,'name',18,    &
+               'Plasma Current (A)')
+           if(status.ne.0) call movieerr(12,status)      
        status = nf_put_att_text(ncid,tniid,'name',31,    &
                 'Total Non-Inductive Current (A)')
        status = nf_put_att_text(ncid,vloopid,'name',16,  &
@@ -666,6 +688,8 @@
                 'Injector Current (2)......')
        status = nf_put_att_text(ncid,helicityid,'name',26,    &
                 'Magnetic Helicity.........')
+       status = nf_put_att_text(ncid,gapvoltid,'name',26,    &
+                'Gap Voltage...............')
        status = nf_put_att_text(ncid,gcur01id,'name',26,    &
                 'Group 01 Current (kA).....')
        status = nf_put_att_text(ncid,gcur02id,'name',26,    &
@@ -710,6 +734,15 @@
                 'Group 21 Current (kA).....')
        status = nf_put_att_text(ncid,gcur22id,'name',26,    &
                 'Group 22 Current (kA).....')
+       do i=1,nobs
+       do j=1,2
+         write(nobschr,'(A,I0.2,A,I0.1)') 'nobs',i,'_',j
+         obsind = (i*2)+j
+         write(*,*) 'nobschr=', nobschr,'obsind=',obsind
+         status = nf_put_att_text(ncid,nobsids(obsind),'name',6, &
+                 nobschr)
+       enddo
+       enddo
            if(status.ne.0) call movieerr(12,status)
 !
 !. 2.1 1D variables (poloidal flux)
@@ -987,6 +1020,23 @@
                 'toroidal field function (T-m)') 
            if(status.ne.0) call movieerr(72,status)
 !
+         status = nf_def_var(ncid,'chivolt',NF_DOUBLE,3,psidims,chivoltid)
+           if(status.ne.0) call movieerr(73,status)
+         status = nf_put_att_text(ncid,chivoltid,'name',32,       &
+                'applied CHI electric field (V-m)')
+           if(status.ne.0) call movieerr(73,status)
+!
+         status = nf_def_var(ncid,'icoil',NF_DOUBLE,3,psidims,icoilid)
+           if(status.ne.0) call movieerr(73,status)
+         status = nf_put_att_text(ncid,icoilid,'name',32,       &
+                'icoil')
+           if(status.ne.0) call movieerr(73,status)
+!
+         status = nf_def_var(ncid,'loopvolt',NF_DOUBLE,3,psidims,lvltdiagid)
+           if(status.ne.0) call movieerr(73,status)
+         status = nf_put_att_text(ncid,lvltdiagid,'name',32,       &
+                'Local Loop Voltage (V)')
+           if(status.ne.0) call movieerr(73,status)
 !
 !........added by SCJ for idata=9 or idata=11 on 2/10
          if(idata.eq.9 .or. idata.eq.11) then
@@ -1092,6 +1142,8 @@
           if(status.ne.0) call movieerr(17,status)
       status = nf_inq_varid(ncid,'eci',eciid)
           if(status.ne.0) call movieerr(17,status)
+      status = nf_inq_varid(ncid,'tcur',tcurid)
+          if(status.ne.0) call movieerr(17,status)
       status = nf_inq_varid(ncid,'tni',tniid)
       status = nf_inq_varid(ncid,'vloop',vloopid)
       status = nf_inq_varid(ncid,'xplas',xplasid)
@@ -1145,6 +1197,7 @@
       status = nf_inq_varid(ncid,'injcurr',injcurrid)
       status = nf_inq_varid(ncid,'injcur2',injcur2id)
       status = nf_inq_varid(ncid,'helicity',helicityid)
+      status = nf_inq_varid(ncid,'gapvolt',gapvoltid)
       status = nf_inq_varid(ncid,'gcur01',gcur01id)
       status = nf_inq_varid(ncid,'gcur02',gcur02id)
       status = nf_inq_varid(ncid,'gcur03',gcur03id)
@@ -1167,6 +1220,11 @@
       status = nf_inq_varid(ncid,'gcur20',gcur20id)
       status = nf_inq_varid(ncid,'gcur21',gcur21id)
       status = nf_inq_varid(ncid,'gcur22',gcur22id)
+       do i=1,nobs
+         write(nobschr,'(A,I0.2,A,I0.1)') 'nobs',i,'_',j
+         obsind = (i*2)+j
+         status = nf_inq_varid(ncid,nobschr,nobsids(obsind))
+       enddo
           if(status.ne.0) call movieerr(17,status)
 !    
       status = nf_inq_varid(ncid,'xsv2',xsv2id)
@@ -1264,6 +1322,12 @@
       status = nf_inq_varid(ncid,'pr',prid)
           if(status.ne.0) call movieerr(19,status)
       status = nf_inq_varid(ncid,'gs',gsid)
+          if(status.ne.0) call movieerr(19,status)
+      status = nf_inq_varid(ncid,'chivolt',chivoltid)
+          if(status.ne.0) call movieerr(19,status)
+      status = nf_inq_varid(ncid,'icoil',icoilid)
+          if(status.ne.0) call movieerr(19,status)
+      status = nf_inq_varid(ncid,'loopvolt',lvltdiagid)
           if(status.ne.0) call movieerr(19,status)
 !
 !
@@ -1433,6 +1497,8 @@
           if(status.ne.0) call movieerr(22,status)
       status = nf_put_var1_double(ncid,eciid,nreccdf,global(242))
           if(status.ne.0) call movieerr(22,status)
+      status = nf_put_var1_double(ncid,tcurid,nreccdf,global(235))
+          if(status.ne.0) call movieerr(22,status)
       status = nf_put_var1_double(ncid,tniid,nreccdf,global(213))
       status = nf_put_var1_double(ncid,vloopid,nreccdf,global(13))
       status = nf_put_var1_double(ncid,xplasid,nreccdf,xplas)
@@ -1491,6 +1557,7 @@
       status = nf_put_var1_double(ncid,injcurrid,nreccdf,global(220))
       status = nf_put_var1_double(ncid,injcur2id,nreccdf,global(221))
       status = nf_put_var1_double(ncid,helicityid,nreccdf,global(12))
+      status = nf_put_var1_double(ncid,gapvoltid,nreccdf,global(7))
       status = nf_put_var1_double(ncid,gcur01id,nreccdf,gcur01)
       status = nf_put_var1_double(ncid,gcur02id,nreccdf,gcur02)
       status = nf_put_var1_double(ncid,gcur03id,nreccdf,gcur03)
@@ -1513,6 +1580,13 @@
       status = nf_put_var1_double(ncid,gcur20id,nreccdf,gcur20)
       status = nf_put_var1_double(ncid,gcur21id,nreccdf,gcur21)
       status = nf_put_var1_double(ncid,gcur22id,nreccdf,gcur22)
+      do i=1,nobs
+      do j=1,2
+        obsind = (i*2)+j
+        status = nf_put_var1_double(ncid,nobsids(obsind),nreccdf, &
+                 obsdiag(j,i))
+      enddo                 
+      enddo
           if(status.ne.0) call movieerr(22,status)
 !
 ! 2. 1D Variables
@@ -1590,12 +1664,21 @@
         call peval(ps,2,pval,ppval,i,jmag)
         call eeval(ps,2,eval,epval,i,jmag)
         call reval(ps,idens,isurf,rval,rpval,i,jmag)
-        call tieval(ps,2,tival,i,jmag,pval,eval,rval)
+!        call tieval(ps,2,tival,i,jmag,pval,eval,rval)
+        call tieval(ps,1,tival,i,jmag,pval,eval,rval)
         ter(ii) = (eval*udsh)/(rval*udsd)
         tir(ii) = tival
         aner(ii) = rval*udsd
         ajphir(ii) = ajphi(i,jmag)*udsi
         qr(ii) =  qget(ps)
+! KDM qget not working? below is a clone of qget
+!        qr(ii) = q
+!        do j=2,npsit
+!          if (xsv2(j).lt.ps) cycle
+!          qr(ii) = ((ps-xsv2(j-1))*qprof2(j) + (xsv2(j)-ps)*qprof2(j-1)) &
+!     &    / (xsv2(j) - xsv2(j-1))
+!          exit
+!        enddo  
       enddo   
 !
       status = nf_put_vara_double(ncid,rcoordid,start2,count2,rcoord)
@@ -1674,8 +1757,20 @@
           if(status.ne.0) call movieerr(81,status)
 !
       call pack(gs,packcdf,isym,nx,nz,pnx,pnz)
-      status = nf_put_vara_double(ncid,gsid,start3,count3,gs)
+      status = nf_put_vara_double(ncid,gsid,start3,count3,packcdf)
           if(status.ne.0) call movieerr(82,status)
+!
+      call pack(chivolt,packcdf,isym,nx,nz,pnx,pnz)
+      status = nf_put_vara_double(ncid,chivoltid,start3,count3,packcdf)
+      if(status.ne.0) call movieerr(83,status)
+!
+      call pack(icoil,packcdf,isym,nx,nz,pnx,pnz)
+      status = nf_put_vara_double(ncid,icoilid,start3,count3,packcdf)
+      if(status.ne.0) call movieerr(83,status)
+!
+      call pack(lvltdiag,packcdf,isym,nx,nz,pnx,pnz)
+      status = nf_put_vara_double(ncid,lvltdiagid,start3,count3,packcdf)
+      if(status.ne.0) call movieerr(83,status)
 !
       if(idata.eq.9 .or. idata.eq.11) then
         status = nf_put_var1_double(ncid,atotid,nreccdf,atot)

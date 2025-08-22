@@ -32,15 +32,16 @@
       ntime = 0
       xmaglst = xmag
       zmaglst = zmag
-!
-     if(acoef(501).eq.0 .and. acoef(504).ne.0) then
-        xmag = xmaglst
-        zmag = zmaglst
-        imag = (xmag-ccon)/deex + 2
-        jmag = nh
-        psimin = -1.e8
-        return
-     endif
+
+! kdm - This breaks CHI boundary conditions
+!     if(acoef(501).eq.0 .and. acoef(504).ne.0) then
+!        xmag = xmaglst
+!        zmag = zmaglst
+!        imag = (xmag-ccon)/deex + 2
+!        jmag = nh
+!        psimin = -1.e8
+!        return
+!     endif
 !
       pmin = 1.E20_R8
       minc = 2
@@ -76,6 +77,9 @@
            jmag = jmagt
            xmag = xary(imagt)
            zmag = zary(jmagt)
+           if (acoef(504).ne.0) then ! kdm - CHI case
+             jmag = nh
+           endif
            return
       endif
 !

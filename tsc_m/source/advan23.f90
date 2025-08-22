@@ -239,6 +239,8 @@
       jupper = j
       iforce(iupper,jupper) = 1
                                                         endif
+! kdm - global diagnostic for watching CHI boundary condition
+      chivolt(i,j) = volta(i,j) - volta(i-1,j) - voltb(i,j) + voltb(i,j-1)
    50 continue
       if(ilower*jlower*iupper*jupper .ne. 0 ) then
 !....diagnostic printout
