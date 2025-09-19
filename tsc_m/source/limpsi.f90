@@ -285,6 +285,10 @@
         itest = (xtest-ccon)/deex + 2
         jtest = (ztest+alz*(1-isym))/deez + 2
         ptest = pinterp(xtest,ztest,itest,jtest)
+! in ST-40 grid, sometimes it believes the separatrix is in the wall
+        if (icoil(itest,jtest).ne.0) go to 240   ! kdm - fix for ST-40
+        if (icoil(itest,jtest+1).ne.0) go to 240 ! kdm - need better logic
+!
         if(ptest.gt.psinn) go to 240
   239   plimiter = psinn
         iplimm = nn

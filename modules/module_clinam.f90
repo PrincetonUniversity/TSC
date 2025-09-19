@@ -416,6 +416,11 @@
       REAL*8, ALLOCATABLE, DIMENSION(:) ::  q_snbi
       INTEGER :: nspec_beam
 !
+! kdm added for chi
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: chivolt
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: lvltdiag
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: obsdiag
+!
 !     ------------------------------------------------------------------
 ! 15Apr2005 fgtok -s r8_precision.sub "r8con_incl.csh conversion"
       END MODULE CLINAM

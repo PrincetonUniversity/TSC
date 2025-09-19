@@ -1036,6 +1036,12 @@
         templ = 0 
         ALLOCATE ( ufdata(2*pnsave,pnx,30), STAT=istat)
         ufdata = 0                                                         
+        ALLOCATE ( chivolt(pnx,pnz), STAT=istat)
+        chivolt = 0
+        ALLOCATE ( lvltdiag(pnx,pnz), STAT=istat)
+        lvltdiag = 0
+        ALLOCATE ( obsdiag(2,pobs), STAT=istat)
+        obsdiag = 0
       if (istat .ne. 0) then 
          print *, 'Allocation Error : alloc_clinam   ' 
          stop

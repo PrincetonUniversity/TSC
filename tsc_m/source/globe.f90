@@ -65,6 +65,7 @@
 !     REAL*8, ALLOCATABLE, DIMENSION(:) :: gcur0ka
 !     REAL*8, ALLOCATABLE, DIMENSION(:) :: gcurfka
       REAL*8, ALLOCATABLE, DIMENSION(:) :: sumvsg
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: poldarr
 !============      
       INTERFACE
 
@@ -95,6 +96,7 @@
 !     IF(.not.ALLOCATED(gcurfka)) ALLOCATE( gcurfka(pngroup), 
 !    &                                 STAT=istat)
       IF(.not.ALLOCATED(sumvsg)) ALLOCATE( sumvsg(pngroup), STAT=istat)
+      IF(.not.ALLOCATED(poldarr)) ALLOCATE( poldarr(pnx,pnz), STAT=istat)
 !============      
       if (istat .ne. 0) stop 'Allocation Error : globe  ' 
 !============      
@@ -316,6 +318,14 @@
                                                             endif
                                                                 endif
       if(irfp.eq.1 .or. acoef(504).ne.0) global(12) = helic
+! -- kdm populate 2D array of the loop voltage
+      do i=1,nxp
+      do j=1,nzp
+        lvltdiag(i,j)=tpi*(psi(i,j)-poldarr(i,j))/(times-tolds)
+        poldarr(i,j) = psi(i,j)
+      enddo
+      enddo
+! -- kdm end
 !     global(13) = reboun*udsv*tpi
       global(13) = 0._R8
       if(tolds2.eq.times .or. tolds2.le.0) go to 339
@@ -327,8 +337,9 @@
       tolds2 = tolds
       pold = psilim
       tolds = times
-      if(global(13).gt.acoef(14)) global(13) = acoef(14)
-      if(global(13).lt.-acoef(14)) global(13) = -acoef(14)
+! kdm Is this really needed?
+!      if(global(13).gt.acoef(14)) global(13) = acoef(14)
+!      if(global(13).lt.-acoef(14)) global(13) = -acoef(14)
 !
       global(14) = qprof(1)
       if(isurf.ne.0) global(14) = 2._R8*qprof2(2) - qprof2(3)

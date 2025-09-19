@@ -327,6 +327,8 @@
       error = sumdb/sumb
       write(nterm,9260) error,facconv
       write(nout, 9260) error,facconv
+      write(nterm,*) "nimax",nimax
+      write(nout,*) "nimax",nimax
  9260 format(" iteration not converged in iterate",/,                    &  
      &       " error,faccon= ",1p2e12.4)
 !

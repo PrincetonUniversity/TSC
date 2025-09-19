@@ -522,6 +522,9 @@
         DEALLOCATE ( ccics, STAT=istat)
         DEALLOCATE ( templ, STAT=istat)
         DEALLOCATE ( ufdata, STAT=istat)
+        DEALLOCATE ( chivolt, STAT=istat)
+        DEALLOCATE ( lvltdiag, STAT=istat)
+        DEALLOCATE ( obsdiag, STAT=istat)
      
       if (istat .ne. 0) then 
          print *, 'Deallocation Error : alloc_clinam   ' 
